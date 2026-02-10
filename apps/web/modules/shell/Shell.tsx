@@ -96,7 +96,6 @@ export type LayoutProps = {
   smallHeading?: boolean;
   isPlatformUser?: boolean;
   disableSticky?: boolean;
-  topAlignedHeading?: boolean;
 };
 
 const KBarWrapper = ({
@@ -155,9 +154,8 @@ export function ShellMain(props: LayoutProps) {
         <div
           style={headerStyle}
           className={classNames(
-            "bg-default mb-0 flex md:mb-6 md:mt-0",
+            "bg-default mb-0 flex items-center md:mb-6 md:mt-0",
             props.smallHeading ? "lg:mb-7" : "lg:mb-8",
-            props.topAlignedHeading ? "items-start" : "items-center",
             !props.disableSticky &&
               "sticky top-0 z-10 md:fixed md:w-[calc(100%-3.5rem)] md:pt-3 md:pb-2 md:px-5 md:left-14 lg:left-56 lg:w-[calc(100%-14rem)]"
           )}
@@ -182,8 +180,7 @@ export function ShellMain(props: LayoutProps) {
             <header
               className={classNames(
                 props.large && "py-8",
-                "flex w-full max-w-full truncate",
-                props.topAlignedHeading ? "items-start" : "items-center"
+                "flex w-full max-w-full items-center truncate"
               )}
             >
               {props.HeadingLeftIcon && (
