@@ -283,7 +283,7 @@ const useTabs = ({
   const pendingInviteCount = pendingInvites?.length ?? 0;
   const organization = user?.organization;
   const orgBranding =
-    organization && !organization.isPlatform && organization.id > 0 && "name" in organization
+    organization && !organization.isPlatform && organization.id != null && organization.id > 0 && "name" in organization
       ? {
           id: organization.id,
           slug: organization.slug ?? undefined,
