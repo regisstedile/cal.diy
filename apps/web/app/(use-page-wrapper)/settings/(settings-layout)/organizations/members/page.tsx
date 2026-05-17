@@ -104,7 +104,7 @@ export default function OrganizationMembersPage() {
                 {m.role !== MembershipRole.OWNER && (
                   <Button
                     data-testid={`remove-member-${m.user.id}`}
-                    variant="destructive"
+                    color="destructive"
                     size="sm"
                     disabled={removeMutation.isPending}
                     onClick={() => removeMutation.mutate({ userId: m.user.id })}>
