@@ -49,6 +49,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import EmailProvider from "next-auth/providers/email";
 import GoogleProvider from "next-auth/providers/google";
 import type { Provider } from "next-auth/providers/index";
+import { clientSecretVerifier, isSAMLLoginEnabled } from "@calcom/features/ee/sso/lib/saml";
 import { getOrgUsernameFromEmail } from "../signup/utils/getOrgUsernameFromEmail";
 import { dub } from "./dub";
 import { ErrorCode } from "./ErrorCode";
@@ -364,6 +365,99 @@ providers.push(
     sendVerificationRequest: async (props) => (await import("./sendVerificationRequest")).default(props),
   })
 );
+
+if (isSAMLLoginEnabled) {
+  providers.push({
+    id: "saml",
+    name: "BoxyHQ",
+    type: "oauth",
+    version: "2.0",
+    checks: ["pkce", "state"],
+    authorization: {
+      url: `${WEBAPP_URL}/api/auth/saml/authorize`,
+      params: { scope: "", response_type: "code", provider: "saml" },
+    },
+    token: {
+      url: `${WEBAPP_URL}/api/auth/saml/token`,
+      params: { grant_type: "authorization_code" },
+    },
+    userinfo: `${WEBAPP_URL}/api/auth/saml/userinfo`,
+    profile: async (profile: {
+      id?: number;
+      firstName?: string;
+      lastName?: string;
+      email?: string;
+      requested?: { tenant?: string };
+    }) => {
+      const userRepo = new UserRepository(prisma);
+      const user = !profile.email
+        ? null
+        : await userRepo.findByEmailAndIncludeProfilesAndPassword({ email: profile.email });
+      return {
+        id: profile.id || 0,
+        firstName: profile.firstName || "",
+        lastName: profile.lastName || "",
+        email: profile.email || "",
+        name: `${profile.firstName || ""} ${profile.lastName || ""}`.trim(),
+        email_verified: true,
+        samlTenant: profile.requested?.tenant,
+        ...(user && { profile: user.allProfiles[0] }),
+      };
+    },
+    options: { clientId: "dummy", clientSecret: clientSecretVerifier },
+    allowDangerousEmailAccountLinking: true,
+  });
+
+  providers.push(
+    CredentialsProvider({
+      id: "saml-idp",
+      name: "IdP Login",
+      credentials: { code: {} },
+      async authorize(credentials): Promise<SamlIdpUser | null> {
+        if (!credentials?.code) return null;
+
+        const { oauthController } = await (await import("@calcom/features/ee/sso/lib/jackson")).default();
+
+        const { access_token } = await oauthController.token({
+          code: credentials.code,
+          grant_type: "authorization_code",
+          redirect_uri: `${process.env.NEXTAUTH_URL}`,
+          client_id: "dummy",
+          client_secret: clientSecretVerifier,
+        });
+
+        if (!access_token) return null;
+
+        const userInfo = await oauthController.userInfo(access_token);
+        if (!userInfo) return null;
+
+        const { id, firstName, lastName, requested } = userInfo;
+        const email = userInfo.email.toLowerCase();
+
+        const userRepo = new UserRepository(prisma);
+        const user = await userRepo.findByEmailAndIncludeProfilesAndPassword({ email });
+
+        if (!user) {
+          log.warn("saml-idp:authorize - user not found", { emailDomain: email.split("@")[1] });
+          throw new Error(ErrorCode.UserNotFound);
+        }
+
+        const [userProfile] = user.allProfiles ?? [];
+        return {
+          id: id as unknown as number,
+          userId: user.id,
+          firstName,
+          lastName,
+          email,
+          name: `${firstName} ${lastName}`.trim(),
+          email_verified: true,
+          profile: userProfile,
+          samlTenant: requested?.tenant,
+        };
+      },
+    })
+  );
+}
 
 function isNumber(n: string) {
   return !Number.isNaN(parseFloat(n)) && !Number.isNaN(+n);
