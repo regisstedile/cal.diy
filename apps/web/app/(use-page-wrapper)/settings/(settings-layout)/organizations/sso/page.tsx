@@ -138,7 +138,7 @@ export default function OrganizationSsoPage() {
             {data?.connection ? (
               <Button
                 type="button"
-                variant="destructive"
+                color="destructive"
                 disabled={!canUpdate || !isSamlAvailable || isBusy}
                 loading={deleteMutation.isPending}
                 onClick={() => deleteMutation.mutate()}>
