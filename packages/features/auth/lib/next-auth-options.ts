@@ -257,6 +257,8 @@ export async function authorizeCredentials(
       return role;
     }
 
+    // Self-hosted: skip 2FA requirement when SKIP_ADMIN_2FA_REQUIREMENT=true
+    if (process.env.SKIP_ADMIN_2FA_REQUIREMENT === "true" && isPasswordValid(credentials.password, false, true)) return role;
     // User's password is valid and two-factor authentication is enabled
     if (isPasswordValid(credentials.password, false, true) && user.twoFactorEnabled) return role;
     // Code is running in a development environment
