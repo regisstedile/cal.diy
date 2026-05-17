@@ -14,7 +14,7 @@ import { useForm } from "react-hook-form";
 
 type InviteFormValues = {
   email: string;
-  role: MembershipRole;
+  role: Extract<MembershipRole, "ADMIN" | "MEMBER">;
 };
 
 const roleOptions = [
