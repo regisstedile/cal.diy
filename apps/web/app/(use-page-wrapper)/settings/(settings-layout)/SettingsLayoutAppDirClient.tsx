@@ -282,10 +282,11 @@ const useTabs = ({
   const { data: pendingInvites } = trpc.viewer.organizations.listPendingInvites.useQuery();
   const pendingInviteCount = pendingInvites?.length ?? 0;
   const organization = user?.organization;
+  const orgId = organization?.id ?? null;
   const orgBranding =
-    organization && !organization.isPlatform && organization.id != null && organization.id > 0 && "name" in organization
+    organization && !organization.isPlatform && orgId !== null && orgId > 0 && "name" in organization
       ? {
-          id: organization.id,
+          id: orgId,
           slug: organization.slug ?? undefined,
           name: organization.name ?? undefined,
           logoUrl: "logoUrl" in organization ? (organization.logoUrl ?? null) : null,
