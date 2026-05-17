@@ -12,12 +12,14 @@ import { showToast } from "@calcom/ui/components/toast";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
+type InvitableRole = typeof MembershipRole.MEMBER | typeof MembershipRole.ADMIN;
+
 type InviteFormValues = {
   email: string;
-  role: Extract<MembershipRole, "ADMIN" | "MEMBER">;
+  role: InvitableRole;
 };
 
-const roleOptions = [
+const roleOptions: { label: string; value: InvitableRole }[] = [
   { label: "Member", value: MembershipRole.MEMBER },
   { label: "Admin", value: MembershipRole.ADMIN },
 ];
