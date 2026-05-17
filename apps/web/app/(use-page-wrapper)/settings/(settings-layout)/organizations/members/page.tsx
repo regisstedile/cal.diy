@@ -143,7 +143,7 @@ export default function OrganizationMembersPage() {
               />
             </div>
             <DialogFooter>
-              <Button variant="minimal" onClick={() => setInviteOpen(false)}>
+              <Button color="minimal" onClick={() => setInviteOpen(false)}>
                 {t("cancel")}
               </Button>
               <Button data-testid="send-invite-btn" type="submit" loading={inviteMutation.isPending}>
