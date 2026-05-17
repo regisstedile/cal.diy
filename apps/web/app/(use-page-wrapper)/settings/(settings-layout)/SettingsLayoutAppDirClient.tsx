@@ -145,12 +145,16 @@ const getTabs = (
           name: "guest_notifications",
           href: "/settings/organizations/guest-notifications",
         },
+        {
+          name: "invites",
+          href: "/settings/organizations/invites",
+          trackingMetadata: { section: "organization", page: "invites" },
+        },
         ...(orgBranding
           ? [
               {
                 name: "members",
-                href: `${WEBAPP_URL}/settings/organizations/${orgBranding?.slug}/members`,
-                isExternalLink: true,
+                href: "/settings/organizations/members",
                 trackingMetadata: { section: "organization", page: "members" },
               },
             ]
@@ -253,13 +257,7 @@ const getTabs = (
 // The following keys are assigned to admin only
 const adminRequiredKeys = ["admin"];
 const organizationRequiredKeys = ["organization"];
-const organizationAdminKeys = [
-  "privacy",
-  "privacy_and_security",
-  "SSO",
-  "directory_sync",
-  "delegation_credential",
-];
+const organizationAdminKeys = ["privacy", "privacy_and_security", "directory_sync", "delegation_credential"];
 
 interface SettingsPermissions {
   canViewRoles?: boolean;
@@ -267,6 +265,8 @@ interface SettingsPermissions {
   canUpdateOrganization?: boolean;
   canViewAttributes?: boolean;
 }
+
+const availableOrganizationSettingsPages = new Set(["profile", "general", "invites", "members", "SSO"]);
 
 const useTabs = ({
   isDelegationCredentialEnabled,
@@ -279,7 +279,18 @@ const useTabs = ({
 }) => {
   const session = useSession();
   const { data: user } = trpc.viewer.me.get.useQuery({ includePasswordAdded: true });
-  const orgBranding = null as { id?: number; slug?: string; name?: string; logoUrl?: string | null } | null;
+  const { data: pendingInvites } = trpc.viewer.organizations.listPendingInvites.useQuery();
+  const pendingInviteCount = pendingInvites?.length ?? 0;
+  const organization = user?.organization;
+  const orgBranding =
+    organization && !organization.isPlatform && organization.id > 0 && "name" in organization
+      ? {
+          id: organization.id,
+          slug: organization.slug ?? undefined,
+          name: organization.name ?? undefined,
+          logoUrl: "logoUrl" in organization ? (organization.logoUrl ?? null) : null,
+        }
+      : null;
   const isAdmin = session.data?.user.role === UserPermissionRole.ADMIN;
 
   const processTabsMemod = useMemo(() => {
@@ -292,9 +303,10 @@ const useTabs = ({
           avatar: getUserAvatarUrl(user),
         };
       } else if (tab.href === "/settings/organizations") {
-        const newArray = (tab?.children ?? []).filter(
-          (child) => permissions?.canUpdateOrganization || !organizationAdminKeys.includes(child.name)
-        );
+        const newArray = (tab?.children ?? []).filter((child) => {
+          if (!availableOrganizationSettingsPages.has(child.name)) return false;
+          return permissions?.canUpdateOrganization || !organizationAdminKeys.includes(child.name);
+        });
 
         if (permissions?.canViewAttributes) {
           newArray.splice(4, 0, {
@@ -349,9 +361,16 @@ const useTabs = ({
           }
         }
 
+        const childrenWithBadges = newArray.map((child) => {
+          if (child.name === "invites" && pendingInviteCount > 0) {
+            return { ...child, isBadged: true };
+          }
+          return child;
+        });
+
         return {
           ...tab,
-          children: newArray,
+          children: childrenWithBadges,
           name: orgBranding?.name || "organization",
           avatar: getPlaceholderAvatar(orgBranding?.logoUrl, orgBranding?.name),
         };
@@ -376,13 +395,21 @@ const useTabs = ({
 
     // check if name is in adminRequiredKeys
     return processedTabs.filter((tab) => {
-      if (organizationRequiredKeys.includes(tab.name)) return !!orgBranding;
+      if (organizationRequiredKeys.includes(tab.name)) return true;
       if (tab.name === "other_teams" && !permissions?.canUpdateOrganization) return false;
 
       if (isAdmin) return true;
       return !adminRequiredKeys.includes(tab.name);
     });
-  }, [isAdmin, orgBranding, user, isDelegationCredentialEnabled, isPbacEnabled, permissions]);
+  }, [
+    isAdmin,
+    orgBranding,
+    user,
+    isDelegationCredentialEnabled,
+    isPbacEnabled,
+    permissions,
+    pendingInviteCount,
+  ]);
 
   return processTabsMemod;
 };
