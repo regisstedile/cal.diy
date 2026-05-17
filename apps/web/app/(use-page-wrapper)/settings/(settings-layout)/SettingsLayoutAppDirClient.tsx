@@ -268,6 +268,8 @@ interface SettingsPermissions {
   canViewAttributes?: boolean;
 }
 
+const availableOrganizationSettingsPages = new Set(["profile", "general"]);
+
 const useTabs = ({
   isDelegationCredentialEnabled,
   isPbacEnabled,
@@ -279,7 +281,16 @@ const useTabs = ({
 }) => {
   const session = useSession();
   const { data: user } = trpc.viewer.me.get.useQuery({ includePasswordAdded: true });
-  const orgBranding = null as { id?: number; slug?: string; name?: string; logoUrl?: string | null } | null;
+  const organization = user?.organization;
+  const orgBranding =
+    organization && !organization.isPlatform && organization.id > 0 && "name" in organization
+      ? {
+          id: organization.id,
+          slug: organization.slug ?? undefined,
+          name: organization.name ?? undefined,
+          logoUrl: "logoUrl" in organization ? organization.logoUrl ?? null : null,
+        }
+      : null;
   const isAdmin = session.data?.user.role === UserPermissionRole.ADMIN;
 
   const processTabsMemod = useMemo(() => {
@@ -292,9 +303,10 @@ const useTabs = ({
           avatar: getUserAvatarUrl(user),
         };
       } else if (tab.href === "/settings/organizations") {
-        const newArray = (tab?.children ?? []).filter(
-          (child) => permissions?.canUpdateOrganization || !organizationAdminKeys.includes(child.name)
-        );
+        const newArray = (tab?.children ?? []).filter((child) => {
+          if (!availableOrganizationSettingsPages.has(child.name)) return false;
+          return permissions?.canUpdateOrganization || !organizationAdminKeys.includes(child.name);
+        });
 
         if (permissions?.canViewAttributes) {
           newArray.splice(4, 0, {
@@ -376,7 +388,7 @@ const useTabs = ({
 
     // check if name is in adminRequiredKeys
     return processedTabs.filter((tab) => {
-      if (organizationRequiredKeys.includes(tab.name)) return !!orgBranding;
+      if (organizationRequiredKeys.includes(tab.name)) return true;
       if (tab.name === "other_teams" && !permissions?.canUpdateOrganization) return false;
 
       if (isAdmin) return true;
