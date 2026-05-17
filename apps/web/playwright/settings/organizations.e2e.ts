@@ -1,3 +1,4 @@
+import process from "node:process";
 import { prisma } from "@calcom/prisma";
 import { MembershipRole } from "@calcom/prisma/enums";
 import { expect } from "@playwright/test";
@@ -195,5 +196,28 @@ test.describe("Organization Settings", () => {
       where: { userId_teamId: { userId: member.id, teamId: org.id } },
     });
     expect(membership).toBeNull();
+  });
+
+  test("owner can view SAML SSO settings", async ({ page, users, orgs }) => {
+    const owner = await users.create({ name: "Org Owner" });
+    const org = await orgs.create({ name: "SSO Test Org", slug: `sso-org-${Date.now()}` });
+
+    await prisma.membership.create({
+      data: { userId: owner.id, teamId: org.id, role: MembershipRole.OWNER, accepted: true },
+    });
+    await prisma.user.update({ where: { id: owner.id }, data: { organizationId: org.id } });
+
+    await owner.apiLogin();
+    await page.goto("/settings/organizations/sso");
+    await page.waitForLoadState("networkidle");
+
+    await expect(page.getByText("Single sign-on")).toBeVisible();
+    await expect(page.getByText("ACS URL")).toBeVisible();
+    await expect(page.getByText("SP Entity ID")).toBeVisible();
+
+    if (!process.env.SAML_DATABASE_URL) {
+      await expect(page.getByText(/SAML is not enabled in this environment/i)).toBeVisible();
+      await expect(page.getByTestId("save-saml-configuration")).toBeDisabled();
+    }
   });
 });

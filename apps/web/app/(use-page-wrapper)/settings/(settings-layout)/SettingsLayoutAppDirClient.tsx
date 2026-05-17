@@ -257,13 +257,7 @@ const getTabs = (
 // The following keys are assigned to admin only
 const adminRequiredKeys = ["admin"];
 const organizationRequiredKeys = ["organization"];
-const organizationAdminKeys = [
-  "privacy",
-  "privacy_and_security",
-  "SSO",
-  "directory_sync",
-  "delegation_credential",
-];
+const organizationAdminKeys = ["privacy", "privacy_and_security", "directory_sync", "delegation_credential"];
 
 interface SettingsPermissions {
   canViewRoles?: boolean;
@@ -272,7 +266,7 @@ interface SettingsPermissions {
   canViewAttributes?: boolean;
 }
 
-const availableOrganizationSettingsPages = new Set(["profile", "general", "invites", "members"]);
+const availableOrganizationSettingsPages = new Set(["profile", "general", "invites", "members", "SSO"]);
 
 const useTabs = ({
   isDelegationCredentialEnabled,
@@ -294,7 +288,7 @@ const useTabs = ({
           id: organization.id,
           slug: organization.slug ?? undefined,
           name: organization.name ?? undefined,
-          logoUrl: "logoUrl" in organization ? organization.logoUrl ?? null : null,
+          logoUrl: "logoUrl" in organization ? (organization.logoUrl ?? null) : null,
         }
       : null;
   const isAdmin = session.data?.user.role === UserPermissionRole.ADMIN;
@@ -407,7 +401,15 @@ const useTabs = ({
       if (isAdmin) return true;
       return !adminRequiredKeys.includes(tab.name);
     });
-  }, [isAdmin, orgBranding, user, isDelegationCredentialEnabled, isPbacEnabled, permissions, pendingInviteCount]);
+  }, [
+    isAdmin,
+    orgBranding,
+    user,
+    isDelegationCredentialEnabled,
+    isPbacEnabled,
+    permissions,
+    pendingInviteCount,
+  ]);
 
   return processTabsMemod;
 };
