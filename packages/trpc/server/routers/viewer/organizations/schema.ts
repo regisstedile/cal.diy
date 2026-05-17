@@ -43,6 +43,10 @@ export const ZAcceptDeclineInviteInputSchema = z.object({
   teamId: z.number(),
 });
 
+export const ZSaveSamlConnectionInputSchema = z.object({
+  rawMetadata: z.string().trim().min(1),
+});
+
 export type TCreateOrganizationInputSchema = z.infer<typeof ZCreateOrganizationInputSchema>;
 export type TUpdateOrganizationInputSchema = z.infer<typeof ZUpdateOrganizationInputSchema>;
 export type TListMembersInputSchema = z.infer<typeof ZListMembersInputSchema>;
@@ -50,3 +54,4 @@ export type TInviteMemberInputSchema = z.infer<typeof ZInviteMemberInputSchema>;
 export type TRemoveMemberInputSchema = z.infer<typeof ZRemoveMemberInputSchema>;
 export type TUpdateMemberRoleInputSchema = z.infer<typeof ZUpdateMemberRoleInputSchema>;
 export type TAcceptDeclineInviteInputSchema = z.infer<typeof ZAcceptDeclineInviteInputSchema>;
+export type TSaveSamlConnectionInputSchema = z.infer<typeof ZSaveSamlConnectionInputSchema>;
