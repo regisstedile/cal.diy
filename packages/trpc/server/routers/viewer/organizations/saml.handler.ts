@@ -1,15 +1,15 @@
-import process from "node:process";
 import type { SAMLSSORecord } from "@boxyhq/saml-jackson";
-import jackson from "@boxyhq/saml-jackson";
+
+import init from "@calcom/features/ee/sso/lib/jackson";
+import { samlPath } from "@calcom/features/ee/sso/lib/saml";
 import { WEBAPP_URL } from "@calcom/lib/constants";
 import { TRPCError } from "@trpc/server";
+
 import type { TrpcSessionUser } from "../../../types";
 import { assertCanManageOrganization, findCurrentOrganizationMembership } from "./organizationUtils";
 import type { TSaveSamlConnectionInputSchema } from "./schema";
 
 const SAML_PRODUCT = "cal-diy";
-const SAML_PATH = "/api/auth/saml/acs";
-const OIDC_PATH = "/api/auth/saml/oidc";
 
 type SamlHandlerOptions = {
   ctx: {
@@ -24,8 +24,8 @@ type SaveSamlHandlerOptions = SamlHandlerOptions & {
 const getTenant = (organizationId: number) => `org-${organizationId}`;
 
 const getServiceProviderDetails = () => ({
-  acsUrl: `${WEBAPP_URL}${SAML_PATH}`,
-  entityId: `${WEBAPP_URL}${SAML_PATH}`,
+  acsUrl: `${WEBAPP_URL}${samlPath}`,
+  entityId: `${WEBAPP_URL}${samlPath}`,
 });
 
 const getJacksonControllers = async () => {
@@ -35,24 +35,12 @@ const getJacksonControllers = async () => {
       message: "SAML_DATABASE_URL is not configured.",
     });
   }
-
-  return jackson({
-    externalUrl: WEBAPP_URL,
-    samlPath: SAML_PATH,
-    oidcPath: OIDC_PATH,
-    db: {
-      engine: "sql",
-      type: "postgres",
-      url: process.env.SAML_DATABASE_URL,
-    },
-    noAnalytics: true,
-  });
+  return init();
 };
 
 const getSamlConnections = async (organizationId: number) => {
-  const { connectionAPIController } = await getJacksonControllers();
-
-  return connectionAPIController.getConnections({
+  const { connectionController } = await getJacksonControllers();
+  return connectionController.getConnections({
     tenant: getTenant(organizationId),
     product: SAML_PRODUCT,
     strategy: "saml",
@@ -98,18 +86,17 @@ export const getSamlSettingsHandler = async ({ ctx }: SamlHandlerOptions) => {
   }
 
   const connections = await getSamlConnections(membership.team.id);
-
   return buildSamlSettings({ canUpdate, connection: connections[0] as SAMLSSORecord | undefined });
 };
 
 export const saveSamlConnectionHandler = async ({ ctx, input }: SaveSamlHandlerOptions) => {
   const membership = await assertCanManageOrganization({ userId: ctx.user.id });
-  const { connectionAPIController } = await getJacksonControllers();
+  const { connectionController } = await getJacksonControllers();
   const tenant = getTenant(membership.team.id);
   const existingConnections = await getSamlConnections(membership.team.id);
 
   if (existingConnections[0]) {
-    await connectionAPIController.updateSAMLConnection({
+    await connectionController.updateSAMLConnection({
       tenant,
       product: SAML_PRODUCT,
       clientID: existingConnections[0].clientID,
@@ -121,7 +108,7 @@ export const saveSamlConnectionHandler = async ({ ctx, input }: SaveSamlHandlerO
       rawMetadata: input.rawMetadata,
     });
   } else {
-    await connectionAPIController.createSAMLConnection({
+    await connectionController.createSAMLConnection({
       tenant,
       product: SAML_PRODUCT,
       name: membership.team.name ?? "Organization SAML",
@@ -133,15 +120,14 @@ export const saveSamlConnectionHandler = async ({ ctx, input }: SaveSamlHandlerO
   }
 
   const connections = await getSamlConnections(membership.team.id);
-
   return buildSamlSettings({ canUpdate: true, connection: connections[0] as SAMLSSORecord | undefined });
 };
 
 export const deleteSamlConnectionHandler = async ({ ctx }: SamlHandlerOptions) => {
   const membership = await assertCanManageOrganization({ userId: ctx.user.id });
-  const { connectionAPIController } = await getJacksonControllers();
+  const { connectionController } = await getJacksonControllers();
 
-  await connectionAPIController.deleteConnections({
+  await connectionController.deleteConnections({
     tenant: getTenant(membership.team.id),
     product: SAML_PRODUCT,
     strategy: "saml",
