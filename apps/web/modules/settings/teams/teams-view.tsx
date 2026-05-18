@@ -23,7 +23,8 @@ const slugify = (value: string) =>
     .replace(/(^-|-$)+/g, "")
     .slice(0, 48);
 
-const roleOptions = [MembershipRole.MEMBER, MembershipRole.ADMIN, MembershipRole.OWNER];
+const inviteRoleOptions = [MembershipRole.MEMBER, MembershipRole.ADMIN];
+const allRoleOptions = [MembershipRole.MEMBER, MembershipRole.ADMIN, MembershipRole.OWNER];
 
 export default function TeamsView() {
   const { t } = useLocale();
@@ -321,7 +322,10 @@ export default function TeamsView() {
                             })
                           }
                           className="border-subtle h-9 rounded-md border bg-default px-3 text-sm text-emphasis">
-                          {roleOptions.map((role) => (
+                          {(selectedTeam?.role === MembershipRole.OWNER
+                            ? allRoleOptions
+                            : inviteRoleOptions
+                          ).map((role) => (
                             <option key={role} value={role}>
                               {role}
                             </option>
