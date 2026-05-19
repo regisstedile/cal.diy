@@ -510,6 +510,8 @@ model User {
 
   autoOptInFeatures Boolean @default(false)
 
+  routingForms App_RoutingForms_Form[] @relation("routing-form")
+
   @@unique([email])
   @@unique([email, username])
   @@unique([username, organizationId])
@@ -644,6 +646,8 @@ model Team {
   // Monthly proration tracking
   seatChangeLogs    SeatChangeLog[]
   monthlyProrations MonthlyProration[]
+
+  routingForms App_RoutingForms_Form[]
 
   @@unique([slug, parentId])
   @@index([parentId])
@@ -2848,4 +2852,38 @@ model AttributeSyncFieldMapping {
 
   @@unique([integrationAttributeSyncId, attributeId])
   @@index([integrationAttributeSyncId])
+}
+
+model App_RoutingForms_Form {
+  id          String                          @id @default(cuid())
+  description String?
+  position    Int                             @default(0)
+  routes      Json?
+  createdAt   DateTime                        @default(now())
+  updatedAt   DateTime                        @updatedAt
+  name        String
+  fields      Json?
+  user        User                            @relation("routing-form", fields: [userId], references: [id], onDelete: Cascade)
+  userId      Int
+  team        Team?                           @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  teamId      Int?
+  responses   App_RoutingForms_FormResponse[]
+  disabled    Boolean                         @default(false)
+  settings    Json?
+
+  @@index([userId])
+  @@index([disabled])
+}
+
+model App_RoutingForms_FormResponse {
+  id           Int                   @id @default(autoincrement())
+  formFillerId String                @default(cuid())
+  form         App_RoutingForms_Form @relation(fields: [formId], references: [id], onDelete: Cascade)
+  formId       String
+  response     Json
+  createdAt    DateTime              @default(now())
+
+  @@unique([formFillerId, formId])
+  @@index([formFillerId])
+  @@index([formId])
 }

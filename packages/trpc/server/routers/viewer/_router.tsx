@@ -1,3 +1,4 @@
+import app_RoutingForms from "@calcom/app-store/routing-forms/trpc-router";
 import { router } from "../../trpc";
 import { featureFlagRouter } from "../features/_router";
 import { loggedInViewerRouter } from "../loggedInViewer/_router";
@@ -59,4 +60,5 @@ export const viewerRouter = router({
   teams: teamsRouter,
   holidays: holidaysRouter,
   travelSchedules: travelSchedulesRouter,
+  appRoutingForms: app_RoutingForms,
 });

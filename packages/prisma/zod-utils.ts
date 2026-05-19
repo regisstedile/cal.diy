@@ -1091,3 +1091,11 @@ export const fieldSchema = baseFieldSchema.merge(
 
 export const eventTypeBookingFields = z.array(fieldSchema);
 export const BookingFieldTypeEnum = eventTypeBookingFields.element.shape.type.Enum;
+
+export const RoutingFormSettings = z
+  .object({
+    emailOwnerOnSubmission: z.boolean(),
+    sendUpdatesTo: z.array(z.number()).optional(),
+    sendToAll: z.boolean().optional(),
+  })
+  .nullable();
