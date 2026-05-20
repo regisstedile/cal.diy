@@ -1,0 +1,205 @@
+# Relatório de Discrepância da API (OpenAPI vs Markdown)
+
+**Total de Endpoints no código (OpenAPI):** 121
+**Total de Arquivos Markdown da API:** 309
+
+## ❌ Endpoints sem documentação clara (Faltando)
+Estes endpoints existem no código, mas o `summary` não bateu com nenhum `title` dos arquivos Markdown.
+
+- **DELETE /v2/bookings/{bookingUid}/attendees/{attendeeId}** -> Summary: `Remove an attendee from a booking`
+- **GET /v2/calendars/connections** -> Summary: `List calendar connections`
+- **GET /v2/calendars/connections/{connectionId}/events** -> Summary: `List events for a connection`
+- **POST /v2/calendars/connections/{connectionId}/events** -> Summary: `Create event on a connection`
+- **GET /v2/calendars/connections/{connectionId}/events/{eventId}** -> Summary: `Get event for a connection`
+- **PATCH /v2/calendars/connections/{connectionId}/events/{eventId}** -> Summary: `Update event for a connection`
+- **DELETE /v2/calendars/connections/{connectionId}/events/{eventId}** -> Summary: `Delete event for a connection`
+- **GET /v2/calendars/connections/{connectionId}/freebusy** -> Summary: `Get free/busy for a connection`
+- **DELETE /v2/calendars/{calendar}/events/{eventUid}** -> Summary: `Delete a calendar event`
+- **GET /v2/calendars/{calendar}/events** -> Summary: `List calendar events`
+- **POST /v2/calendars/{calendar}/events** -> Summary: `Create a calendar event`
+- **GET /v2/calendars/{calendar}/freebusy** -> Summary: `Get free/busy times`
+
+## ⚠️ Documentações Órfãs (Desatualizadas ou sem correspondência)
+Estes arquivos Markdown têm um título que não existe no `openapi.json`.
+
+- `docs-api-reference-v2-teams-verified-resources-get-verified-phone-number-of-a-team-by-id.md` -> Title: `Get verified phone number of a team by id`
+- `docs-api-reference-v2-orgs-attributes-create-an-attribute.md` -> Title: `Create an attribute`
+- `docs-api-reference-v2-managed-orgs-update-an-organization-within-an-organization.md` -> Title: `Update an organization within an organization`
+- `docs-api-reference-v2-managed-orgs-get-all-organizations-within-an-organization.md` -> Title: `Get all organizations within an organization`
+- `docs-api-reference-v2-orgs-teams-roles-permissions-remove-multiple-permissions-from-an-organization-team-role.md` -> Title: `Remove multiple permissions from an organization team role`
+- `docs-api-reference-v2-orgs-teams-update-a-team.md` -> Title: `Update a team`
+- `docs-api-reference-v2-orgs-roles-permissions-list-permissions-for-an-organization-role.md` -> Title: `List permissions for an organization role`
+- `docs-api-reference-v2-orgs-teams-get-all-teams.md` -> Title: `Get all teams`
+- `docs-api-reference-v2-teams-create-a-team.md` -> Title: `Create a team`
+- `docs-api-reference-v2-orgs-routing-forms-update-routing-form-response.md` -> Title: `Update routing form response`
+- `docs-api-reference-v2-orgs-teams-stripe-check-team-stripe-connection.md` -> Title: `Check team Stripe connection`
+- `docs-api-reference-v2-notifications-register-an-app-push-subscription.md` -> Title: `Register an app push subscription`
+- `docs-api-reference-v2-orgs-memberships-create-a-membership.md` -> Title: `Create a membership`
+- `docs-api-reference-v2-orgs-attributes-options-create-an-attribute-option.md` -> Title: `Create an attribute option`
+- `docs-api-reference-v2-orgs-roles-permissions-remove-a-permission-from-an-organization-role.md` -> Title: `Remove a permission from an organization role`
+- `docs-api-reference-v2-orgs-attributes-options-get-all-attribute-options-for-a-user.md` -> Title: `Get all attribute options for a user`
+- `docs-api-reference-v2-orgs-teams-conferencing-list-team-conferencing-applications.md` -> Title: `List team conferencing applications`
+- `docs-api-reference-v2-teams-memberships-get-all-memberships.md` -> Title: `Get all memberships`
+- `docs-api-reference-v2-teams-event-types-webhooks-get-all-webhooks-for-a-team-event-type.md` -> Title: `Get all webhooks for a team event type`
+- `docs-api-reference-v2-orgs-routing-forms-get-routing-form-responses.md` -> Title: `Get routing form responses`
+- `docs-api-reference-v2-orgs-teams-event-types-private-links-update-a-private-link-for-a-team-event-ty.md` -> Title: `Update a private link for a team event type`
+- `docs-api-reference-v2-orgs-teams-event-types-private-links-create-a-private-link-for-a-team-event-type.md` -> Title: `Create a private link for a team event type`
+- `docs-api-reference-v2-orgs-attributes-get-an-attribute.md` -> Title: `Get an attribute`
+- `docs-api-reference-v2-orgs-attributes-options-assign-an-attribute-to-a-user.md` -> Title: `Assign an attribute to a user`
+- `docs-api-reference-v2-orgs-teams-roles-permissions-add-permissions-to-an-organization-team-role-sing.md` -> Title: `Add permissions to an organization team role (single or batch)`
+- `docs-api-reference-v2-orgs-roles-permissions-remove-multiple-permissions-from-an-organization-role.md` -> Title: `Remove multiple permissions from an organization role`
+- `docs-api-reference-v2-orgs-teams-workflows-get-organization-team-routing-form-workflows.md` -> Title: `Get organization team routing form workflows`
+- `docs-api-reference-v2-teams-verified-resources-get-list-of-verified-emails-of-a-team.md` -> Title: `Get list of verified emails of a team`
+- `docs-api-reference-v2-teams-memberships-update-membership.md` -> Title: `Update membership`
+- `docs-api-reference-v2-notifications-remove-an-app-push-subscription.md` -> Title: `Remove an app push subscription`
+- `docs-api-reference-v2-orgs-users-delete-a-user.md` -> Title: `Delete a user`
+- `docs-api-reference-v2-orgs-teams-routing-forms-responses-get-organization-team-routing-form-responses.md` -> Title: `Get organization team routing form responses`
+- `docs-api-reference-v2-managed-orgs-create-an-organization-within-an-organization.md` -> Title: `Create an organization within an organization`
+- `docs-api-reference-v2-teams-users-ooo-update-an-out-of-office-entry-for-a-team-member.md` -> Title: `Update an out-of-office entry for a team member`
+- `docs-api-reference-v2-organization-team-verified-resources-get-list-of-verified-emails-of-an-org-team.md` -> Title: `Get list of verified emails of an org team`
+- `docs-api-reference-v2-teams-event-types-delete-a-team-event-type.md` -> Title: `Delete a team event type`
+- `docs-api-reference-v2-orgs-teams-conferencing-set-team-default-conferencing-application.md` -> Title: `Set team default conferencing application`
+- `docs-api-reference-v2-orgs-routing-forms-get-organization-routing-forms.md` -> Title: `Get organization routing forms`
+- `docs-api-reference-v2-orgs-teams-roles-permissions-remove-a-permission-from-an-organization-team-role.md` -> Title: `Remove a permission from an organization team role`
+- `docs-api-reference-v2-orgs-bookings-report-an-organization-booking.md` -> Title: `Report an organization booking`
+- `docs-api-reference-v2-orgs-delegation-credentials-save-delegation-credentials-for-your-organization.md` -> Title: `Save delegation credentials for your organization`
+- `docs-api-reference-v2-teams-verified-resources-verify-an-email-for-a-team.md` -> Title: `Verify an email for a team`
+- `docs-api-reference-v2-teams-memberships-get-a-membership.md` -> Title: `Get a membership`
+- `docs-api-reference-v2-out-of-office-get-all-out-of-office-entries-for-the-authenticated-user.md` -> Title: `Get all out-of-office entries for the authenticated user`
+- `docs-api-reference-v2-orgs-teams-workflows-create-organization-team-workflow-for-routing-forms.md` -> Title: `Create organization team workflow for routing-forms`
+- `docs-api-reference-v2-orgs-teams-event-types-get-team-event-types.md` -> Title: `Get team event types`
+- `docs-api-reference-v2-teams-users-ooo-delete-an-out-of-office-entry-for-a-team-member.md` -> Title: `Delete an out-of-office entry for a team member`
+- `docs-api-reference-v2-me-get-my-booking-limits.md` -> Title: `Get my booking limits`
+- `docs-api-reference-v2-orgs-teams-workflows-delete-organization-team-routing-form-workflow.md` -> Title: `Delete organization team routing-form workflow`
+- `docs-api-reference-v2-orgs-teams-workflows-get-organization-team-workflow.md` -> Title: `Get organization team workflow`
+- `docs-api-reference-v2-credits-charge-credits.md` -> Title: `Charge credits`
+- `docs-api-reference-v2-orgs-teams-memberships-delete-a-membership.md` -> Title: `Delete a membership`
+- `docs-api-reference-v2-access-control.md` -> Title: `Access Control`
+- `docs-api-reference-v2-orgs-memberships-get-a-membership.md` -> Title: `Get a membership`
+- `docs-api-reference-v2-teams-event-types-webhooks-update-a-webhook-for-a-team-event-type.md` -> Title: `Update a webhook for a team event type`
+- `docs-api-reference-v2-orgs-teams-event-types-private-links-get-all-private-links-for-a-team-event-type.md` -> Title: `Get all private links for a team event type`
+- `docs-api-reference-v2-orgs-teams-routing-forms-responses-create-routing-form-response-and-get-available-slots.md` -> Title: `Create routing form response and get available slots`
+- `docs-api-reference-v2-orgs-teams-roles-update-an-organization-team-role.md` -> Title: `Update an organization team role`
+- `docs-api-reference-v2-orgs-attributes-options-get-all-attribute-options.md` -> Title: `Get all attribute options`
+- `docs-api-reference-v2-orgs-teams-delete-a-team.md` -> Title: `Delete a team`
+- `docs-api-reference-v2-orgs-delegation-credentials-delete-delegation-credentials-of-your-organization.md` -> Title: `Delete delegation credentials of your organization`
+- `docs-api-reference-v2-teams-verified-resources-get-verified-email-of-a-team-by-id.md` -> Title: `Get verified email of a team by id`
+- `docs-api-reference-v2-organization-team-verified-resources-get-verified-phone-number-of-an-org-team-.md` -> Title: `Get verified phone number of an org team by id`
+- `docs-api-reference-v2-orgs-teams-roles-permissions-remove-a-permission-from-an-organization-team-rol.md` -> Title: `Remove a permission from an organization team role`
+- `docs-api-reference-v2-orgs-teams-event-types-update-a-team-event-type.md` -> Title: `Update a team event type`
+- `docs-api-reference-v2-orgs-teams-event-types-private-links-create-a-private-link-for-a-team-event-ty.md` -> Title: `Create a private link for a team event type`
+- `docs-api-reference-v2-orgs-teams-conferencing-get-team-default-conferencing-application.md` -> Title: `Get team default conferencing application`
+- `docs-api-reference-v2-orgs-users-create-a-user.md` -> Title: `Create a user`
+- `docs-api-reference-v2-teams-schedules-get-all-team-member-schedules.md` -> Title: `Get all team member schedules`
+- `docs-api-reference-v2-orgs-teams-roles-permissions-remove-multiple-permissions-from-an-organization-.md` -> Title: `Remove multiple permissions from an organization team role`
+- `docs-api-reference-v2-teams-memberships-create-a-membership.md` -> Title: `Create a membership`
+- `docs-api-reference-v2-orgs-teams-bookings-get-organization-team-bookings.md` -> Title: `Get organization team bookings`
+- `docs-api-reference-v2-orgs-attributes-delete-an-attribute.md` -> Title: `Delete an attribute`
+- `docs-api-reference-v2-orgs-attributes-get-all-attributes.md` -> Title: `Get all attributes`
+- `docs-api-reference-v2-orgs-bookings-get-organization-bookings.md` -> Title: `Get organization bookings`
+- `docs-api-reference-v2-orgs-teams-routing-forms-get-team-routing-forms.md` -> Title: `Get team routing forms`
+- `docs-api-reference-v2-orgs-attributes-update-an-attribute.md` -> Title: `Update an attribute`
+- `docs-api-reference-v2-organization-team-verified-resources-get-verified-email-of-an-org-team-by-id.md` -> Title: `Get verified email of an org team by id`
+- `docs-api-reference-v2-orgs-teams-routing-forms-responses-update-routing-form-response.md` -> Title: `Update routing form response`
+- `docs-api-reference-v2-teams-event-types-update-a-team-event-type.md` -> Title: `Update a team event type`
+- `docs-api-reference-v2-organization-team-verified-resources-get-list-of-verified-phone-numbers-of-an-.md` -> Title: `Get list of verified phone numbers of an org team`
+- `docs-api-reference-v2-orgs-teams-memberships-get-all-memberships.md` -> Title: `Get all memberships`
+- `docs-api-reference-v2-orgs-teams-event-types-create-a-phone-call.md` -> Title: `Create a phone call`
+- `docs-api-reference-v2-orgs-attributes-options-unassign-an-attribute-from-a-user.md` -> Title: `Unassign an attribute from a user`
+- `docs-api-reference-v2-teams-delete-a-team.md` -> Title: `Delete a team`
+- `docs-api-reference-v2-orgs-attributes-options-update-an-attribute-option.md` -> Title: `Update an attribute option`
+- `docs-api-reference-v2-oauth.md` -> Title: `OAuth`
+- `docs-api-reference-v2-orgs-teams-invite-create-team-invite-link.md` -> Title: `Create team invite link`
+- `docs-api-reference-v2-orgs-teams-roles-permissions-replace-all-permissions-for-an-organization-team-.md` -> Title: `Replace all permissions for an organization team role`
+- `docs-api-reference-v2-organization-team-verified-resources-get-verified-phone-number-of-an-org-team-by-id.md` -> Title: `Get verified phone number of an org team by id`
+- `docs-api-reference-v2-organization-team-verified-resources-verify-a-phone-number-for-an-org-team.md` -> Title: `Verify a phone number for an org team`
+- `docs-api-reference-v2-orgs-teams-get-teams-membership-for-user.md` -> Title: `Get teams membership for user`
+- `docs-api-reference-v2-orgs-teams-create-a-team.md` -> Title: `Create a team`
+- `docs-api-reference-v2-orgs-teams-workflows-delete-organization-team-workflow.md` -> Title: `Delete organization team workflow`
+- `docs-api-reference-v2-orgs-teams-roles-get-all-organization-team-roles.md` -> Title: `Get all organization team roles`
+- `docs-api-reference-v2-me-clear-my-booking-limits.md` -> Title: `Clear my booking limits`
+- `docs-api-reference-v2-orgs-teams-workflows-create-organization-team-workflow-for-event-types.md` -> Title: `Create organization team workflow for event-types`
+- `docs-api-reference-v2-orgs-teams-event-types-delete-a-team-event-type.md` -> Title: `Delete a team event type`
+- `docs-api-reference-v2-orgs-teams-conferencing-connect-your-conferencing-application-to-a-team.md` -> Title: `Connect your conferencing application to a team`
+- `docs-api-reference-v2-orgs-teams-roles-permissions-list-permissions-for-an-organization-team-role.md` -> Title: `List permissions for an organization team role`
+- `docs-api-reference-v2-orgs-teams-workflows-update-organization-routing-form-team-workflow.md` -> Title: `Update organization routing form team workflow`
+- `docs-api-reference-v2-teams-event-types-webhooks-create-a-webhook-for-a-team-event-type.md` -> Title: `Create a webhook for a team event type`
+- `docs-api-reference-v2-orgs-teams-event-types-private-links-delete-a-private-link-for-a-team-event-ty.md` -> Title: `Delete a private link for a team event type`
+- `docs-api-reference-v2-orgs-users-update-a-user.md` -> Title: `Update a user`
+- `docs-api-reference-v2-credits-check-available-credits.md` -> Title: `Check available credits`
+- `docs-api-reference-v2-orgs-users-bookings-get-all-bookings-for-an-organization-user.md` -> Title: `Get all bookings for an organization user`
+- `docs-api-reference-v2-orgs-teams-conferencing-disconnect-team-conferencing-application.md` -> Title: `Disconnect team conferencing application`
+- `docs-api-reference-v2-bookings-request-to-reschedule-a-booking.md` -> Title: `Request to reschedule a booking`
+- `docs-api-reference-v2-orgs-attributes-options-delete-an-attribute-option.md` -> Title: `Delete an attribute option`
+- `docs-api-reference-v2-orgs-bookings-block-an-organization-booking-attendee.md` -> Title: `Block an organization booking attendee`
+- `docs-api-reference-v2-orgs-teams-roles-get-a-specific-organization-team-role.md` -> Title: `Get a specific organization team role`
+- `docs-api-reference-v2-teams-event-types-webhooks-get-a-webhook-for-a-team-event-type.md` -> Title: `Get a webhook for a team event type`
+- `docs-api-reference-v2-orgs-teams-memberships-get-a-membership.md` -> Title: `Get a membership`
+- `docs-api-reference-v2-orgs-routing-forms-create-routing-form-response-and-get-available-slots.md` -> Title: `Create routing form response and get available slots`
+- `docs-api-reference-v2-organization-team-verified-resources-get-list-of-verified-phone-numbers-of-an-org-team.md` -> Title: `Get list of verified phone numbers of an org team`
+- `docs-api-reference-v2-orgs-memberships-delete-a-membership.md` -> Title: `Delete a membership`
+- `docs-api-reference-v2-orgs-attributes-options-get-all-assigned-attribute-options-by-attribute-id.md` -> Title: `Get all assigned attribute options by attribute ID`
+- `docs-api-reference-v2-teams-get-a-team.md` -> Title: `Get a team`
+- `docs-api-reference-v2-orgs-teams-event-types-private-links-get-all-private-links-for-a-team-event-ty.md` -> Title: `Get all private links for a team event type`
+- `docs-api-reference-v2-orgs-teams-roles-permissions-replace-all-permissions-for-an-organization-team-role.md` -> Title: `Replace all permissions for an organization team role`
+- `docs-api-reference-v2-orgs-teams-workflows-get-organization-team-workflows.md` -> Title: `Get organization team workflows`
+- `docs-api-reference-v2-orgs-roles-delete-an-organization-role.md` -> Title: `Delete an organization role`
+- `docs-api-reference-v2-orgs-roles-create-a-new-organization-role.md` -> Title: `Create a new organization role`
+- `docs-api-reference-v2-orgs-roles-permissions-replace-all-permissions-for-an-organization-role.md` -> Title: `Replace all permissions for an organization role`
+- `docs-api-reference-v2-teams-users-ooo-create-an-out-of-office-entry-for-a-team-member.md` -> Title: `Create an out-of-office entry for a team member`
+- `docs-api-reference-v2-orgs-users-get-all-users.md` -> Title: `Get all users`
+- `docs-api-reference-v2-orgs-teams-event-types-private-links-update-a-private-link-for-a-team-event-type.md` -> Title: `Update a private link for a team event type`
+- `docs-api-reference-v2-routing-forms-calculate-slots-based-on-routing-form-response.md` -> Title: `Calculate slots based on routing form response`
+- `docs-api-reference-v2-me-update-my-booking-limits.md` -> Title: `Update my booking limits`
+- `docs-api-reference-v2-orgs-roles-get-all-organization-roles.md` -> Title: `Get all organization roles`
+- `docs-api-reference-v2-orgs-teams-conferencing-save-conferencing-app-oauth-credentials.md` -> Title: `Save conferencing app OAuth credentials`
+- `docs-api-reference-v2-teams-get-teams.md` -> Title: `Get teams`
+- `docs-api-reference-v2-teams-memberships-delete-a-membership.md` -> Title: `Delete a membership`
+- `docs-api-reference-v2-orgs-roles-permissions-add-permissions-to-an-organization-role-single-or-batch.md` -> Title: `Add permissions to an organization role (single or batch)`
+- `docs-api-reference-v2-orgs-teams-routing-forms-responses-create-routing-form-response-and-get-availa.md` -> Title: `Create routing form response and get available slots`
+- `docs-api-reference-v2-orgs-teams-event-types-private-links-delete-a-private-link-for-a-team-event-type.md` -> Title: `Delete a private link for a team event type`
+- `docs-api-reference-v2-orgs-teams-routing-forms-responses-get-organization-team-routing-form-response.md` -> Title: `Get organization team routing form responses`
+- `docs-api-reference-v2-orgs-users-ooo-get-all-out-of-office-entries-for-a-user.md` -> Title: `Get all out-of-office entries for a user`
+- `docs-api-reference-v2-organization-team-verified-resources-verify-an-email-for-an-org-team.md` -> Title: `Verify an email for an org team`
+- `docs-api-reference-v2-out-of-office-create-an-out-of-office-entry-for-the-authenticated-user.md` -> Title: `Create an out-of-office entry for the authenticated user`
+- `docs-api-reference-v2-managed-orgs-get-an-organization-within-an-organization.md` -> Title: `Get an organization within an organization`
+- `docs-api-reference-v2-teams-event-types-create-a-phone-call.md` -> Title: `Create a phone call`
+- `docs-api-reference-v2-orgs-users-ooo-update-an-out-of-office-entry-for-a-user.md` -> Title: `Update an out-of-office entry for a user`
+- `docs-api-reference-v2-orgs-attributes-options-get-all-assigned-attribute-options-by-attribute-slug.md` -> Title: `Get all assigned attribute options by attribute slug`
+- `docs-api-reference-v2-orgs-teams-roles-delete-an-organization-team-role.md` -> Title: `Delete an organization team role`
+- `docs-api-reference-v2-teams-verified-resources-verify-a-phone-number-for-an-org-team.md` -> Title: `Verify a phone number for an org team`
+- `docs-api-reference-v2-orgs-memberships-update-a-membership.md` -> Title: `Update a membership`
+- `docs-api-reference-v2-orgs-teams-roles-permissions-add-permissions-to-an-organization-team-role-single-or-batch.md` -> Title: `Add permissions to an organization team role (single or batch)`
+- `docs-api-reference-v2-teams-verified-resources-get-list-of-verified-phone-numbers-of-a-team.md` -> Title: `Get list of verified phone numbers of a team`
+- `docs-api-reference-v2-teams-invite-create-team-invite-link.md` -> Title: `Create team invite link`
+- `docs-api-reference-v2-teams-update-a-team.md` -> Title: `Update a team`
+- `docs-api-reference-v2-out-of-office-update-an-out-of-office-entry-for-the-authenticated-user.md` -> Title: `Update an out-of-office entry for the authenticated user`
+- `docs-api-reference-v2-orgs-teams-workflows-get-organization-team-routing-form-workflow.md` -> Title: `Get organization team routing form workflow`
+- `docs-api-reference-v2-orgs-teams-workflows-update-organization-team-workflow.md` -> Title: `Update organization team workflow`
+- `docs-api-reference-v2-user-booking-limits.md` -> Title: `User booking limits`
+- `docs-api-reference-v2-orgs-teams-event-types-get-all-team-event-types.md` -> Title: `Get all team event types`
+- `docs-api-reference-v2-teams-bookings-get-team-bookings.md` -> Title: `Get team bookings`
+- `docs-api-reference-v2-out-of-office-delete-an-out-of-office-entry-for-the-authenticated-user.md` -> Title: `Delete an out-of-office entry for the authenticated user`
+- `docs-api-reference-v2-orgs-teams-memberships-update-a-membership.md` -> Title: `Update a membership`
+- `docs-api-reference-v2-orgs-roles-update-an-organization-role.md` -> Title: `Update an organization role`
+- `docs-api-reference-v2-teams-event-types-webhooks-delete-a-webhook-for-a-team-event-type.md` -> Title: `Delete a webhook for a team event type`
+- `docs-api-reference-v2-teams-users-ooo-get-all-out-of-office-entries-for-a-team-member.md` -> Title: `Get all out-of-office entries for a team member`
+- `docs-api-reference-v2-orgs-delegation-credentials-update-delegation-credentials-of-your-organization.md` -> Title: `Update delegation credentials of your organization`
+- `docs-api-reference-v2-orgs-teams-memberships-create-a-membership.md` -> Title: `Create a membership`
+- `docs-api-reference-v2-managed-orgs-delete-an-organization-within-an-organization.md` -> Title: `Delete an organization within an organization`
+- `docs-api-reference-v2-v1-v2-differences.md` -> Title: `Migrating from API v1 to v2`
+- `docs-api-reference-v2-orgs-roles-get-a-specific-organization-role.md` -> Title: `Get a specific organization role`
+- `docs-api-reference-v2-orgs-users-ooo-get-all-out-of-office-entries-for-organization-users.md` -> Title: `Get all out-of-office entries for organization users`
+- `docs-api-reference-v2-organization-team-verified-resources-get-list-of-verified-emails-of-an-org-tea.md` -> Title: `Get list of verified emails of an org team`
+- `docs-api-reference-v2-orgs-memberships-get-all-memberships.md` -> Title: `Get all memberships`
+- `docs-api-reference-v2-teams-event-types-get-team-event-types.md` -> Title: `Get team event types`
+- `docs-api-reference-v2-introduction.md` -> Title: `Introduction to API v2`
+- `docs-api-reference-v2-orgs-teams-stripe-get-stripe-connect-url-for-a-team.md` -> Title: `Get Stripe connect URL for a team`
+- `docs-api-reference-v2-orgs-users-ooo-delete-an-out-of-office-entry-for-a-user.md` -> Title: `Delete an out-of-office entry for a user`
+- `docs-api-reference-v2-orgs-teams-conferencing-get-oauth-conferencing-apps-auth-url-for-a-team.md` -> Title: `Get OAuth conferencing app's auth URL for a team`
+- `docs-api-reference-v2-orgs-teams-users-schedules-get-schedules-of-a-team-member.md` -> Title: `Get schedules of a team member`
+- `docs-api-reference-v2-teams-event-types-webhooks-delete-all-webhooks-for-a-team-event-type.md` -> Title: `Delete all webhooks for a team event type`
+- `docs-api-reference-v2-orgs-users-ooo-create-an-out-of-office-entry-for-a-user.md` -> Title: `Create an out-of-office entry for a user`
+- `docs-api-reference-v2-orgs-teams-schedules-get-all-team-member-schedules.md` -> Title: `Get all team member schedules`
+- `docs-api-reference-v2-orgs-teams-get-a-team.md` -> Title: `Get a team`
+- `docs-api-reference-v2-orgs-teams-roles-create-a-new-organization-team-role.md` -> Title: `Create a new organization team role`

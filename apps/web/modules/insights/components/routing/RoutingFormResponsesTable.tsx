@@ -4,10 +4,10 @@ import {
   ColumnFilterType,
   convertMapToFacetedValues,
   type FilterableColumn,
-  useFilterValue,
   ZSingleSelectFilterValue,
 } from "@calcom/features/data-table";
 import { useDataTable } from "~/data-table/hooks/useDataTable";
+import { useFilterValue } from "~/data-table/hooks/useFilterValue";
 import type { RoutingFormTableRow } from "@calcom/features/insights/lib/types";
 import { useLocale } from "@calcom/lib/hooks/useLocale";
 import { trpc } from "@calcom/trpc/react";
