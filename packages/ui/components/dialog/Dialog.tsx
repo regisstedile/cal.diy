@@ -30,10 +30,13 @@ const dialogClasses = cva(
   }
 );
 
-export type DialogProps = React.ComponentProps<(typeof DialogPrimitive)["Root"]>;
+export type DialogProps = React.ComponentProps<(typeof DialogPrimitive)["Root"]> & {
+  name?: string;
+  clearQueryParamsOnClose?: string[];
+};
 
 export function Dialog(props: DialogProps) {
-  const { children, ...dialogProps } = props;
+  const { children, name: _name, clearQueryParamsOnClose: _clearQueryParamsOnClose, ...dialogProps } = props;
   return <DialogPrimitive.Root {...dialogProps}>{children}</DialogPrimitive.Root>;
 }
 
