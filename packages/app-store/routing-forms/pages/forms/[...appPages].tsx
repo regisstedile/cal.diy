@@ -38,7 +38,7 @@ import {
 } from "../../components/FormActions";
 import type { RoutingFormWithResponseCount } from "../../components/SingleForm";
 import { isFallbackRoute } from "../../lib/isFallbackRoute";
-import { getServerSideProps } from "./getServerSideProps";
+import type { getServerSideProps } from "./getServerSideProps";
 
 function NewFormButton() {
   const { t } = useLocale();
@@ -349,4 +349,3 @@ RoutingForms.getLayout = (page: React.ReactElement) => {
   );
 };
 
-export { getServerSideProps };

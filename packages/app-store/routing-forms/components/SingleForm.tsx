@@ -37,7 +37,7 @@ import { RoutingPages } from "../lib/RoutingPages";
 import type { Response, Route, SerializableForm } from "../types/types";
 import { FormAction, FormActionsDropdown, FormActionsProvider } from "./FormActions";
 import FormInputFields from "./FormInputFields";
-import { getServerSidePropsForSingleFormView } from "./getServerSidePropsSingleForm";
+import type { getServerSidePropsForSingleFormView } from "./getServerSidePropsSingleForm";
 import RoutingNavBar from "./RoutingNavBar";
 
 type RoutingForm = SerializableForm<App_RoutingForms_Form>;
@@ -606,4 +606,3 @@ export default function SingleFormWrapper({ form: _form, ...props }: SingleFormC
   );
 }
 
-export { getServerSidePropsForSingleFormView };

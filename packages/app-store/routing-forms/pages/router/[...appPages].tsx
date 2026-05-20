@@ -2,7 +2,7 @@
 
 import type { inferSSRProps } from "@calcom/types/inferSSRProps";
 import Head from "next/head";
-import { getServerSideProps } from "./getServerSideProps";
+import type { getServerSideProps } from "./getServerSideProps";
 
 export default function Router({ form, message }: inferSSRProps<typeof getServerSideProps>) {
   return (
@@ -21,4 +21,3 @@ export default function Router({ form, message }: inferSSRProps<typeof getServer
   );
 }
 
-export { getServerSideProps };

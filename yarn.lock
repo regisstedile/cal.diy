@@ -2315,7 +2315,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@calcom/emails@workspace:*, @calcom/emails@workspace:packages/emails":
+"@calcom/emails@npm:*, @calcom/emails@workspace:*, @calcom/emails@workspace:packages/emails":
   version: 0.0.0-use.local
   resolution: "@calcom/emails@workspace:packages/emails"
   dependencies:
@@ -2995,6 +2995,23 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@calcom/routing-forms@workspace:packages/app-store/routing-forms":
+  version: 0.0.0-use.local
+  resolution: "@calcom/routing-forms@workspace:packages/app-store/routing-forms"
+  dependencies:
+    "@calcom/emails": "npm:*"
+    "@calcom/lib": "npm:*"
+    "@calcom/prisma": "npm:*"
+    "@calcom/trpc": "npm:*"
+    "@calcom/types": "npm:*"
+    "@calcom/ui": "npm:*"
+    "@types/json-logic-js": "npm:^1.2.1"
+    dotenv: "npm:^16.3.1"
+    json-logic-js: "npm:^2.0.2"
+    react-awesome-query-builder: "npm:^5.1.2"
+  languageName: unknown
+  linkType: soft
+
 "@calcom/salesforce@workspace:packages/app-store/salesforce":
   version: 0.0.0-use.local
   resolution: "@calcom/salesforce@workspace:packages/app-store/salesforce"
@@ -3131,7 +3148,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@calcom/trpc@workspace:*, @calcom/trpc@workspace:packages/trpc":
+"@calcom/trpc@npm:*, @calcom/trpc@workspace:*, @calcom/trpc@workspace:packages/trpc":
   version: 0.0.0-use.local
   resolution: "@calcom/trpc@workspace:packages/trpc"
   dependencies:
@@ -3183,7 +3200,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@calcom/ui@workspace:*, @calcom/ui@workspace:packages/ui":
+"@calcom/ui@npm:*, @calcom/ui@workspace:*, @calcom/ui@workspace:packages/ui":
   version: 0.0.0-use.local
   resolution: "@calcom/ui@workspace:packages/ui"
   dependencies:
@@ -16552,6 +16569,13 @@ __metadata:
     "@types/tough-cookie": "npm:*"
     parse5: "npm:^7.0.0"
   checksum: 10/a5ee54aec813ac928ef783f69828213af4d81325f584e1fe7573a9ae139924c40768d1d5249237e62d51b9a34ed06bde059c86c6b0248d627457ec5e5d532dfa
+  languageName: node
+  linkType: hard
+
+"@types/json-logic-js@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "@types/json-logic-js@npm:1.2.1"
+  checksum: 10/034ce3f41ee88cbd8cfe211499a28ae51fe2e4fe854e691861c5acf62f0a4c986caf605d668572b8c0fa66bb5155b604b3d4c8d2d1556529fa501292f6b7f9d3
   languageName: node
   linkType: hard
 

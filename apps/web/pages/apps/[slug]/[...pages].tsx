@@ -1,19 +1,15 @@
 import type { GetServerSidePropsContext } from "next";
 import { z } from "zod";
 
-import { getAppWithMetadata } from "@calcom/app-store/_appRegistry";
 import RoutingFormsRoutingConfig from "@calcom/app-store/routing-forms/pages/app-routing.config";
-import { getServerSession } from "@calcom/features/auth/lib/getServerSession";
 import { useParamsWithFallback } from "@calcom/lib/hooks/useParamsWithFallback";
-import prisma from "@calcom/prisma";
 import type { AppGetServerSideProps } from "@calcom/types/AppGetServerSideProps";
 
 import PageWrapper from "@components/PageWrapper";
 
-import { ssrInit } from "@server/lib/ssr";
 
 type AppPageType = {
-  getServerSideProps: AppGetServerSideProps;
+  getServerSideProps?: AppGetServerSideProps;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   default: ((props: any) => JSX.Element) & {
     isBookingPage?: boolean | ((props: { router: { query: Record<string, string | string[]> } }) => boolean);
@@ -25,7 +21,7 @@ type AppPageType = {
 type Found = {
   notFound: false;
   Component: AppPageType["default"];
-  getServerSideProps: AppPageType["getServerSideProps"];
+  getServerSideProps?: AppPageType["getServerSideProps"];
 };
 
 type NotFound = {
@@ -52,6 +48,17 @@ function getRoute(appName: string, pages: string[]): Found | NotFound {
     return { notFound: true };
   }
   return { notFound: false, Component: appPage.default, ...appPage };
+}
+
+async function getServerSidePropsForRoute(appName: string, page: string) {
+  if (appName === "routing-forms") {
+    const { serverSidePropsConfig } = await import(
+      "@calcom/app-store/routing-forms/pages/app-routing.server"
+    );
+    return serverSidePropsConfig[page];
+  }
+
+  return undefined;
 }
 
 const AppPage: AppPageType["default"] = function AppPage(props) {
@@ -85,7 +92,7 @@ const paramsSchema = z.object({
 });
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const { params, req, res } = context;
+  const { params, req } = context;
   if (!params) {
     return { notFound: true };
   }
@@ -101,9 +108,18 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     return { notFound: true };
   }
 
-  if (route.getServerSideProps) {
+  const routeGetServerSideProps = await getServerSidePropsForRoute(appName, pages[0]);
+
+  if (routeGetServerSideProps) {
     const typedParams = params as { slug: string; pages: string[]; appPages?: string[] };
     typedParams.appPages = pages.slice(1);
+
+    const [{ getAppWithMetadata }, { getServerSession }, { default: prisma }, { ssrInit }] = await Promise.all([
+      import("@calcom/app-store/_appRegistry"),
+      import("@calcom/features/auth/lib/getServerSession"),
+      import("@calcom/prisma"),
+      import("@server/lib/ssr"),
+    ]);
 
     const session = await getServerSession({ req });
     const user = session?.user;
@@ -112,7 +128,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       return { notFound: true };
     }
 
-    const result = await route.getServerSideProps(
+    const result = await routeGetServerSideProps(
       context as Parameters<AppGetServerSideProps>[0],
       prisma,
       user,
