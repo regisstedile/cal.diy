@@ -1,5 +1,3 @@
-"use client";
-
 import type { GetServerSidePropsContext } from "next";
 import { z } from "zod";
 
@@ -107,7 +105,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     const typedParams = params as { slug: string; pages: string[]; appPages?: string[] };
     typedParams.appPages = pages.slice(1);
 
-    const session = await getServerSession({ req, res });
+    const session = await getServerSession({ req });
     const user = session?.user;
     const app = await getAppWithMetadata({ slug: appName });
     if (!app) {

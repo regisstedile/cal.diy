@@ -309,8 +309,6 @@ function SingleForm({ form, appUrl, Page, enrichedWithUserProfileForm }: SingleF
       <Form
         form={hookForm}
         handleSubmit={(data) => {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          //@ts-expect-error
           mutation.mutate({
             ...data,
           });

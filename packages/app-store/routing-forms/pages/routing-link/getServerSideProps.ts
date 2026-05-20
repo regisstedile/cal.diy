@@ -48,15 +48,16 @@ export const getServerSideProps = async function getServerSideProps(
       notFound: true,
     };
   }
-  const formId = params.appPages[0];
-  if (!formId || params.appPages.length > 2) {
+  const appPages = params.appPages ?? [];
+  const formId = appPages[0];
+  if (!formId || appPages.length > 2) {
     return {
       notFound: true,
     };
   }
   const { currentOrgDomain } = orgDomainConfig(context.req);
 
-  const isEmbed = params.appPages[1] === "embed";
+  const isEmbed = appPages[1] === "embed";
   if (context.query["flag.coep"] === "true") {
     context.res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
   }
@@ -101,7 +102,7 @@ export const getServerSideProps = async function getServerSideProps(
     };
   }
 
-  const { UserRepository } = await import("@calcom/lib/server/repository/user");
+  const { UserRepository } = await import("../../lib/UserRepository");
   const formWithUserProfile = {
     ...form,
     user: await UserRepository.enrichUserWithItsProfile({ user: form.user }),

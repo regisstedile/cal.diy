@@ -66,16 +66,11 @@ export default function RoutingForms({
   const utils = trpc.useUtils();
   const [parent] = useAutoAnimate<HTMLUListElement>();
 
-  const mutation = trpc.viewer.routingFormOrder.useMutation({
-    onError: async (err) => {
-      console.error(err.message);
-      await utils.viewer.appRoutingForms.forms.cancel();
-      await utils.viewer.appRoutingForms.invalidate();
-    },
-    onSettled: () => {
+  const mutation = {
+    mutate: (_input: { ids: string[] }) => {
       utils.viewer.appRoutingForms.invalidate();
     },
-  });
+  };
 
   useEffect(() => {
     hookForm.reset({});

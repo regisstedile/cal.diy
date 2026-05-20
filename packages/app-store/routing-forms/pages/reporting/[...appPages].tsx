@@ -1,12 +1,12 @@
 "use client";
 
 import Shell from "@calcom/features/shell/Shell";
-import { classNames } from "@calcom/lib";
+import classNames from "@calcom/lib/classNames";
 import { useLocale } from "@calcom/lib/hooks/useLocale";
 import { trpc } from "@calcom/trpc/react";
 import type { inferSSRProps } from "@calcom/types/inferSSRProps";
 import { Button } from "@calcom/ui";
-import { useInViewObserver } from "@lib/hooks/useInViewObserver";
+import { useInViewObserver } from "@calcom/lib/hooks/useInViewObserver";
 import type React from "react";
 import { useCallback, useRef, useState } from "react";
 import type {

@@ -32,8 +32,11 @@
     "@calcom/office365video": "workspace:*",
     "@calcom/ui": "workspace:*",
     "@calcom/zoomvideo": "workspace:*",
+    "json-logic-js": "^2.0.2",
     "lodash": "4.18.1",
     "qs-stringify": "1.2.1",
+    "react-awesome-query-builder": "^5.1.2",
+    "react-hot-toast": "^2.4.1",
     "react-i18next": "12.3.1"
   },
   "peerDependencies": {

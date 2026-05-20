@@ -29,8 +29,9 @@ export const getServerSidePropsForSingleFormView = async function getServerSideP
       notFound: true,
     };
   }
-  const formId = params.appPages[0];
-  if (!formId || params.appPages.length > 1) {
+  const appPages = params.appPages ?? [];
+  const formId = appPages[0];
+  if (!formId || appPages.length > 1) {
     return {
       notFound: true,
     };
@@ -100,7 +101,7 @@ export const getServerSidePropsForSingleFormView = async function getServerSideP
       : null,
   };
 
-  const { UserRepository } = await import("@calcom/lib/server/repository/user");
+  const { UserRepository } = await import("../lib/UserRepository");
 
   const formWithUserInfoProfil = {
     ...form,

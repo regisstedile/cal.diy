@@ -567,7 +567,7 @@ const Routes = ({
         <SelectField
           placeholder={t("select_a_router")}
           containerClassName="mb-6 data-testid-select-router"
-          isOptionDisabled={(option) => !!option.isDisabled}
+          isOptionDisabled={(option) => !!(option as { isDisabled?: boolean }).isDisabled}
           label={t("add_a_new_route")}
           options={routerOptions}
           key={mainRoutes.length}
