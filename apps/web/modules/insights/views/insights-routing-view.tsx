@@ -1,7 +1,6 @@
 "use client";
 
-import { DataTableProvider } from "@calcom/features/data-table/DataTableProvider";
-import { useSegments } from "@calcom/features/data-table/hooks/useSegments";
+import { DataTableProvider } from "~/data-table/DataTableProvider";
 import { useLocale } from "@calcom/lib/hooks/useLocale";
 import {
   FailedBookingsByField,
@@ -19,7 +18,7 @@ export default function InsightsRoutingFormResponsesPage({ timeZone }: { timeZon
   if (!pathname) return null;
 
   return (
-    <DataTableProvider tableIdentifier={pathname} useSegments={useSegments} timeZone={timeZone}>
+    <DataTableProvider tableIdentifier={pathname} timeZone={timeZone}>
       <InsightsOrgTeamsProvider>
         <div className="mb-4 stack-y-4">
           <RoutingFormResponsesTable />

@@ -1,8 +1,8 @@
 "use client";
 
-import { ColumnFilterType, DataTableProvider, type FilterableColumn } from "@calcom/features/data-table";
-import { useDataTable } from "@calcom/features/data-table/hooks/useDataTable";
-import { useSegments } from "@calcom/features/data-table/hooks/useSegments";
+import { ColumnFilterType, type FilterableColumn } from "@calcom/features/data-table";
+import { DataTableProvider } from "~/data-table/DataTableProvider";
+import { useDataTable } from "~/data-table/hooks/useDataTable";
 import { useLocale } from "@calcom/lib/hooks/useLocale";
 import type { FilterType } from "@calcom/types/data-table";
 import { ButtonGroup } from "@calcom/ui/components/buttonGroup";
@@ -38,7 +38,7 @@ export default function InsightsPage({ timeZone }: { timeZone: string }) {
   const pathname = usePathname();
   if (!pathname) return null;
   return (
-    <DataTableProvider tableIdentifier={pathname} useSegments={useSegments} timeZone={timeZone}>
+    <DataTableProvider tableIdentifier={pathname} timeZone={timeZone}>
       <InsightsOrgTeamsProvider>
         <InsightsPageContent />
       </InsightsOrgTeamsProvider>
