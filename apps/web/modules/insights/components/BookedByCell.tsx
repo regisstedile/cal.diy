@@ -1,4 +1,4 @@
-import type { RoutingFormTableRow } from "@calcom/features/insights/lib/types";
+import type { InsightsRoutingTableItem } from "@calcom/features/insights/services/InsightsRoutingBaseService";
 import { useLocale } from "@calcom/lib/hooks/useLocale";
 import { Badge } from "@calcom/ui/components/badge";
 import { Tooltip } from "@calcom/ui/components/tooltip";
@@ -9,7 +9,7 @@ export function BookedByCell({
   attendees,
   rowId,
 }: {
-  attendees: RoutingFormTableRow["bookingAttendees"];
+  attendees: InsightsRoutingTableItem["bookingAttendees"];
   rowId: number;
 }) {
   const cellId = useId();

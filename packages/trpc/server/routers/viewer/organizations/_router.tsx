@@ -6,6 +6,7 @@ import {
   ZInviteMemberInputSchema,
   ZListMembersInputSchema,
   ZRemoveMemberInputSchema,
+  ZSaveSamlConnectionInputSchema,
   ZUpdateMemberRoleInputSchema,
   ZUpdateOrganizationInputSchema,
 } from "./schema";
@@ -69,5 +70,23 @@ export const organizationsRouter = router({
     const { declineInviteHandler } = await import("./declineInvite.handler");
 
     return declineInviteHandler({ ctx, input });
+  }),
+
+  getSamlSettings: authedProcedure.query(async ({ ctx }) => {
+    const { getSamlSettingsHandler } = await import("./saml.handler");
+
+    return getSamlSettingsHandler({ ctx });
+  }),
+
+  saveSamlConnection: authedProcedure.input(ZSaveSamlConnectionInputSchema).mutation(async ({ ctx, input }) => {
+    const { saveSamlConnectionHandler } = await import("./saml.handler");
+
+    return saveSamlConnectionHandler({ ctx, input });
+  }),
+
+  deleteSamlConnection: authedProcedure.mutation(async ({ ctx }) => {
+    const { deleteSamlConnectionHandler } = await import("./saml.handler");
+
+    return deleteSamlConnectionHandler({ ctx });
   }),
 });
