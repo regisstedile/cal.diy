@@ -1,3 +1,4 @@
+import app_RoutingForms from "@calcom/app-store/routing-forms/trpc-router";
 import { router } from "../../trpc";
 import { featureFlagRouter } from "../features/_router";
 import { loggedInViewerRouter } from "../loggedInViewer/_router";
@@ -19,12 +20,12 @@ import { feedbackRouter } from "./feedback/_router";
 import { googleWorkspaceRouter } from "./googleWorkspace/_router";
 import { holidaysRouter } from "./holidays/_router";
 import { i18nRouter } from "./i18n/_router";
-import { insightsRouter } from "./insights/_router";
 import { meRouter } from "./me/_router";
 import { oAuthRouter } from "./oAuth/_router";
 import { oooRouter } from "./ooo/_router";
 import { organizationsRouter } from "./organizations/_router";
 import { slotsRouter } from "./slots/_router";
+import { teamsRouter } from "./teams/_router";
 import { travelSchedulesRouter } from "./travelSchedules/_router";
 import { userAdminRouter } from "./users/_router";
 import { webhookRouter } from "./webhook/_router";
@@ -56,7 +57,8 @@ export const viewerRouter = router({
   apiKeys: apiKeysRouter,
   ooo: oooRouter,
   organizations: organizationsRouter,
+  teams: teamsRouter,
   holidays: holidaysRouter,
   travelSchedules: travelSchedulesRouter,
-  insights: insightsRouter,
+  appRoutingForms: app_RoutingForms,
 });

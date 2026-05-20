@@ -1,0 +1,11 @@
+import type { z } from "zod";
+import type { zodField, zodFieldView, zodRouterField, zodRouterFieldView } from "../zod";
+
+export default function isRouterLinkedField(
+  field: z.infer<typeof zodFieldView> | z.infer<typeof zodField>
+): field is z.infer<typeof zodRouterField> | z.infer<typeof zodRouterFieldView> {
+  if ("routerId" in field) {
+    return true;
+  }
+  return false;
+}

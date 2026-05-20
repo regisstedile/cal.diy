@@ -81,6 +81,18 @@ const getTabs = (
       ],
     },
     {
+      name: "teams",
+      href: "/settings/teams",
+      icon: "users",
+      children: [
+        {
+          name: "teams",
+          href: "/settings/teams",
+          trackingMetadata: { section: "teams", page: "teams" },
+        },
+      ],
+    },
+    {
       name: "security",
       href: "/settings/security",
       icon: "key",
@@ -256,17 +268,21 @@ const getTabs = (
 
 // The following keys are assigned to admin only
 const adminRequiredKeys = ["admin"];
-const organizationRequiredKeys = ["organization"];
-const organizationAdminKeys = ["privacy", "privacy_and_security", "directory_sync", "delegation_credential"];
+const organizationAdminKeys = [
+  "privacy",
+  "privacy_and_security",
+  "SSO",
+  "directory_sync",
+  "delegation_credential",
+];
 
 interface SettingsPermissions {
   canViewRoles?: boolean;
   canViewOrganizationBilling?: boolean;
   canUpdateOrganization?: boolean;
-  canViewAttributes?: boolean;
 }
 
-const availableOrganizationSettingsPages = new Set(["profile", "general", "invites", "members", "SSO"]);
+const availableOrganizationSettingsPages = new Set(["profile", "general", "invites", "members"]);
 
 const useTabs = ({
   isDelegationCredentialEnabled,
@@ -282,14 +298,13 @@ const useTabs = ({
   const { data: pendingInvites } = trpc.viewer.organizations.listPendingInvites.useQuery();
   const pendingInviteCount = pendingInvites?.length ?? 0;
   const organization = user?.organization;
-  const orgId = organization?.id ?? null;
   const orgBranding =
-    organization && !organization.isPlatform && orgId !== null && orgId > 0 && "name" in organization
+    organization && !organization.isPlatform && organization.id != null && organization.id > 0 && "name" in organization
       ? {
-          id: orgId,
+          id: organization.id ?? undefined,
           slug: organization.slug ?? undefined,
           name: organization.name ?? undefined,
-          logoUrl: "logoUrl" in organization ? (organization.logoUrl ?? null) : null,
+          logoUrl: "logoUrl" in organization ? (organization.logoUrl as string | null) ?? null : null,
         }
       : null;
   const isAdmin = session.data?.user.role === UserPermissionRole.ADMIN;
@@ -308,14 +323,6 @@ const useTabs = ({
           if (!availableOrganizationSettingsPages.has(child.name)) return false;
           return permissions?.canUpdateOrganization || !organizationAdminKeys.includes(child.name);
         });
-
-        if (permissions?.canViewAttributes) {
-          newArray.splice(4, 0, {
-            name: "attributes",
-            href: "/settings/organizations/attributes",
-            trackingMetadata: { section: "organization", page: "attributes" },
-          });
-        }
 
         // Add delegation-credential menu item only if feature flag is enabled
         if (isDelegationCredentialEnabled) {
@@ -396,21 +403,13 @@ const useTabs = ({
 
     // check if name is in adminRequiredKeys
     return processedTabs.filter((tab) => {
-      if (organizationRequiredKeys.includes(tab.name)) return true;
+      if (tab.href === "/settings/organizations") return true;
       if (tab.name === "other_teams" && !permissions?.canUpdateOrganization) return false;
 
       if (isAdmin) return true;
       return !adminRequiredKeys.includes(tab.name);
     });
-  }, [
-    isAdmin,
-    orgBranding,
-    user,
-    isDelegationCredentialEnabled,
-    isPbacEnabled,
-    permissions,
-    pendingInviteCount,
-  ]);
+  }, [isAdmin, orgBranding, user, isDelegationCredentialEnabled, isPbacEnabled, permissions, pendingInviteCount]);
 
   return processTabsMemod;
 };

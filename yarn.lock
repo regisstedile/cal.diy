@@ -2044,8 +2044,11 @@ __metadata:
     "@calcom/types": "workspace:*"
     "@calcom/ui": "workspace:*"
     "@calcom/zoomvideo": "workspace:*"
+    json-logic-js: "npm:^2.0.2"
     lodash: "npm:4.18.1"
     qs-stringify: "npm:1.2.1"
+    react-awesome-query-builder: "npm:^5.1.2"
+    react-hot-toast: "npm:^2.4.1"
     react-i18next: "npm:12.3.1"
   peerDependencies:
     react: ^18.0.0 || ^19.0.0
@@ -2277,6 +2280,7 @@ __metadata:
     next: "npm:^15.1.0"
     nextra: "npm:^4.2.0"
     nextra-theme-docs: "npm:^4.2.0"
+    pagefind: "npm:^1.5.2"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
     typescript: "npm:^5.0.0"
@@ -2311,7 +2315,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@calcom/emails@workspace:*, @calcom/emails@workspace:packages/emails":
+"@calcom/emails@npm:*, @calcom/emails@workspace:*, @calcom/emails@workspace:packages/emails":
   version: 0.0.0-use.local
   resolution: "@calcom/emails@workspace:packages/emails"
   dependencies:
@@ -2991,6 +2995,23 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@calcom/routing-forms@workspace:packages/app-store/routing-forms":
+  version: 0.0.0-use.local
+  resolution: "@calcom/routing-forms@workspace:packages/app-store/routing-forms"
+  dependencies:
+    "@calcom/emails": "npm:*"
+    "@calcom/lib": "npm:*"
+    "@calcom/prisma": "npm:*"
+    "@calcom/trpc": "npm:*"
+    "@calcom/types": "npm:*"
+    "@calcom/ui": "npm:*"
+    "@types/json-logic-js": "npm:^1.2.1"
+    dotenv: "npm:^16.3.1"
+    json-logic-js: "npm:^2.0.2"
+    react-awesome-query-builder: "npm:^5.1.2"
+  languageName: unknown
+  linkType: soft
+
 "@calcom/salesforce@workspace:packages/app-store/salesforce":
   version: 0.0.0-use.local
   resolution: "@calcom/salesforce@workspace:packages/app-store/salesforce"
@@ -3127,7 +3148,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@calcom/trpc@workspace:*, @calcom/trpc@workspace:packages/trpc":
+"@calcom/trpc@npm:*, @calcom/trpc@workspace:*, @calcom/trpc@workspace:packages/trpc":
   version: 0.0.0-use.local
   resolution: "@calcom/trpc@workspace:packages/trpc"
   dependencies:
@@ -3179,7 +3200,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@calcom/ui@workspace:*, @calcom/ui@workspace:packages/ui":
+"@calcom/ui@npm:*, @calcom/ui@workspace:*, @calcom/ui@workspace:packages/ui":
   version: 0.0.0-use.local
   resolution: "@calcom/ui@workspace:packages/ui"
   dependencies:
@@ -3992,6 +4013,24 @@ __metadata:
     react: ^16.8 || ^17.0 || ^18.0 || ^19.0
     react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0
   checksum: 10/d1522247c7d38290dfefb8422f4ba206914f835974114e72b39bf864072d8961d98c9ee63d757f47e6f775d2b2b844a027e1603eed73b66c4844cc0325d9c9d0
+  languageName: node
+  linkType: hard
+
+"@date-io/core@npm:^1.3.13":
+  version: 1.3.13
+  resolution: "@date-io/core@npm:1.3.13"
+  checksum: 10/5a9e9d1de20f0346a3c7d2d5946190caef4bfb0b64d82ba1f4c566657a9192667c94ebe7f438d11d4286d9c190974daad4fb2159294225cd8af4d9a140239879
+  languageName: node
+  linkType: hard
+
+"@date-io/moment@npm:^1.3.13":
+  version: 1.3.13
+  resolution: "@date-io/moment@npm:1.3.13"
+  dependencies:
+    "@date-io/core": "npm:^1.3.13"
+  peerDependencies:
+    moment: ^2.24.0
+  checksum: 10/ed62d4fd5629935110dbf75dc2e5cfa376c9da4338726dcca967d04d082006a3cddcc18eacd3b8332e930a6d2edb6ebe8eb5a2e8b11427ac534c50a2acd0b3e1
   languageName: node
   linkType: hard
 
@@ -10373,6 +10412,55 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@pagefind/darwin-arm64@npm:1.5.2":
+  version: 1.5.2
+  resolution: "@pagefind/darwin-arm64@npm:1.5.2"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@pagefind/darwin-x64@npm:1.5.2":
+  version: 1.5.2
+  resolution: "@pagefind/darwin-x64@npm:1.5.2"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@pagefind/freebsd-x64@npm:1.5.2":
+  version: 1.5.2
+  resolution: "@pagefind/freebsd-x64@npm:1.5.2"
+  conditions: os=freebsd & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@pagefind/linux-arm64@npm:1.5.2":
+  version: 1.5.2
+  resolution: "@pagefind/linux-arm64@npm:1.5.2"
+  conditions: os=linux & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@pagefind/linux-x64@npm:1.5.2":
+  version: 1.5.2
+  resolution: "@pagefind/linux-x64@npm:1.5.2"
+  conditions: os=linux & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@pagefind/windows-arm64@npm:1.5.2":
+  version: 1.5.2
+  resolution: "@pagefind/windows-arm64@npm:1.5.2"
+  conditions: os=win32 & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@pagefind/windows-x64@npm:1.5.2":
+  version: 1.5.2
+  resolution: "@pagefind/windows-x64@npm:1.5.2"
+  conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
 "@panva/hkdf@npm:^1.0.2":
   version: 1.0.4
   resolution: "@panva/hkdf@npm:1.0.4"
@@ -16394,6 +16482,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/hoist-non-react-statics@npm:^3.3.0":
+  version: 3.3.7
+  resolution: "@types/hoist-non-react-statics@npm:3.3.7"
+  dependencies:
+    hoist-non-react-statics: "npm:^3.3.0"
+  peerDependencies:
+    "@types/react": "*"
+  checksum: 10/13f610572c073970b3f43cc446396974fed786fee6eac2d6fd4b0ca5c985f13e79d4a0de58af4e5b4c68470d808567c3a14108d98edb7d526d4d46c8ec851ed1
+  languageName: node
+  linkType: hard
+
 "@types/hoist-non-react-statics@npm:^3.3.6":
   version: 3.3.6
   resolution: "@types/hoist-non-react-statics@npm:3.3.6"
@@ -16470,6 +16569,13 @@ __metadata:
     "@types/tough-cookie": "npm:*"
     parse5: "npm:^7.0.0"
   checksum: 10/a5ee54aec813ac928ef783f69828213af4d81325f584e1fe7573a9ae139924c40768d1d5249237e62d51b9a34ed06bde059c86c6b0248d627457ec5e5d532dfa
+  languageName: node
+  linkType: hard
+
+"@types/json-logic-js@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "@types/json-logic-js@npm:1.2.1"
+  checksum: 10/034ce3f41ee88cbd8cfe211499a28ae51fe2e4fe854e691861c5acf62f0a4c986caf605d668572b8c0fa66bb5155b604b3d4c8d2d1556529fa501292f6b7f9d3
   languageName: node
   linkType: hard
 
@@ -16852,6 +16958,18 @@ __metadata:
   dependencies:
     "@types/react": "npm:*"
   checksum: 10/dbdf98d127db58130f3e4394f23a6b4b200703049579e97a4e6049c0f47f871c7731cec37e2067afb62cc7c5486bd1b151fc0ef672b9ea7369c40d811592b948
+  languageName: node
+  linkType: hard
+
+"@types/react-redux@npm:^7.1.20":
+  version: 7.1.34
+  resolution: "@types/react-redux@npm:7.1.34"
+  dependencies:
+    "@types/hoist-non-react-statics": "npm:^3.3.0"
+    "@types/react": "npm:*"
+    hoist-non-react-statics: "npm:^3.3.0"
+    redux: "npm:^4.0.0"
+  checksum: 10/febcd1db0c83c5002c6bee0fdda9e70da0653454ffbb72d6c37cbf2f5c005e06fb5271cff344d7164c385c944526565282de9a95ff379e040476b71d27fc2512
   languageName: node
   linkType: hard
 
@@ -19932,7 +20050,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"classnames@npm:^2.5.1":
+"classnames@npm:^2.3.1, classnames@npm:^2.5.1":
   version: 2.5.1
   resolution: "classnames@npm:2.5.1"
   checksum: 10/58eb394e8817021b153bb6e7d782cfb667e4ab390cb2e9dac2fc7c6b979d1cc2b2a733093955fc5c94aa79ef5c8c89f11ab77780894509be6afbb91dddd79d15
@@ -21199,6 +21317,13 @@ __metadata:
   version: 3.1.3
   resolution: "csstype@npm:3.1.3"
   checksum: 10/f593cce41ff5ade23f44e77521e3a1bcc2c64107041e1bf6c3c32adc5187d0d60983292fda326154d20b01079e24931aa5b08e4467cc488b60bb1e7f6d478ade
+  languageName: node
+  linkType: hard
+
+"csstype@npm:^3.1.3":
+  version: 3.2.3
+  resolution: "csstype@npm:3.2.3"
+  checksum: 10/ad41baf7e2ffac65ab544d79107bf7cd1a4bb9bab9ac3302f59ab4ba655d5e30942a8ae46e10ba160c6f4ecea464cc95b975ca2fefbdeeacd6ac63f12f99fe1f
   languageName: node
   linkType: hard
 
@@ -25058,6 +25183,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"goober@npm:^2.1.16":
+  version: 2.1.19
+  resolution: "goober@npm:2.1.19"
+  peerDependencies:
+    csstype: ^3.0.10
+  checksum: 10/1390b08f6e2468d63e463e74e50d734b9cfd2280bf1ecf04878c666f48b8a5aac2d5c4b517b4d15fc46d32a98948f386b5fcde60799f8884351b01dc7658465f
+  languageName: node
+  linkType: hard
+
 "google-auth-library@npm:9.15.0, google-auth-library@npm:^9.0.0":
   version: 9.15.0
   resolution: "google-auth-library@npm:9.15.0"
@@ -28292,6 +28426,13 @@ __metadata:
   dependencies:
     bignumber.js: "npm:^9.0.0"
   checksum: 10/cd3973b88e5706f8f89d2a9c9431f206ef385bd5c584db1b258891a5e6642507c32316b82745239088c697f5ddfe967351e1731f5789ba7855aed56ad5f70e1f
+  languageName: node
+  linkType: hard
+
+"json-logic-js@npm:^2.0.2":
+  version: 2.0.5
+  resolution: "json-logic-js@npm:2.0.5"
+  checksum: 10/5d3c49e331027df2307aa8ab5c27fbadb930ffa083ad9b2876b20844a71cbe441c17702ab6a378cb79604c03c326124dfe3d7b75ec8bb4630075e8bdf16fe59a
   languageName: node
   linkType: hard
 
@@ -32977,6 +33118,38 @@ __metadata:
   languageName: node
   linkType: hard
 
+"pagefind@npm:^1.5.2":
+  version: 1.5.2
+  resolution: "pagefind@npm:1.5.2"
+  dependencies:
+    "@pagefind/darwin-arm64": "npm:1.5.2"
+    "@pagefind/darwin-x64": "npm:1.5.2"
+    "@pagefind/freebsd-x64": "npm:1.5.2"
+    "@pagefind/linux-arm64": "npm:1.5.2"
+    "@pagefind/linux-x64": "npm:1.5.2"
+    "@pagefind/windows-arm64": "npm:1.5.2"
+    "@pagefind/windows-x64": "npm:1.5.2"
+  dependenciesMeta:
+    "@pagefind/darwin-arm64":
+      optional: true
+    "@pagefind/darwin-x64":
+      optional: true
+    "@pagefind/freebsd-x64":
+      optional: true
+    "@pagefind/linux-arm64":
+      optional: true
+    "@pagefind/linux-x64":
+      optional: true
+    "@pagefind/windows-arm64":
+      optional: true
+    "@pagefind/windows-x64":
+      optional: true
+  bin:
+    pagefind: lib/runner/bin.cjs
+  checksum: 10/8e5c261be809facefefe162864ac3a9eb20377c791029c301a123c72e884ce1e3df111b48e46136ca814b25ddb2eaceb70f0086580dc34fd3035379397170279
+  languageName: node
+  linkType: hard
+
 "pako@npm:^0.2.5":
   version: 0.2.9
   resolution: "pako@npm:0.2.9"
@@ -34946,6 +35119,46 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-awesome-query-builder@npm:^5.1.2":
+  version: 5.4.0
+  resolution: "react-awesome-query-builder@npm:5.4.0"
+  dependencies:
+    "@date-io/moment": "npm:^1.3.13"
+    classnames: "npm:^2.3.1"
+    clone: "npm:^2.1.2"
+    immutable: "npm:^3.8.2"
+    lodash: "npm:^4.17.21"
+    moment: "npm:^2.29.4"
+    prop-types: "npm:^15.7.2"
+    react-redux: "npm:^7.2.2"
+    redux: "npm:^4.2.0"
+    spel2js: "npm:^0.2.8"
+    sqlstring: "npm:^2.3.3"
+  peerDependencies:
+    "@ant-design/icons": ^4.0.0
+    "@emotion/react": ^11.7.1
+    "@emotion/styled": ^11.6.0
+    "@fortawesome/fontawesome-svg-core": ^1.2.0 || ^6.1.0
+    "@fortawesome/free-solid-svg-icons": ^5.15.4 || ^6.0.0
+    "@fortawesome/react-fontawesome": ^0.1.16 || ^0.2.0
+    "@material-ui/core": ^4.12.3
+    "@material-ui/icons": ^4.0.0
+    "@material-ui/lab": ^4.0.0-alpha.57
+    "@material-ui/pickers": ^3.2.10
+    "@mui/icons-material": ^5.2.4
+    "@mui/lab": ^5.0.0-alpha.60
+    "@mui/material": ^5.2.4
+    "@mui/x-date-pickers": ^5.0.0-beta.2
+    antd: ^4.0.0
+    bootstrap: ^5.1.3
+    material-ui-confirm: ^2.0.1 || ^3.0.0
+    react: ^16.8.4 || ^17.0.1 || ^18.0.0
+    react-dom: ^16.8.4 || ^17.0.1 || ^18.0.0
+    reactstrap: ^9.0.0
+  checksum: 10/2a71349e3b091adc62ae68dbbcac0d0d8ad71a9fe42ef634009313df8303188c8c19d7dce7b21a30826c6f0647fbe493eb57fcb1ad1b3db7c78f0e69328af8c8
+  languageName: node
+  linkType: hard
+
 "react-calendar@npm:^3.3.1":
   version: 3.7.0
   resolution: "react-calendar@npm:3.7.0"
@@ -35120,6 +35333,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-hot-toast@npm:^2.4.1":
+  version: 2.6.0
+  resolution: "react-hot-toast@npm:2.6.0"
+  dependencies:
+    csstype: "npm:^3.1.3"
+    goober: "npm:^2.1.16"
+  peerDependencies:
+    react: ">=16"
+    react-dom: ">=16"
+  checksum: 10/825ebbaa03c63dc2f22795ac8d535b40f1066c3ace5b792d0de740070693f195b910c98f46a00f7f6195f804ecf41b03201f6ff6950a540098dd2b7a0069df5b
+  languageName: node
+  linkType: hard
+
 "react-i18next@npm:12.3.1":
   version: 12.3.1
   resolution: "react-i18next@npm:12.3.1"
@@ -35275,6 +35501,27 @@ __metadata:
     redux:
       optional: true
   checksum: 10/b3d2f89f469169475ab0a9f8914d54a336ac9bc6a31af6e8dcfe9901e6fe2cfd8c1a3f6ce7a2f7f3e0928a93fbab833b668804155715598b7f2ad89927d3ff50
+  languageName: node
+  linkType: hard
+
+"react-redux@npm:^7.2.2":
+  version: 7.2.9
+  resolution: "react-redux@npm:7.2.9"
+  dependencies:
+    "@babel/runtime": "npm:^7.15.4"
+    "@types/react-redux": "npm:^7.1.20"
+    hoist-non-react-statics: "npm:^3.3.2"
+    loose-envify: "npm:^1.4.0"
+    prop-types: "npm:^15.7.2"
+    react-is: "npm:^17.0.2"
+  peerDependencies:
+    react: ^16.8.3 || ^17 || ^18
+  peerDependenciesMeta:
+    react-dom:
+      optional: true
+    react-native:
+      optional: true
+  checksum: 10/1c3018bd2601e6d18339281867910b583dcbb3d8856403086e08c00abf0dfe467a94c0d1356bafa8cdf107bf1e2c9899a28486e4778e85c8bc4dfed2076b116f
   languageName: node
   linkType: hard
 
@@ -35753,6 +36000,15 @@ __metadata:
   peerDependencies:
     redux: ^5.0.0
   checksum: 10/38c563db5f0bbec90d2e65cc27f3c870c1b6102e0c071258734fac41cb0e51d31d894125815c2f4133b20aff231f51f028ad99bccc05a7e3249f1a5d5a959ed3
+  languageName: node
+  linkType: hard
+
+"redux@npm:^4.0.0, redux@npm:^4.2.0":
+  version: 4.2.1
+  resolution: "redux@npm:4.2.1"
+  dependencies:
+    "@babel/runtime": "npm:^7.9.2"
+  checksum: 10/371e4833b671193303a7dea7803c8fdc8e0d566740c78f580e0a3b77b4161da25037626900a2205a5d616117fa6ad09a4232e5a110bd437186b5c6355a041750
   languageName: node
   linkType: hard
 
@@ -37823,6 +38079,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"spel2js@npm:^0.2.8":
+  version: 0.2.9
+  resolution: "spel2js@npm:0.2.9"
+  checksum: 10/94081e5e2109473e2d7e9cff5c32417af47d11fba7090be7207364c6b0064d2f8ddf570f7c8dade2cb83ca2fb3108d066a8bbeaa9356c11e549d5fdd7762a45d
+  languageName: node
+  linkType: hard
+
 "split2@npm:^3.1.0":
   version: 3.2.2
   resolution: "split2@npm:3.2.2"
@@ -37890,7 +38153,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sqlstring@npm:^2.3.2":
+"sqlstring@npm:^2.3.2, sqlstring@npm:^2.3.3":
   version: 2.3.3
   resolution: "sqlstring@npm:2.3.3"
   checksum: 10/4e5a25af2d77a031fe00694034bf9fd822ddc3a483c9383124b120aa6b9ae9ab71e173cd29fba9c653998ebfef9e97be668957839960b9b3dc1afcb45f1ddb64
