@@ -1,0 +1,28 @@
+---
+title: "Custom booking flow"
+source: "https://cal.com/docs/atoms/guides/custom-booking-flow"
+tags: [cal-com, docs]
+---
+If you want to have a custom payment flow or any other custom action before the booking happens, you can intercept the booking once the user clicks book in the [[docs-atoms-booker|Booker atom]], run whatever custom code you need and then finally submit the booking with the intercepted booking data.In your component that renders the Booker atom create a `interceptBooking` function that will be passed to the Booker atom `handleCreateBooking` hook. See [[docs-atoms-booker|Booker atom]] docs on how to use it - in this tutorial we focus on the `handleCreateBooking` hook.
+
+```
+import { Booker, UseCreateBookingInput } from "@calcom/atoms";
+
+export function BookingPage(props: { calUsername: string; calEmail: string }) {
+    ...
+    const interceptBooking = useCallback((data: UseCreateBookingInput) => {
+        console.log(data);
+    }, []);
+  
+  return (
+    <Booker
+        handleCreateBooking={interceptBooking}
+        ...
+    />
+  );
+}
+```
+
+1.   When user clicks “Book” in the Booker atom the booking will not happen. Instead, the `interceptBooking` function will be called and will receive all the booking data.
+2.   Then, you can hide the Booker component and instead render another component, show a modal, redirect to a new page or whatever you want to do.
+3.   After your custom action is finished, extract the necessary information from the booking data passed to `interceptBooking` and make a POST request to [[docs-api-reference-v2-bookings-create-a-booking|create booking]] endpoint to actually create the booking.
