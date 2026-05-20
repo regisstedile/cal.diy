@@ -18,14 +18,12 @@ import type {
 } from "react-awesome-query-builder";
 import { Builder, Utils as QbUtils, Query } from "react-awesome-query-builder";
 import type QueryBuilderInitialConfig from "../../components/react-awesome-query-builder/config/config";
-import SingleForm, {
-  getServerSidePropsForSingleFormView as getServerSideProps,
-} from "../../components/SingleForm";
+import SingleForm from "../../components/SingleForm";
+import type { getServerSidePropsForSingleFormView as getServerSideProps } from "../../components/getServerSidePropsSingleForm";
 import "../../components/react-awesome-query-builder/styles.css";
 import type { JsonLogicQuery } from "../../jsonLogicToPrisma";
 import { getQueryBuilderConfig } from "../../lib/getQueryBuilderConfig";
 
-export { getServerSideProps };
 
 type QueryBuilderUpdatedConfig = typeof QueryBuilderInitialConfig & { fields: Config["fields"] };
 

@@ -1,7 +1,6 @@
 "use client";
 
 import Shell from "@calcom/features/shell/Shell";
-import { areTheySiblingEntitites } from "@calcom/lib/entityPermissionUtils";
 import { useLocale } from "@calcom/lib/hooks/useLocale";
 import { trpc } from "@calcom/trpc/react";
 import type { inferSSRProps } from "@calcom/types/inferSSRProps";
@@ -23,9 +22,8 @@ import type { BuilderProps, ImmutableTree, JsonTree } from "react-awesome-query-
 import { Builder, Utils as QbUtils, Query } from "react-awesome-query-builder";
 import type { UseFormReturn } from "react-hook-form";
 import type { RoutingFormWithResponseCount } from "../../components/SingleForm";
-import SingleForm, {
-  getServerSidePropsForSingleFormView as getServerSideProps,
-} from "../../components/SingleForm";
+import SingleForm from "../../components/SingleForm";
+import type { getServerSidePropsForSingleFormView as getServerSideProps } from "../../components/getServerSidePropsSingleForm";
 import "../../components/react-awesome-query-builder/styles.css";
 import { createFallbackRoute } from "../../lib/createFallbackRoute";
 import { getQueryBuilderConfig } from "../../lib/getQueryBuilderConfig";
@@ -38,7 +36,19 @@ import type {
   SerializableRoute,
 } from "../../types/types";
 
-export { getServerSideProps };
+const areTheySiblingEntitites = ({
+  entity1,
+  entity2,
+}: {
+  entity1: { teamId: number | null; userId: number | null };
+  entity2: { teamId: number | null; userId: number | null };
+}) => {
+  if (entity1.teamId) {
+    return entity1.teamId === entity2.teamId;
+  }
+  return !entity2.teamId && entity1.userId === entity2.userId;
+};
+
 
 const hasRules = (route: Route) => {
   if (isRouter(route)) return false;

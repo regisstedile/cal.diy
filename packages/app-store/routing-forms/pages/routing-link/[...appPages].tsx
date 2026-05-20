@@ -22,7 +22,7 @@ import { processRoute } from "../../lib/processRoute";
 import { substituteVariables } from "../../lib/substituteVariables";
 import transformResponse from "../../lib/transformResponse";
 import type { NonRouterRoute, Response } from "../../types/types";
-import { getServerSideProps } from "./getServerSideProps";
+import type { getServerSideProps } from "./getServerSideProps";
 
 type Props = inferSSRProps<typeof getServerSideProps>;
 const useBrandColors = ({
@@ -241,7 +241,6 @@ export default function RoutingLink(props: inferSSRProps<typeof getServerSidePro
 
 RoutingLink.isBookingPage = true;
 
-export { getServerSideProps };
 
 const usePrefilledResponse = (form: Props["form"]) => {
   const searchParams = useCompatSearchParams();

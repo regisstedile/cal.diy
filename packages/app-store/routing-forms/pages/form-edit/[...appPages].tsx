@@ -21,11 +21,8 @@ import type { UseFormReturn } from "react-hook-form";
 import { Controller, useFieldArray, useWatch } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 import type { RoutingFormWithResponseCount } from "../../components/SingleForm";
-import SingleForm, {
-  getServerSidePropsForSingleFormView as getServerSideProps,
-} from "../../components/SingleForm";
-
-export { getServerSideProps };
+import SingleForm from "../../components/SingleForm";
+import type { getServerSidePropsForSingleFormView as getServerSideProps } from "../../components/getServerSidePropsSingleForm";
 type HookForm = UseFormReturn<RoutingFormWithResponseCount>;
 type SelectOption = { placeholder: string; value: string; id: string };
 
