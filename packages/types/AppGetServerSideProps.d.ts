@@ -1,4 +1,4 @@
-import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
+import type { GetServerSidePropsContext } from "next";
 import type { CalendsoSessionUser } from "next-auth";
 
 import type prisma from "@calcom/prisma";
@@ -19,4 +19,4 @@ export type AppGetServerSideProps = (
   prisma: AppPrisma,
   user: AppUser,
   ssrInit: AppSsrInit
-) => Promise<GetServerSidePropsResult<Record<string, unknown>>>;
+) => Promise<any>;

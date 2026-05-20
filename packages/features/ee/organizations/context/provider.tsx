@@ -1,3 +1,3 @@
-export function useOrgBranding() {
+export function useOrgBranding(): { fullDomain?: string } | null {
   return null;
 }

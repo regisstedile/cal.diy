@@ -16,15 +16,14 @@ export const filterQuerySchemaStrict: z.ZodType<TFilterQuerySchemaStrict> = z.ob
   schedulingTypes: z.nativeEnum(SchedulingType).array().optional(),
 });
 
-export type TEventTypeInputSchema = {
-  filters?: TFilterQuerySchemaStrict;
-} | null | undefined;
-
-export const ZEventTypeInputSchema: z.ZodType<TEventTypeInputSchema> = z
+export const ZEventTypeInputSchema = z
   .object({
     filters: filterQuerySchemaStrict.optional(),
+    forRoutingForms: z.boolean().optional(),
   })
   .nullish();
+
+export type TEventTypeInputSchema = z.infer<typeof ZEventTypeInputSchema>;
 
 export type TGetEventTypesFromGroupSchemaInput = {
   filters?: TFilterQuerySchemaStrict;

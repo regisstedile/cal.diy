@@ -2044,8 +2044,11 @@ __metadata:
     "@calcom/types": "workspace:*"
     "@calcom/ui": "workspace:*"
     "@calcom/zoomvideo": "workspace:*"
+    json-logic-js: "npm:^2.0.2"
     lodash: "npm:4.18.1"
     qs-stringify: "npm:1.2.1"
+    react-awesome-query-builder: "npm:^5.1.2"
+    react-hot-toast: "npm:^2.4.1"
     react-i18next: "npm:12.3.1"
   peerDependencies:
     react: ^18.0.0 || ^19.0.0
@@ -2989,19 +2992,6 @@ __metadata:
   dependencies:
     "@calcom/lib": "workspace:*"
     "@calcom/types": "workspace:*"
-  languageName: unknown
-  linkType: soft
-
-"@calcom/routing-forms@workspace:packages/app-store/routing-forms":
-  version: 0.0.0-use.local
-  resolution: "@calcom/routing-forms@workspace:packages/app-store/routing-forms"
-  dependencies:
-    "@calcom/lib": "npm:*"
-    "@calcom/types": "npm:*"
-    "@types/json-logic-js": "npm:^1.2.1"
-    dotenv: "npm:^16.3.1"
-    json-logic-js: "npm:^2.0.2"
-    react-awesome-query-builder: "npm:^5.1.2"
   languageName: unknown
   linkType: soft
 
@@ -16565,13 +16555,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/json-logic-js@npm:^1.2.1":
-  version: 1.2.1
-  resolution: "@types/json-logic-js@npm:1.2.1"
-  checksum: 10/034ce3f41ee88cbd8cfe211499a28ae51fe2e4fe854e691861c5acf62f0a4c986caf605d668572b8c0fa66bb5155b604b3d4c8d2d1556529fa501292f6b7f9d3
-  languageName: node
-  linkType: hard
-
 "@types/json-schema@npm:*, @types/json-schema@npm:^7.0.15, @types/json-schema@npm:^7.0.8, @types/json-schema@npm:^7.0.9":
   version: 7.0.15
   resolution: "@types/json-schema@npm:7.0.15"
@@ -21313,6 +21296,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"csstype@npm:^3.1.3":
+  version: 3.2.3
+  resolution: "csstype@npm:3.2.3"
+  checksum: 10/ad41baf7e2ffac65ab544d79107bf7cd1a4bb9bab9ac3302f59ab4ba655d5e30942a8ae46e10ba160c6f4ecea464cc95b975ca2fefbdeeacd6ac63f12f99fe1f
+  languageName: node
+  linkType: hard
+
 "csv-parse@npm:5.6.0, csv-parse@npm:^5.5.2":
   version: 5.6.0
   resolution: "csv-parse@npm:5.6.0"
@@ -25166,6 +25156,15 @@ __metadata:
     merge2: "npm:^1.4.1"
     slash: "npm:^3.0.0"
   checksum: 10/288e95e310227bbe037076ea81b7c2598ccbc3122d87abc6dab39e1eec309aa14f0e366a98cdc45237ffcfcbad3db597778c0068217dcb1950fef6249104e1b1
+  languageName: node
+  linkType: hard
+
+"goober@npm:^2.1.16":
+  version: 2.1.19
+  resolution: "goober@npm:2.1.19"
+  peerDependencies:
+    csstype: ^3.0.10
+  checksum: 10/1390b08f6e2468d63e463e74e50d734b9cfd2280bf1ecf04878c666f48b8a5aac2d5c4b517b4d15fc46d32a98948f386b5fcde60799f8884351b01dc7658465f
   languageName: node
   linkType: hard
 
@@ -35307,6 +35306,19 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17 || ^18
   checksum: 10/df766b8b8b5f298e773d517c232fe6717dcb6451337fbdf388af08b9a4aa451d7783bb92872e10c1debe7011dd930411126e378b03fed445e357aa7932535bce
+  languageName: node
+  linkType: hard
+
+"react-hot-toast@npm:^2.4.1":
+  version: 2.6.0
+  resolution: "react-hot-toast@npm:2.6.0"
+  dependencies:
+    csstype: "npm:^3.1.3"
+    goober: "npm:^2.1.16"
+  peerDependencies:
+    react: ">=16"
+    react-dom: ">=16"
+  checksum: 10/825ebbaa03c63dc2f22795ac8d535b40f1066c3ace5b792d0de740070693f195b910c98f46a00f7f6195f804ecf41b03201f6ff6950a540098dd2b7a0069df5b
   languageName: node
   linkType: hard
 
