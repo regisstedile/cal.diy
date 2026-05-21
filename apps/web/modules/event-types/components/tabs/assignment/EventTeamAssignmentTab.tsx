@@ -4,21 +4,22 @@ import { useFormContext } from "react-hook-form";
 
 import CheckedTeamSelect from "@calcom/features/eventtypes/components/CheckedTeamSelect";
 import type { CheckedSelectOption } from "@calcom/features/eventtypes/components/CheckedTeamSelect";
-import type { TeamMember } from "@calcom/features/eventtypes/lib/types";
 import type { FormValues, EventTypeSetupProps } from "@calcom/features/eventtypes/lib/types";
 import { useLocale } from "@calcom/lib/hooks/useLocale";
 import { SchedulingType } from "@calcom/prisma/enums";
 
 export type EventTeamAssignmentTabCustomClassNames = Record<string, unknown>;
 
+type RawTeamMember = EventTypeSetupProps["teamMembers"][number];
+
 type EventTeamAssignmentTabProps = {
   orgId: number | null;
-  teamMembers: TeamMember[];
+  teamMembers: RawTeamMember[];
   team: EventTypeSetupProps["team"];
   eventType: EventTypeSetupProps;
 };
 
-export function EventTeamAssignmentTab({ teamMembers, eventType }: EventTeamAssignmentTabProps) {
+export function EventTeamAssignmentTab({ teamMembers }: EventTeamAssignmentTabProps) {
   const { t } = useLocale();
   const formMethods = useFormContext<FormValues>();
   const hosts = formMethods.watch("hosts") ?? [];
@@ -26,10 +27,10 @@ export function EventTeamAssignmentTab({ teamMembers, eventType }: EventTeamAssi
   const isCollective = schedulingType === SchedulingType.COLLECTIVE;
 
   const teamMemberOptions: CheckedSelectOption[] = teamMembers.map((member) => ({
-    value: String(member.value),
-    label: member.label,
-    avatar: member.avatar,
-    defaultScheduleId: member.defaultScheduleId,
+    value: String(member.id),
+    label: member.name ?? member.username ?? member.email,
+    avatar: member.avatar ?? "",
+    defaultScheduleId: null,
     isFixed: isCollective,
     priority: 2,
     weight: 100,
@@ -38,13 +39,13 @@ export function EventTeamAssignmentTab({ teamMembers, eventType }: EventTeamAssi
 
   const selectedHosts: CheckedSelectOption[] = hosts
     .map((host) => {
-      const member = teamMembers.find((m) => String(m.value) === String(host.userId));
+      const member = teamMembers.find((m) => m.id === host.userId);
       if (!member) return null;
       return {
         value: String(host.userId),
-        label: member.label,
-        avatar: member.avatar,
-        defaultScheduleId: member.defaultScheduleId,
+        label: member.name ?? member.username ?? member.email,
+        avatar: member.avatar ?? "",
+        defaultScheduleId: null,
         isFixed: host.isFixed,
         priority: host.priority ?? 2,
         weight: host.weight ?? 100,
