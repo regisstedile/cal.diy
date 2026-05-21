@@ -5,12 +5,13 @@ import { useTypedQuery } from "@calcom/lib/hooks/useTypedQuery";
 import type { EventType } from "@calcom/prisma/client";
 import type { MembershipRole } from "@calcom/prisma/enums";
 import { SchedulingType } from "@calcom/prisma/enums";
-import { trpc } from "@calcom/trpc/react";
 import { Button } from "@calcom/ui/components/button";
 import { DialogClose, DialogContent, DialogFooter } from "@calcom/ui/components/dialog";
+import { Select } from "@calcom/ui/components/form/select";
 import { showToast } from "@calcom/ui/components/toast";
 import { isValidPhoneNumber } from "libphonenumber-js/max";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { z } from "zod";
 import { useCreateEventType } from "~/event-types/hooks/useCreateEventType";
 
@@ -66,15 +67,9 @@ const querySchema = z.object({
 export function CreateEventTypeDialog({ profileOptions }: { profileOptions: ProfileOption[] }) {
   const { t } = useLocale();
   const router = useRouter();
-  const orgBranding = null;
-
   const {
     data: { teamId, eventPage: pageSlug },
   } = useTypedQuery(querySchema);
-
-  const teamProfile = profileOptions.find((profile) => profile.teamId === teamId);
-
-  const permissions = teamProfile?.permissions ?? { canCreateEventType: false };
 
   const onSuccessMutation = (eventType: EventType) => {
     router.replace(`/event-types/${eventType.id}${teamId ? "?tabName=team" : ""}`);
@@ -103,6 +98,20 @@ export function CreateEventTypeDialog({ profileOptions }: { profileOptions: Prof
 
   const { form, createMutation, isManagedEventType } = useCreateEventType(onSuccessMutation, onErrorMutation);
 
+  useEffect(() => {
+    if (teamId) {
+      form.setValue("teamId", teamId);
+      if (!form.getValues("schedulingType")) {
+        form.setValue("schedulingType", SchedulingType.COLLECTIVE);
+      }
+    }
+  }, [teamId]);
+
+  const schedulingTypeOptions = [
+    { value: SchedulingType.COLLECTIVE, label: t("collective") },
+    { value: SchedulingType.ROUND_ROBIN, label: t("round_robin") },
+  ];
+
   const urlPrefix = WEBSITE_URL;
 
   return (
@@ -114,7 +123,31 @@ export function CreateEventTypeDialog({ profileOptions }: { profileOptions: Prof
         enableOverflow
         title={teamId ? t("add_new_team_event_type") : t("add_new_event_type")}
         description={t("new_event_type_to_book_description")}>
-        {teamId ? null : (
+        {teamId ? (
+          <div className="space-y-4">
+            <div>
+              <label className="mb-1 block text-sm font-medium text-default">
+                {t("scheduling_type")}
+              </label>
+              <Select
+                options={schedulingTypeOptions}
+                value={schedulingTypeOptions.find((o) => o.value === form.watch("schedulingType"))}
+                onChange={(opt) => opt && form.setValue("schedulingType", opt.value as SchedulingType)}
+              />
+            </div>
+            <CreateEventTypeForm
+              urlPrefix={urlPrefix}
+              isPending={createMutation.isPending}
+              form={form}
+              isManagedEventType={isManagedEventType}
+              handleSubmit={(values) => {
+                createMutation.mutate({ ...values, teamId });
+              }}
+              SubmitButton={SubmitButton}
+              pageSlug={pageSlug}
+            />
+          </div>
+        ) : (
           <CreateEventTypeForm
             urlPrefix={urlPrefix}
             isPending={createMutation.isPending}
