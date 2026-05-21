@@ -45,9 +45,7 @@ const EventAvailabilityTab = dynamic(() =>
   import("./tabs/availability/EventAvailabilityTabWebWrapper").then((mod) => mod)
 );
 
-const EventTeamAssignmentTab = dynamic(() =>
-  import("./tabs/assignment/EventTeamAssignmentTab").then((mod) => mod.EventTeamAssignmentTab)
-);
+import { EventTeamAssignmentTab } from "./tabs/assignment/EventTeamAssignmentTab";
 
 const EventLimitsTab = dynamic(() => import("./tabs/limits/EventLimitsTabWebWrapper").then((mod) => mod));
 
