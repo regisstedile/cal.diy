@@ -7,7 +7,7 @@ import type { MembershipRole } from "@calcom/prisma/enums";
 import { SchedulingType } from "@calcom/prisma/enums";
 import { Button } from "@calcom/ui/components/button";
 import { DialogClose, DialogContent, DialogFooter } from "@calcom/ui/components/dialog";
-import { Select } from "@calcom/ui/components/form/select";
+import { Select } from "@calcom/ui/components/form";
 import { showToast } from "@calcom/ui/components/toast";
 import { isValidPhoneNumber } from "libphonenumber-js/max";
 import { useRouter } from "next/navigation";
