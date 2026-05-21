@@ -2,11 +2,10 @@
 
 import { useFormContext } from "react-hook-form";
 
-import CheckedTeamSelect from "@calcom/features/eventtypes/components/CheckedTeamSelect";
-import type { CheckedSelectOption } from "@calcom/features/eventtypes/components/CheckedTeamSelect";
 import type { FormValues, EventTypeSetupProps } from "@calcom/features/eventtypes/lib/types";
 import { useLocale } from "@calcom/lib/hooks/useLocale";
 import { SchedulingType } from "@calcom/prisma/enums";
+import { Select } from "@calcom/ui/components/form";
 
 export type EventTeamAssignmentTabCustomClassNames = Record<string, unknown>;
 
@@ -26,43 +25,28 @@ export function EventTeamAssignmentTab({ teamMembers }: EventTeamAssignmentTabPr
   const schedulingType = formMethods.watch("schedulingType");
   const isCollective = schedulingType === SchedulingType.COLLECTIVE;
 
-  const teamMemberOptions: CheckedSelectOption[] = teamMembers.map((member) => ({
+  const options = teamMembers.map((member) => ({
     value: String(member.id),
     label: member.name ?? member.username ?? member.email,
-    avatar: member.avatar ?? "",
-    defaultScheduleId: null,
-    isFixed: isCollective,
-    priority: 2,
-    weight: 100,
-    groupId: null,
   }));
 
-  const selectedHosts: CheckedSelectOption[] = hosts
+  const selectedValues = hosts
     .map((host) => {
       const member = teamMembers.find((m) => m.id === host.userId);
       if (!member) return null;
-      return {
-        value: String(host.userId),
-        label: member.name ?? member.username ?? member.email,
-        avatar: member.avatar ?? "",
-        defaultScheduleId: null,
-        isFixed: host.isFixed,
-        priority: host.priority ?? 2,
-        weight: host.weight ?? 100,
-        groupId: host.groupId ?? null,
-      };
+      return { value: String(host.userId), label: member.name ?? member.username ?? member.email };
     })
-    .filter(Boolean) as CheckedSelectOption[];
+    .filter(Boolean) as { value: string; label: string }[];
 
-  const handleChange = (newValue: readonly CheckedSelectOption[]) => {
+  const handleChange = (newValue: readonly { value: string; label: string }[]) => {
     formMethods.setValue(
       "hosts",
       newValue.map((opt) => ({
         userId: Number(opt.value),
-        isFixed: isCollective ? true : (opt.isFixed ?? false),
-        priority: opt.priority ?? 2,
-        weight: opt.weight ?? 100,
-        groupId: opt.groupId ?? null,
+        isFixed: isCollective ? true : false,
+        priority: 2,
+        weight: 100,
+        groupId: null,
       })),
       { shouldDirty: true }
     );
@@ -80,11 +64,11 @@ export function EventTeamAssignmentTab({ teamMembers }: EventTeamAssignmentTabPr
       </div>
       <div>
         <label className="text-emphasis mb-1 block text-sm font-medium">{t("team_members")}</label>
-        <CheckedTeamSelect
-          options={teamMemberOptions}
-          value={selectedHosts}
-          onChange={handleChange}
-          groupId={null}
+        <Select
+          isMulti
+          options={options}
+          value={selectedValues}
+          onChange={(v) => handleChange(v ?? [])}
         />
       </div>
     </div>
