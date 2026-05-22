@@ -12,14 +12,24 @@ export class BookingDetailsService {
     this.bookingAccessService = new BookingAccessService(prismaClient);
   }
 
-  async getBookingDetails({ userId, bookingUid }: { userId: number; bookingUid: string }) {
-    const hasAccess = await this.bookingAccessService.doesUserIdHaveAccessToBooking({
-      userId,
-      bookingUid,
-    });
+  async getBookingDetails({
+    userId,
+    bookingUid,
+    isGlobalAdmin = false,
+  }: {
+    userId: number;
+    bookingUid: string;
+    isGlobalAdmin?: boolean;
+  }) {
+    if (!isGlobalAdmin) {
+      const hasAccess = await this.bookingAccessService.doesUserIdHaveAccessToBooking({
+        userId,
+        bookingUid,
+      });
 
-    if (!hasAccess) {
-      throw ErrorWithCode.Factory.Forbidden("You do not have permission to view this booking");
+      if (!hasAccess) {
+        throw ErrorWithCode.Factory.Forbidden("You do not have permission to view this booking");
+      }
     }
 
     const booking = await this.bookingRepo.findByUidForDetails({ bookingUid });

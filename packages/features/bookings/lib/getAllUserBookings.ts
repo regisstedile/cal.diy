@@ -14,7 +14,7 @@ export type SortOptions = {
 };
 type GetOptions = {
   ctx: {
-    user: { id: number; email: string; orgId?: number | null };
+    user: { id: number; email: string; orgId?: number | null; role?: string };
     prisma: PrismaClient;
     kysely: Kysely<DB>;
   };

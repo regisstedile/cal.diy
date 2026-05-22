@@ -37,17 +37,14 @@ function transformBookingToCsv(booking: BookingOutput, t: TranslationFunction) {
 
 export function BookingsCsvDownload({ status }: BookingsCsvDownloadProps) {
   const { t } = useLocale();
-  const { data: user, isPending: isUserPending } = useMeQuery();
+  const { isPending: isUserPending } = useMeQuery();
   const [isDownloading, setIsDownloading] = useState(false);
   const utils = trpc.useUtils();
 
   const { eventTypeIds, teamIds, userIds, dateRange, attendeeName, attendeeEmail, bookingUid } =
     useBookingFilters();
 
-  // Only show for users who are part of an organization
-  const isOrgUser = Boolean(user?.organizationId);
-
-  if (isUserPending || !isOrgUser) {
+  if (isUserPending) {
     return null;
   }
 

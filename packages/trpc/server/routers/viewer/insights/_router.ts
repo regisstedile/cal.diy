@@ -63,7 +63,7 @@ export interface IResultTeamList {
 }
 
 function createInsightsBookingService(
-  ctx: { user: { id: number; organizationId: number | null } },
+  ctx: { user: { id: number; organizationId: number | null; role?: string | null } },
   input: z.infer<typeof bookingRepositoryBaseInputSchema>
 ) {
   const { scope, selectedTeamId, columnFilters } = input;
@@ -72,6 +72,7 @@ function createInsightsBookingService(
       scope,
       userId: ctx.user.id,
       orgId: ctx.user.organizationId,
+      isGlobalAdmin: ctx.user.role === "ADMIN",
       ...(selectedTeamId && { teamId: selectedTeamId }),
     },
     filters: {
