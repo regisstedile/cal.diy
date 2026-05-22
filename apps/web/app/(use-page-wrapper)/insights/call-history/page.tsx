@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { _generateMetadata } from "app/_utils";
 import InsightsCallHistoryPage from "~/insights/views/insights-call-history-view";
 import { checkInsightsPagePermission } from "../checkInsightsPagePermission";
