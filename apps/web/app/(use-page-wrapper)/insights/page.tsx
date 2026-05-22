@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import prisma from "@calcom/prisma";
 import { _generateMetadata } from "app/_utils";
 import InsightsPage from "~/insights/views/insights-view";

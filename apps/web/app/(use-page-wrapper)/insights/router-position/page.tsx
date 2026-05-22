@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { _generateMetadata } from "app/_utils";
 import InsightsVirtualQueuesPage from "~/insights/views/insights-virtual-queues-view";
 import { checkInsightsPagePermission } from "../checkInsightsPagePermission";
