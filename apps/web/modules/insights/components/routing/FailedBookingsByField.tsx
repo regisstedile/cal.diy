@@ -136,7 +136,7 @@ export function FailedBookingsByField() {
   if (!isLoading && !isError && (!data || Object.entries(data).length === 0)) return null;
 
   // routingFormId is always set, meaning data has only one entry.
-  const [formName, fields] = data ? Object.entries(data)[0] : ["", {}];
+  const [formName, fields] = data ? Object.entries(data)[0] : ["", {} as Record<string, { optionId: string; count: number; optionLabel: string }[]>];
 
   return (
     <ChartCard title={t("failed_bookings_by_field")} isPending={isLoading} isError={isError}>
