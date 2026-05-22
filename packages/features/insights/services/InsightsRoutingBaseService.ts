@@ -190,7 +190,7 @@ export class InsightsRoutingBaseService {
     return { data: data.slice(responseOffset, responseOffset + responseLimit), total: data.length };
   }
 
-  async getFailedBookingsByFieldData(): Promise<Record<string, { optionId: string; count: number; optionLabel: string }[]>> {
+  async getFailedBookingsByFieldData(): Promise<Record<string, Record<string, { optionId: string; count: number; optionLabel: string }[]>>> {
     return {};
   }
 
