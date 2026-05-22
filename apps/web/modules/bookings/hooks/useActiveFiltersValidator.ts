@@ -59,8 +59,13 @@ export function useActiveFiltersValidator({
 }: UseActiveFiltersValidatorOptions): ActiveFiltersValidatorState {
   const eventTypes = useEventTypes();
   const teams = undefined as { id: number; name: string }[] | undefined;
-  const members = undefined as { id: number; name: string | null }[] | undefined;
   const { data: currentUser } = useMeQuery();
+  const { data: allUsers } = trpc.viewer.users.list.useQuery(undefined, {
+    enabled: canReadOthersBookings,
+  });
+  const members = canReadOthersBookings
+    ? allUsers?.map((u) => ({ id: u.id, name: u.name ?? u.email }))
+    : undefined;
 
   const accessibleUserIds = useMemo(() => {
     if (!canReadOthersBookings) {
@@ -79,10 +84,10 @@ export function useActiveFiltersValidator({
 
   const isDataLoaded = useMemo(() => {
     if (!canReadOthersBookings) {
-      return currentUser !== undefined && eventTypes !== undefined && teams !== undefined;
+      return currentUser !== undefined && eventTypes !== undefined;
     }
-    return members !== undefined && eventTypes !== undefined && teams !== undefined;
-  }, [canReadOthersBookings, currentUser, members, eventTypes, teams]);
+    return members !== undefined && eventTypes !== undefined;
+  }, [canReadOthersBookings, currentUser, members, eventTypes]);
 
   const validateActiveFilters = useCallback(
     (filters: ActiveFilters): ActiveFilters => {

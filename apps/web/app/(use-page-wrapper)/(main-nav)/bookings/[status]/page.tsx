@@ -39,8 +39,7 @@ const Page = async ({ params }: PageProps) => {
   const userId = session.user.id;
   const featuresRepository = new FeaturesRepository(prisma);
 
-  // No teams in cal.diy, so canReadOthersBookings is always false.
-  const canReadOthersBookings = false;
+  const canReadOthersBookings = session.user.role === "ADMIN";
 
   const [bookingAuditEnabled, bookingsV3Enabled] = await Promise.all([
     featuresRepository.checkIfUserHasFeature(userId, "booking-audit"),

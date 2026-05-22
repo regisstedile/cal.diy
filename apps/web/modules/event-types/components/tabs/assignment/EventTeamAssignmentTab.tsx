@@ -15,7 +15,7 @@ type EventTeamAssignmentTabProps = {
   orgId: number | null;
   teamMembers: RawTeamMember[];
   team: EventTypeSetupProps["team"];
-  eventType: EventTypeSetupProps;
+  eventType: EventTypeSetupProps["eventType"];
 };
 
 export function EventTeamAssignmentTab({ teamMembers }: EventTeamAssignmentTabProps) {
@@ -64,12 +64,7 @@ export function EventTeamAssignmentTab({ teamMembers }: EventTeamAssignmentTabPr
       </div>
       <div>
         <label className="text-emphasis mb-1 block text-sm font-medium">{t("team_members")}</label>
-        <Select
-          isMulti
-          options={options}
-          value={selectedValues}
-          onChange={(v) => handleChange(v ?? [])}
-        />
+        <Select isMulti options={options} value={selectedValues} onChange={(v) => handleChange(v ?? [])} />
       </div>
     </div>
   );

@@ -17,8 +17,13 @@ export function useFacetedUniqueValues({
 ) => () => Map<FacetedValue, number> {
   const eventTypes = useEventTypes();
   const teams = undefined as { id: number; name: string }[] | undefined;
-  const members = undefined as { id: number; name: string | null }[] | undefined;
   const { data: currentUser } = useMeQuery();
+  const { data: allUsers } = trpc.viewer.users.list.useQuery(undefined, {
+    enabled: canReadOthersBookings,
+  });
+  const members = canReadOthersBookings
+    ? allUsers?.map((u) => ({ id: u.id, name: u.name ?? u.email }))
+    : undefined;
 
   return useCallback(
     <TData extends RowData>(_: Table<TData>, columnId: string) =>
@@ -45,12 +50,10 @@ export function useFacetedUniqueValues({
             ]);
           }
           return convertFacetedValuesToMap(
-            (members || [])
-              .map((member) => ({
-                label: member.name,
-                value: member.id,
-              }))
-              .filter((option): option is { label: string; value: number } => Boolean(option.label))
+            (members || []).map((member) => ({
+              label: member.name,
+              value: member.id,
+            }))
           );
         }
         return new Map<FacetedValue, number>();

@@ -122,6 +122,7 @@ export type InsightsBookingServicePublicOptions = {
   userId: number;
   orgId: number | null | undefined;
   teamId?: number;
+  isGlobalAdmin?: boolean;
 };
 
 export type InsightsBookingServiceOptions = z.infer<typeof insightsBookingServiceOptionsSchema>;
@@ -140,6 +141,7 @@ export class InsightsBookingBaseService {
   private prisma: PrismaClient;
   private options: InsightsBookingServiceOptions | null;
   private filters: InsightsBookingServiceFilterOptions | null;
+  private isGlobalAdmin: boolean;
   private cachedAuthConditions?: Prisma.Sql;
   private cachedFilterConditions?: Prisma.Sql | null;
 
@@ -153,6 +155,7 @@ export class InsightsBookingBaseService {
     filters?: InsightsBookingServiceFilterOptions;
   }) {
     this.prisma = prisma;
+    this.isGlobalAdmin = options.isGlobalAdmin ?? false;
     const optionsValidated = insightsBookingServiceOptionsSchema.safeParse(options);
     this.options = optionsValidated.success ? optionsValidated.data : null;
 
@@ -386,6 +389,9 @@ export class InsightsBookingBaseService {
     }
 
     if (scope === "user") {
+      if (this.isGlobalAdmin) {
+        return Prisma.sql`("teamId" IS NULL)`;
+      }
       return Prisma.sql`("userId" = ${this.options.userId}) AND ("teamId" IS NULL)`;
     } else if (scope === "org") {
       return await this.buildOrgAuthorizationCondition(this.options);
@@ -683,10 +689,11 @@ export class InsightsBookingBaseService {
     data.forEach(({ date, bookingsCount, timeStatus, noShowHost, noShowGuests }) => {
       // Find which date range this date belongs to using native Date comparison
       const dateRange = dateRanges.find((range) => {
-        const bookingDate = new Date(date);
-        const rangeStart = new Date(range.startDate);
-        const rangeEnd = new Date(range.endDate);
-        return bookingDate >= rangeStart && bookingDate <= rangeEnd;
+        // PostgreSQL DATE returns calendar date as midnight UTC; compare as calendar strings in tz
+        const calendarDate = new Date(date).toISOString().slice(0, 10);
+        const rangeStart = dayjs(range.startDate).tz(timeZone).format("YYYY-MM-DD");
+        const rangeEnd = dayjs(range.endDate).tz(timeZone).format("YYYY-MM-DD");
+        return calendarDate >= rangeStart && calendarDate <= rangeEnd;
       });
 
       if (!dateRange) return;
@@ -1190,8 +1197,7 @@ export class InsightsBookingBaseService {
     const endDate = new Date(result.endDate);
 
     // +1 because diff is exclusive: Jan 1→Jan 3 = 2 days diff, but 3-day period
-    const periodLength =
-      Math.round((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+    const periodLength = Math.round((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
 
     const lastPeriodStartDate = new Date(startDate.getTime() - periodLength * 24 * 60 * 60 * 1000);
     const lastPeriodEndDate = new Date(endDate.getTime() - periodLength * 24 * 60 * 60 * 1000);
@@ -1240,12 +1246,11 @@ export class InsightsBookingBaseService {
 
     // Process the raw data and aggregate by date ranges
     data.forEach(({ date, count }) => {
-      // Find which date range this date belongs to using native Date comparison
       const dateRange = dateRanges.find((range) => {
-        const bookingDate = new Date(date);
-        const rangeStart = new Date(range.startDate);
-        const rangeEnd = new Date(range.endDate);
-        return bookingDate >= rangeStart && bookingDate <= rangeEnd;
+        const calendarDate = new Date(date).toISOString().slice(0, 10);
+        const rangeStart = dayjs(range.startDate).tz(timeZone).format("YYYY-MM-DD");
+        const rangeEnd = dayjs(range.endDate).tz(timeZone).format("YYYY-MM-DD");
+        return calendarDate >= rangeStart && calendarDate <= rangeEnd;
       });
 
       if (!dateRange) return;
@@ -1300,12 +1305,11 @@ export class InsightsBookingBaseService {
 
     // Process the raw data and aggregate by date ranges
     data.forEach(({ date, ratings_above_3, total_ratings }) => {
-      // Find which date range this date belongs to using native Date comparison
       const dateRange = dateRanges.find((range) => {
-        const bookingDate = new Date(date);
-        const rangeStart = new Date(range.startDate);
-        const rangeEnd = new Date(range.endDate);
-        return bookingDate >= rangeStart && bookingDate <= rangeEnd;
+        const calendarDate = new Date(date).toISOString().slice(0, 10);
+        const rangeStart = dayjs(range.startDate).tz(timeZone).format("YYYY-MM-DD");
+        const rangeEnd = dayjs(range.endDate).tz(timeZone).format("YYYY-MM-DD");
+        return calendarDate >= rangeStart && calendarDate <= rangeEnd;
       });
 
       if (!dateRange) return;

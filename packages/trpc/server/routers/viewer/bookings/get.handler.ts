@@ -20,9 +20,15 @@ import type { TGetInputSchema } from "./get.schema";
 
 class PermissionCheckService {
   constructor(_prisma?: unknown) {}
-  async checkPermission(..._args: unknown[]) { return true; }
-  async hasPermission(..._args: unknown[]) { return true; }
-  async getTeamIdsWithPermission(..._args: unknown[]): Promise<number[]> { return []; }
+  async checkPermission(..._args: unknown[]) {
+    return true;
+  }
+  async hasPermission(..._args: unknown[]) {
+    return true;
+  }
+  async getTeamIdsWithPermission(..._args: unknown[]): Promise<number[]> {
+    return [];
+  }
 }
 
 type GetOptions = {
@@ -60,7 +66,12 @@ export const getHandler = async ({ ctx, input }: GetOptions) => {
 
   const { bookings, recurringInfo, totalCount } = await getAllUserBookings({
     ctx: {
-      user: { id: user.id, email: user.email, orgId: user?.profile?.organizationId },
+      user: {
+        id: user.id,
+        email: user.email,
+        orgId: user?.profile?.organizationId,
+        role: user.role ?? undefined,
+      },
       prisma: prisma,
       kysely: kysely,
     },
@@ -100,7 +111,7 @@ export async function getBookings({
   take,
   skip,
 }: {
-  user: { id: number; email: string; orgId?: number | null };
+  user: { id: number; email: string; orgId?: number | null; role?: string };
   filters: TGetInputSchema["filters"];
   prisma: PrismaClient;
   kysely: Kysely<DB>;
@@ -152,11 +163,12 @@ export async function getBookings({
     );
 
     const isCurrentUser = filters.userIds.length === 1 && user.id === filters.userIds[0];
+    const isGlobalAdmin = user.role === "ADMIN";
 
     //  Scope depends on `user.orgId`:
     // - Throw an error if trying to filter by usersIds that are not within your ORG
     // - Throw an error if trying to filter by usersIds that are not within your TEAM
-    if (!areUserIdsWithinUserOrgOrTeam && !isCurrentUser) {
+    if (!areUserIdsWithinUserOrgOrTeam && !isCurrentUser && !isGlobalAdmin) {
       throw new TRPCError({
         code: "FORBIDDEN",
         message: "You do not have permissions to fetch bookings for specified userIds",
