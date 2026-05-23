@@ -20,6 +20,7 @@ export const ENDPOINTS = [
   "holidays",
   "featureOptIn",
   "i18n",
+  "insights",
   "me",
   "ooo",
   "organizations",
