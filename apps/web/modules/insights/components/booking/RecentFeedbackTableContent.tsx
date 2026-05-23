@@ -4,7 +4,6 @@ import { getUserAvatarUrl } from "@calcom/lib/getAvatarUrl";
 import { useLocale } from "@calcom/lib/hooks/useLocale";
 import type { RouterOutputs } from "@calcom/trpc/react";
 import { Avatar } from "@calcom/ui/components/avatar";
-import { Button } from "@calcom/ui/components/button";
 import { EmptyScreen } from "@calcom/ui/components/empty-screen";
 import { Tooltip } from "@calcom/ui/components/tooltip";
 
@@ -44,11 +43,6 @@ export const RecentFeedbackTableContent = ({ data }: { data: FeedbackData }) => 
           Icon="zap"
           headline={t("no_ratings")}
           description={t("no_ratings_description")}
-          buttonRaw={
-            <Button target="_blank" color="secondary" href="/workflows">
-              {t("workflows")}
-            </Button>
-          }
         />
       )}
     </div>
