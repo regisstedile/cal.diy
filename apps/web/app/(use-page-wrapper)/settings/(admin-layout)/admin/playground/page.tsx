@@ -5,8 +5,8 @@ import Link from "next/link";
 
 const LINKS = [
   {
-    title: "Date Range Filter",
-    description: "Test date range selection and filtering components",
+    title: "Filtro de Intervalo de Datas",
+    description: "Testar componentes de seleção e filtragem de intervalo de datas",
     href: "/settings/admin/playground/date-range-filter",
     icon: "calendar-days" as const,
   },
