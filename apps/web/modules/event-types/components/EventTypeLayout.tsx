@@ -1,4 +1,13 @@
-import type { EventTypeSetupProps, FormValues } from "@calcom/features/eventtypes/lib/types";
+import { useMemo, useState, Suspense } from "react";
+import type { UseFormReturn } from "react-hook-form";
+
+import useLockedFieldsManager from "@calcom/features/ee/managed-event-types/hooks/useLockedFieldsManager";
+import {
+  EventTypeEmbedButton,
+  EventTypeEmbedDialog,
+} from "@calcom/web/modules/embed/components/EventTypeEmbed";
+import type { FormValues } from "@calcom/features/eventtypes/lib/types";
+import type { EventTypeSetupProps } from "@calcom/features/eventtypes/lib/types";
 import { useLocale } from "@calcom/lib/hooks/useLocale";
 import { SchedulingType } from "@calcom/prisma/enums";
 import classNames from "@calcom/ui/classNames";
@@ -7,27 +16,23 @@ import { Button } from "@calcom/ui/components/button";
 import { ButtonGroup } from "@calcom/ui/components/buttonGroup";
 import { VerticalDivider } from "@calcom/ui/components/divider";
 import {
+  DropdownMenuSeparator,
   Dropdown,
-  DropdownItem,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
+  DropdownItem,
   DropdownMenuTrigger,
 } from "@calcom/ui/components/dropdown";
-import { Label, Switch } from "@calcom/ui/components/form";
-import type { VerticalTabItemProps } from "@calcom/ui/components/navigation";
+import { Label } from "@calcom/ui/components/form";
+import { Switch } from "@calcom/ui/components/form";
+import { LoaderIcon } from "@coss/ui/icons";
 import { HorizontalTabs, VerticalTabs } from "@calcom/ui/components/navigation";
+import type { VerticalTabItemProps } from "@calcom/ui/components/navigation";
 import { Skeleton } from "@calcom/ui/components/skeleton";
 import { showToast } from "@calcom/ui/components/toast";
 import { Tooltip } from "@calcom/ui/components/tooltip";
-import {
-  EventTypeEmbedButton,
-  EventTypeEmbedDialog,
-} from "@calcom/web/modules/embed/components/EventTypeEmbed";
 import WebShell from "@calcom/web/modules/shell/Shell";
-import { LoaderIcon } from "@coss/ui/icons";
-import { Suspense, useMemo, useState } from "react";
-import type { UseFormReturn } from "react-hook-form";
+
 import { Shell as PlatformShell } from "../../../../../packages/platform/atoms/src/components/ui/shell";
 import { DeleteDialog } from "./dialogs/DeleteDialog";
 
@@ -77,10 +82,11 @@ function EventTypeSingleLayout({
     formMethods.getValues("schedulingType") === SchedulingType.MANAGED ||
     isUserOrganizationAdmin;
 
-  const isManagedEventType = false;
-  const isChildrenManagedEventType = false;
-  const shouldLockDisableProps = (_field: string) => ({ disabled: false, LockedIcon: false as const, isLocked: false });
-  const shouldLockIndicator = (_field: string) => false;
+  const { isManagedEventType, isChildrenManagedEventType } = useLockedFieldsManager({
+    eventType,
+    translate: t,
+    formMethods,
+  });
   const EventTypeTabs = tabsNavigation;
   const permalink = `${bookerUrl}/${
     team ? `${!team.parentId ? "team/" : ""}${team.slug}` : formMethods.getValues("users")[0].username
@@ -116,7 +122,7 @@ function EventTypeSingleLayout({
             <>
               <div
                 className={classNames(
-                  "hidden cursor-pointer items-center rounded-md transition sm:hover:bg-cal-muted",
+                  "sm:hover:bg-cal-muted hidden cursor-pointer items-center rounded-md transition",
                   formMethods.watch("hidden") ? "pl-2" : "",
                   "lg:flex"
                 )}>
@@ -253,11 +259,11 @@ function EventTypeSingleLayout({
                 </DropdownMenuItem>
               )}
               <DropdownMenuSeparator />
-              <div className="flex h-9 cursor-pointer flex-row items-center justify-between px-4 py-2 transition hover:bg-subtle">
+              <div className="hover:bg-subtle flex h-9 cursor-pointer flex-row items-center justify-between px-4 py-2 transition">
                 <Skeleton
                   as={Label}
                   htmlFor="hiddenSwitch"
-                  className="mt-2 inline cursor-pointer self-center pr-2">
+                  className="mt-2 inline cursor-pointer self-center pr-2 ">
                   {formMethods.watch("hidden") ? t("show_eventtype_on_profile") : t("hide_from_profile")}
                 </Skeleton>
                 <Switch
@@ -306,8 +312,8 @@ function EventTypeSingleLayout({
           <div className="w-full ltr:mr-2 rtl:ml-2">
             <div
               className={classNames(
-                "mt-4 rounded-md border-subtle bg-default sm:mx-0 xl:mt-0",
-                disableBorder ? "border-0" : "p-2 md:border md:p-6"
+                "bg-default border-subtle  mt-4 rounded-md sm:mx-0 xl:mt-0",
+                disableBorder ? "border-0 " : "p-2 md:border md:p-6"
               )}>
               {children}
             </div>
