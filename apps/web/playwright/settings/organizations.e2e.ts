@@ -170,6 +170,35 @@ test.describe("Organization Settings", () => {
     expect(membership).toBeNull();
   });
 
+  test("owner can change a member's role", async ({ page, users, orgs }) => {
+    const owner = await users.create({ name: "Org Owner" });
+    const member = await users.create({ name: "Role Change Member" });
+    const org = await orgs.create({ name: "Role Test Org", slug: `role-org-${Date.now()}` });
+
+    await prisma.membership.create({
+      data: { userId: owner.id, teamId: org.id, role: MembershipRole.OWNER, accepted: true },
+    });
+    await prisma.membership.create({
+      data: { userId: member.id, teamId: org.id, role: MembershipRole.MEMBER, accepted: true },
+    });
+    await prisma.user.update({ where: { id: owner.id }, data: { organizationId: org.id } });
+
+    await owner.apiLogin();
+    await page.goto("/settings/organizations/members");
+    await page.waitForLoadState("networkidle");
+
+    const memberRow = page.locator("li").filter({ hasText: member.email });
+    await memberRow.getByRole("combobox").click();
+    await page.getByRole("option", { name: /admin/i }).click();
+
+    await expect(page.getByText("Settings updated successfully")).toBeVisible();
+
+    const membership = await prisma.membership.findUnique({
+      where: { userId_teamId: { userId: member.id, teamId: org.id } },
+    });
+    expect(membership?.role).toBe(MembershipRole.ADMIN);
+  });
+
   test("owner can remove a member", async ({ page, users, orgs }) => {
     const owner = await users.create({ name: "Org Owner" });
     const member = await users.create({ name: "Regular Member" });
@@ -187,9 +216,10 @@ test.describe("Organization Settings", () => {
     await page.goto("/settings/organizations/members");
     await page.waitForLoadState("networkidle");
 
+    const memberRow = page.locator("li").filter({ hasText: member.email });
     await page.getByTestId(`remove-member-${member.id}`).click();
 
-    await expect(page.getByText("Member removed.")).toBeVisible();
+    await expect(memberRow).toHaveCount(0);
 
     const membership = await prisma.membership.findUnique({
       where: { userId_teamId: { userId: member.id, teamId: org.id } },
