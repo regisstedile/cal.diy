@@ -1,6 +1,7 @@
 "use client";
 
 import type { ChildrenEventType } from "@calcom/features/eventtypes/components/ChildrenEventTypeSelect";
+import type { Workflow } from "@calcom/features/ee/workflows/lib/types";
 import type {
   EventTypeApps,
   EventTypeSetupProps,
@@ -37,6 +38,7 @@ const tabs = [
   "instant",
   "recurring",
   "apps",
+  "workflows",
   "webhooks",
   "ai",
   "payments",
@@ -46,6 +48,7 @@ export type EventTypeSetup = RouterOutputs["viewer"]["eventTypes"]["get"]["event
 export type TeamMembers = RouterOutputs["viewer"]["eventTypes"]["get"]["teamMembers"];
 
 export type EventTypeComponentProps = EventTypeSetupProps & {
+  allActiveWorkflows?: Workflow[];
   tabMap: TabMap;
   onDelete: (id: number) => void;
   isDeleting?: boolean;

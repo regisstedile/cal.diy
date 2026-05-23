@@ -2,6 +2,7 @@
 
 import { getPaymentAppData } from "@calcom/app-store/_utils/payments/getPaymentAppData";
 import { eventTypeMetaDataSchemaWithTypedApps } from "@calcom/app-store/zod-utils";
+import type { Workflow } from "@calcom/features/ee/workflows/lib/types";
 import type {
   AvailabilityOption,
   EventTypeApps,
@@ -20,12 +21,14 @@ type Props = {
   eventType: EventTypeSetupProps["eventType"];
   team: EventTypeSetupProps["team"];
   eventTypeApps?: EventTypeApps;
+  allActiveWorkflows?: Workflow[];
 };
 export const useTabsNavigations = ({
   formMethods,
   eventType,
   team,
   eventTypeApps,
+  allActiveWorkflows,
 }: Props) => {
   const { t } = useLocale();
 
@@ -59,6 +62,7 @@ export const useTabsNavigations = ({
   const activeWebhooksNumber = eventType.webhooks.filter((webhook) => webhook.active).length;
 
   const installedAppsNumber = eventTypeApps?.items.filter((app) => app.isInstalled).length || 0;
+  const enabledWorkflowsNumber = allActiveWorkflows ? allActiveWorkflows.length : 0;
 
   const eventTypeId = formMethods.getValues("id");
 
@@ -70,6 +74,7 @@ export const useTabsNavigations = ({
       id: eventTypeId,
       enabledAppsNumber,
       installedAppsNumber,
+      enabledWorkflowsNumber,
       availability,
     });
 
@@ -135,6 +140,7 @@ export const useTabsNavigations = ({
   }, [
     t,
     enabledAppsNumber,
+    enabledWorkflowsNumber,
     installedAppsNumber,
     availability,
     isManagedEventType,
@@ -160,6 +166,7 @@ type getNavigationProps = {
   id: number;
   multipleDuration?: EventTypeSetupProps["eventType"]["metadata"]["multipleDuration"];
   enabledAppsNumber: number;
+  enabledWorkflowsNumber: number;
   installedAppsNumber: number;
   availability: AvailabilityOption | undefined;
 };
@@ -170,6 +177,7 @@ function getNavigation({
   multipleDuration,
   t,
   enabledAppsNumber,
+  enabledWorkflowsNumber,
   installedAppsNumber,
 }: getNavigationProps) {
   const duration = multipleDuration?.map((duration) => ` ${duration}`) || length;
@@ -202,6 +210,13 @@ function getNavigation({
       icon: "grid-3x3",
       info: `${t("number_apps", { count: installedAppsNumber })}, ${enabledAppsNumber} ${t("active")}`,
       "data-testid": "apps",
+    },
+    {
+      name: t("workflows"),
+      href: `/event-types/${id}?tabName=workflows`,
+      icon: "zap",
+      info: `${enabledWorkflowsNumber} ${t("active")}`,
+      "data-testid": "workflows",
     },
   ];
 
