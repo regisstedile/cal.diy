@@ -13,7 +13,7 @@ export default function PlaygroundLayout({ children }: { children: React.ReactNo
   ) : (
     <div>
       <Link href="/settings/admin/playground" className="text-sm underline">
-        ← Playground
+        ← Voltar ao Playground
       </Link>
       <div className="h-8" />
       <div>{children}</div>

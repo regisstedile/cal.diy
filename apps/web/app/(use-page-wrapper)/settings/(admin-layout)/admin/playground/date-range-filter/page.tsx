@@ -27,30 +27,30 @@ const scenarios: ScenarioProps[] = [
   {
     id: "past",
     title: 'Range: "past"',
-    description: "Restricts date selection to past dates only. Shows presets that are past-compatible.",
+    description: "Restringe a seleção de datas apenas ao passado. Exibe predefinições compatíveis com datas passadas.",
     expected:
-      "Presets visible: Today, Last 7 days, Last 30 days, Month to date, Year to date, Custom. Calendar maxDate = today.",
+      "Predefinições visíveis: Hoje, Últimos 7 dias, Últimos 30 dias, Mês atual, Ano atual, Personalizado. maxDate do calendário = hoje.",
     range: "past",
   },
   {
     id: "future",
     title: 'Range: "future"',
-    description: "Restricts date selection to future dates only. Shows only future-compatible presets.",
-    expected: "Presets visible: Custom only (presets with direction 'any'). Calendar minDate = today.",
+    description: "Restringe a seleção de datas apenas ao futuro. Exibe apenas predefinições compatíveis com datas futuras.",
+    expected: "Predefinições visíveis: somente Personalizado (predefinições com direção 'any'). minDate do calendário = hoje.",
     range: "future",
   },
   {
     id: "any",
     title: 'Range: "any"',
-    description: "No date restrictions. Shows all presets.",
-    expected: "All presets visible. No calendar date restrictions.",
+    description: "Sem restrições de data. Exibe todas as predefinições.",
+    expected: "Todas as predefinições visíveis. Sem restrições de data no calendário.",
     range: "any",
   },
   {
     id: "customOnly",
     title: 'Range: "customOnly"',
-    description: "Forces custom date picker only. Always hides presets dropdown.",
-    expected: "No presets dropdown. Only calendar picker visible when opened. No date restrictions.",
+    description: "Força apenas o seletor de datas personalizado. Sempre oculta o menu de predefinições.",
+    expected: "Sem menu de predefinições. Apenas o seletor de calendário visível ao abrir. Sem restrições de data.",
     range: "customOnly",
   },
 ];
@@ -106,7 +106,7 @@ function ScenarioCard({ scenario }: { scenario: ScenarioProps }) {
       <h3 className="text-emphasis mb-2 text-lg font-semibold">{scenario.title}</h3>
       <p className="text-default mb-2 text-sm">{scenario.description}</p>
       <p className="text-subtle mb-4 text-xs">
-        <strong>Expected:</strong> {scenario.expected}
+        <strong>Esperado:</strong> {scenario.expected}
       </p>
 
       <div className="mt-4">
@@ -133,13 +133,13 @@ export default function DateRangeFilterPlayground() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-emphasis text-2xl font-bold">DateRangeFilter Playground</h1>
+        <h1 className="text-emphasis text-2xl font-bold">Playground — Filtro de Intervalo de Datas</h1>
         <p className="text-default mt-2">
-          This page demonstrates the different <code>range</code> options for the DateRangeFilter component.
+          Esta página demonstra as diferentes opções de <code>range</code> do componente DateRangeFilter.
         </p>
         <p className="text-subtle mt-1 text-sm">
-          The <code>range</code> option controls both date restrictions and presets visibility. Presets
-          visibility is derived automatically based on compatible presets.
+          A opção <code>range</code> controla tanto as restrições de data quanto a visibilidade das predefinições. A
+          visibilidade das predefinições é derivada automaticamente com base nas predefinições compatíveis.
         </p>
       </div>
 
