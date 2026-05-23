@@ -1,8 +1,12 @@
 import { getOAuthService } from "@calcom/features/oauth/di/OAuthService.container";
-import { OAuthErrorReason, OAUTH_ERROR_REASONS } from "@calcom/features/oauth/services/OAuthService";
+import {
+  type AuthorizeResult,
+  type OAuthErrorReason,
+  OAUTH_ERROR_REASONS,
+} from "@calcom/features/oauth/services/OAuthService";
 import { ErrorWithCode } from "@calcom/lib/errors";
 import { getHttpStatusCode } from "@calcom/lib/server/getServerErrorFromUnknown";
-import type { AccessScope } from "@calcom/prisma/enums";
+import { AccessScope } from "@calcom/prisma/enums";
 import { httpStatusToTrpcCode } from "@calcom/trpc/server/lib/toTRPCError";
 import type { TrpcSessionUser } from "@calcom/trpc/server/types";
 
@@ -17,7 +21,27 @@ type AddClientOptions = {
   input: TGenerateAuthCodeInputSchema;
 };
 
-export const generateAuthCodeHandler = async ({ ctx, input }: AddClientOptions) => {
+const SCOPE_ALIASES: Record<string, AccessScope> = {
+  READ_PROFILE: AccessScope.READ_PROFILE,
+  PROFILE_READ: AccessScope.READ_PROFILE,
+  READ_BOOKING: AccessScope.READ_BOOKING,
+  BOOKING_READ: AccessScope.READ_BOOKING,
+};
+
+function normalizeAccessScopes(scopes: string[]): AccessScope[] {
+  const normalized = scopes
+    .flatMap((scope) => scope.split(/[,\s]+/))
+    .map((scope) => SCOPE_ALIASES[scope])
+    .filter((scope): scope is AccessScope => Boolean(scope));
+
+  if (normalized.length === 0) {
+    return [AccessScope.READ_PROFILE];
+  }
+
+  return Array.from(new Set(normalized));
+}
+
+export const generateAuthCodeHandler = async ({ ctx, input }: AddClientOptions): Promise<AuthorizeResult> => {
   try {
     const { clientId, scopes, teamSlug, codeChallenge, codeChallengeMethod, state, redirectUri } = input;
     const oAuthService = getOAuthService();
@@ -27,7 +51,7 @@ export const generateAuthCodeHandler = async ({ ctx, input }: AddClientOptions) 
       clientId,
       ctx.user.id,
       oAuthClientRedirectUri,
-      scopes as AccessScope[],
+      normalizeAccessScopes(scopes),
       state,
       teamSlug,
       codeChallenge,
