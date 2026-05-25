@@ -25,3 +25,5 @@ export const formatCalEvent = (calEvent: CalendarEvent) => {
 
   return clonedEvent;
 };
+
+export const formatCalEventExtended = formatCalEvent;

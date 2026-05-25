@@ -7,7 +7,9 @@
     "../types/tanstack-table.d.ts",
     "../types/next.d.ts",
     "../types/window.d.ts",
-    "./server"
+    "../types/twilio.d.ts",
+    "./server",
+    "./server/routers/viewer/apps/routing-forms/forms.schema.ts"
   ],
   "exclude": ["**/node_modules/**", "./react", "./server/**/*.test.ts", "./server/**/*.spec.ts"],
   "compilerOptions": {

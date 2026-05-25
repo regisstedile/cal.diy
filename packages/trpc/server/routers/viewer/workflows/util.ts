@@ -1,8 +1,8 @@
 import type { z } from "zod";
 
-import { isSMSOrWhatsappAction } from "@calcom/ee/workflows/lib/actionHelperFunctions";
-import emailRatingTemplate from "@calcom/ee/workflows/lib/reminders/templates/emailRatingTemplate";
-import emailReminderTemplate from "@calcom/ee/workflows/lib/reminders/templates/emailReminderTemplate";
+import { isSMSOrWhatsappAction } from "@calcom/features/ee/workflows/lib/actionHelperFunctions";
+import emailRatingTemplate from "@calcom/features/ee/workflows/lib/reminders/templates/emailRatingTemplate";
+import emailReminderTemplate from "@calcom/features/ee/workflows/lib/reminders/templates/emailReminderTemplate";
 import {
   getSmsReminderNumberField,
   getSmsReminderNumberSource,

@@ -264,5 +264,6 @@ export const getActiveOnOptions = async ({ ctx, input }: GetActiveOnOptions) => 
   return {
     eventTypeOptions,
     teamOptions,
+    routingFormOptions: [] as { value: string; label: string }[],
   };
 };

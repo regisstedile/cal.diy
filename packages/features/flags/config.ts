@@ -13,6 +13,7 @@ export type AppFlags = {
   "delegation-credential": boolean;
   "salesforce-crm-tasker": boolean;
   "cal-video-log-in-overlay": boolean;
+  "sidebar-tips": boolean;
   "restriction-schedule": boolean;
   "calendar-subscription-cache": boolean;
   "calendar-subscription-sync": boolean;
@@ -26,6 +27,7 @@ export type AppFlags = {
   "signup-watchlist-review": boolean;
   "sink-shortener": boolean;
   insights: boolean;
+  "cal-ai-voice-agents": boolean;
 };
 
 export type TeamFeatures = Record<keyof AppFlags, boolean>;

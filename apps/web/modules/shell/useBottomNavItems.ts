@@ -7,6 +7,8 @@ import type { NavigationItemType } from "./navigation/NavigationItem";
 
 type BottomNavItemsProps = {
   publicPageUrl: string;
+  isAdmin?: boolean;
+  user?: unknown;
 };
 
 export function useBottomNavItems({ publicPageUrl }: BottomNavItemsProps): NavigationItemType[] {

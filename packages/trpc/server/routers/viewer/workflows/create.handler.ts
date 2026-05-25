@@ -1,4 +1,4 @@
-import emailReminderTemplate from "@calcom/ee/workflows/lib/reminders/templates/emailReminderTemplate";
+import emailReminderTemplate from "@calcom/features/ee/workflows/lib/reminders/templates/emailReminderTemplate";
 import { PermissionCheckService } from "@calcom/features/pbac/services/permission-check.service";
 import { SENDER_NAME } from "@calcom/lib/constants";
 import { getTranslation } from "@calcom/i18n/server";

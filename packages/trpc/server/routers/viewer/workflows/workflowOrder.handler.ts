@@ -6,7 +6,14 @@ import type { TrpcSessionUser } from "@calcom/trpc/server/types";
 
 import { TRPCError } from "@trpc/server";
 
-import type { TFormSchema } from "../../apps/routing-forms/forms.schema";
+// Stub: routing-forms schema not available in cal.diy
+type TFormSchema = {
+  filters?: {
+    userIds?: number[];
+    teamIds?: number[];
+  } | null;
+  [key: string]: unknown;
+};
 import type { TWorkflowOrderInputSchema } from "./workflowOrder.schema";
 
 type RoutingFormOrderOptions = {

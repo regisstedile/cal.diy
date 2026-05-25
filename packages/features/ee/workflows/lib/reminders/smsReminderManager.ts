@@ -3,7 +3,7 @@ import {
   getAttendeeToBeUsedInSMS,
   getSMSMessageWithVariables,
   shouldUseTwilio,
-} from "@calcom/ee/workflows/lib/reminders/utils";
+} from "@calcom/features/ee/workflows/lib/reminders/utils";
 import { getTranslationService } from "@calcom/features/di/containers/TranslationService";
 import type { CreditCheckFn } from "@calcom/features/ee/billing/credit-service";
 import { getSubmitterEmail } from "@calcom/features/tasker/tasks/triggerFormSubmittedNoEvent/formSubmissionValidation";

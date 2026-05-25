@@ -1,5 +1,7 @@
 import process from "node:process";
+import type { Workflow } from "@calcom/features/ee/workflows/lib/types";
 import { fieldsThatSupportLabelAsSafeHtml } from "@calcom/features/form-builder/fieldsThatSupportLabelAsSafeHtml";
+import { SMS_REMINDER_NUMBER_FIELD, CAL_AI_AGENT_PHONE_NUMBER_FIELD } from "@calcom/lib/bookings/SystemField";
 import { getFieldIdentifier } from "@calcom/features/form-builder/utils/getFieldIdentifier";
 import { markdownToSafeHTML } from "@calcom/lib/markdownToSafeHTML";
 import slugify from "@calcom/lib/slugify";
@@ -19,6 +21,52 @@ if (typeof window !== "undefined" && !process.env.INTEGRATION_TEST_MODE) {
   // This file imports some costly dependencies, so we want to make sure it's not imported on the client side.
   throw new Error("`getBookingFields` must not be imported on the client side.");
 }
+
+export const getSmsReminderNumberField = () =>
+  ({
+    name: SMS_REMINDER_NUMBER_FIELD,
+    type: "phone",
+    defaultLabel: "number_text_notifications",
+    defaultPlaceholder: "enter_phone_number",
+    editable: "system",
+  }) as const;
+
+export const getSmsReminderNumberSource = ({
+  workflowId,
+  isSmsReminderNumberRequired,
+}: {
+  workflowId: Workflow["id"];
+  isSmsReminderNumberRequired: boolean;
+}) => ({
+  id: `${workflowId}`,
+  type: "workflow",
+  label: "Workflow",
+  fieldRequired: isSmsReminderNumberRequired,
+  editUrl: `/workflows/${workflowId}`,
+});
+
+export const getAIAgentCallPhoneNumberField = () =>
+  ({
+    name: CAL_AI_AGENT_PHONE_NUMBER_FIELD,
+    type: "phone",
+    defaultLabel: "phone_number_for_ai_call",
+    defaultPlaceholder: "enter_phone_number",
+    editable: "system",
+  }) as const;
+
+export const getAIAgentCallPhoneNumberSource = ({
+  workflowId,
+  isAIAgentCallPhoneNumberRequired,
+}: {
+  workflowId: Workflow["id"];
+  isAIAgentCallPhoneNumberRequired: boolean;
+}) => ({
+  id: `${workflowId}`,
+  type: "workflow",
+  label: "Workflow",
+  fieldRequired: isAIAgentCallPhoneNumberRequired,
+  editUrl: `/workflows/${workflowId}`,
+});
 
 /**
  * PHONE -> Phone

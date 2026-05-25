@@ -431,6 +431,7 @@ export type TabMap = {
   setup: React.ReactNode;
   team?: React.ReactNode;
   webhooks?: React.ReactNode;
+  workflows?: React.ReactNode;
   payments?: React.ReactNode;
 };
 
