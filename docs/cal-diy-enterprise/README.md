@@ -31,3 +31,4 @@ Sem essa cadeia, a documentação ainda é apenas descrição parcial.
 - [Webhooks & Integrações](03-features/webhooks-integrations.md)
 - [Payments](03-features/payments.md)
 - [Auth & SSO](03-features/auth-sso.md)
+- [Mobile App](03-features/mobile.md)

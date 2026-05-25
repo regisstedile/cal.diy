@@ -43,6 +43,14 @@ Dar um caminho de leitura para quem precisa alterar ou revisar o `cal-diy` sem d
 
 - [`03-features/organizations.md`](03-features/organizations.md)
 - [`03-features/bookings.md`](03-features/bookings.md)
+- [`03-features/event-types.md`](03-features/event-types.md)
+- [`03-features/availability-and-slots.md`](03-features/availability-and-slots.md)
+- [`03-features/public-booking-page.md`](03-features/public-booking-page.md)
+- [`03-features/teams-routing.md`](03-features/teams-routing.md)
+- [`03-features/webhooks-integrations.md`](03-features/webhooks-integrations.md)
+- [`03-features/payments.md`](03-features/payments.md)
+- [`03-features/auth-sso.md`](03-features/auth-sso.md)
+- [`03-features/mobile.md`](03-features/mobile.md)
 
 ## Documentos já existentes que continuam válidos
 
@@ -50,7 +58,3 @@ Dar um caminho de leitura para quem precisa alterar ou revisar o `cal-diy` sem d
 - `docs/allged/09-infra/05-rebuild.md`: rebuild Docker.
 - `docs/allged/05-api/05-endpoints-ref.md`: referência de endpoints.
 - `docs/estudo/02-linha-estudo-cal-diy.md`: trilha de estudo aplicada ao código.
-
-- [Event Types](03-features/event-types.md)
-- [Availability e Slots](03-features/availability-and-slots.md)
-- [Public Booking Page](03-features/public-booking-page.md)
