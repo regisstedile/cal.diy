@@ -13,11 +13,6 @@ export const MORE_SEPARATOR_NAME = "more";
 
 const getNavigationItems = (): NavigationItemType[] => [
   {
-    name: "event_types_page_title",
-    href: "/event-types",
-    icon: "link",
-  },
-  {
     name: "bookings",
     href: "/bookings/upcoming",
     icon: "calendar",
@@ -28,6 +23,32 @@ const getNavigationItems = (): NavigationItemType[] => [
     name: "availability",
     href: "/availability",
     icon: "clock",
+  },
+  {
+    name: "workflows",
+    href: "/workflows",
+    icon: "zap",
+    isCurrent: ({ pathname: path }) => path?.startsWith("/workflows") ?? false,
+    moreOnMobile: true,
+  },
+  {
+    name: "insights",
+    href: "/insights",
+    icon: "chart-bar",
+    isCurrent: ({ pathname: path, item }) => path?.startsWith(item.href) ?? false,
+    moreOnMobile: true,
+    child: [
+      {
+        name: "bookings",
+        href: "/insights",
+        isCurrent: ({ pathname: path }) => path === "/insights",
+      },
+      {
+        name: "routing",
+        href: "/insights/routing",
+        isCurrent: ({ pathname: path }) => path?.startsWith("/insights/routing") ?? false,
+      },
+    ],
   },
   {
     name: "apps",
@@ -57,28 +78,15 @@ const getNavigationItems = (): NavigationItemType[] => [
     ],
   },
   {
-    name: "insights",
-    href: "/insights",
-    icon: "chart-bar",
-    isCurrent: ({ pathname: path, item }) => path?.startsWith(item.href) ?? false,
-    moreOnMobile: true,
-    child: [
-      {
-        name: "bookings",
-        href: "/insights",
-        isCurrent: ({ pathname: path }) => path === "/insights",
-      },
-      {
-        name: "routing",
-        href: "/insights/routing",
-        isCurrent: ({ pathname: path }) => path?.startsWith("/insights/routing") ?? false,
-      },
-    ],
-  },
-  {
     name: MORE_SEPARATOR_NAME,
     href: "/more",
     icon: "ellipsis",
+  },
+  {
+    name: "event_types_page_title",
+    href: "/event-types",
+    icon: "link",
+    moreOnMobile: true,
   },
 ];
 
