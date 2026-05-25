@@ -1,0 +1,7 @@
+{
+  "name": "@types/twilio",
+  "version": "0.1.0",
+  "description": "Type stubs for twilio — SMS sending not available without credentials",
+  "types": "index.d.ts",
+  "license": "MIT"
+}

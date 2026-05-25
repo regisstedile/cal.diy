@@ -101,4 +101,12 @@ export class TranslationService implements ITranslationService {
     await Promise.all(promises);
     return result;
   }
+
+  async getWorkflowStepTranslation(
+    _workflowStepId: number,
+    _targetLocale: string,
+    _options?: { includeBody?: boolean; includeSubject?: boolean }
+  ): Promise<{ translatedBody?: string; translatedSubject?: string }> {
+    return {};
+  }
 }

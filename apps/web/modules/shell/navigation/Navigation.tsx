@@ -102,7 +102,7 @@ const useNavigationItems = () => {
   }, []);
 };
 
-export const Navigation = () => {
+export const Navigation = ({ isPlatformNavigation: _isPlatformNavigation }: { isPlatformNavigation?: boolean }) => {
   const { desktopNavigationItems } = useNavigationItems();
 
   return (

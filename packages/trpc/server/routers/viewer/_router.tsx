@@ -1,5 +1,6 @@
 import app_RoutingForms from "@calcom/app-store/routing-forms/trpc-router";
 import { router } from "../../trpc";
+import { aiVoiceAgentRouter } from "./aiVoiceAgent/_router";
 import { featureFlagRouter } from "../features/_router";
 import { loggedInViewerRouter } from "../loggedInViewer/_router";
 import { publicViewerRouter } from "../publicViewer/_router";
@@ -13,6 +14,7 @@ import { bookingsRouter } from "./bookings/_router";
 import { calendarsRouter } from "./calendars/_router";
 import { calVideoRouter } from "./calVideo/_router";
 import { credentialsRouter } from "./credentials/_router";
+import { creditsRouter } from "./credits/_router";
 import { deploymentSetupRouter } from "./deploymentSetup/_router";
 import { eventTypesRouter } from "./eventTypes/_router";
 import { eventTypesRouter as heavyEventTypesRouter } from "./eventTypes/heavy/_router";
@@ -24,6 +26,7 @@ import { insightsRouter } from "./insights/_router";
 import { meRouter } from "./me/_router";
 import { oAuthRouter } from "./oAuth/_router";
 import { oooRouter } from "./ooo/_router";
+import { phoneNumberRouter } from "./phoneNumber/_router";
 import { organizationsRouter } from "./organizations/_router";
 import { slotsRouter } from "./slots/_router";
 import { teamsRouter } from "./teams/_router";
@@ -43,6 +46,7 @@ export const viewerRouter = router({
   calendars: calendarsRouter,
   calVideo: calVideoRouter,
   credentials: credentialsRouter,
+  credits: creditsRouter,
   eventTypes: eventTypesRouter,
   eventTypesHeavy: heavyEventTypesRouter,
   availability: availabilityRouter,
@@ -59,10 +63,12 @@ export const viewerRouter = router({
   admin: adminRouter,
   apiKeys: apiKeysRouter,
   ooo: oooRouter,
+  phoneNumber: phoneNumberRouter,
   organizations: organizationsRouter,
   teams: teamsRouter,
   holidays: holidaysRouter,
   travelSchedules: travelSchedulesRouter,
   appRoutingForms: app_RoutingForms,
   workflows: workflowsRouter,
+  aiVoiceAgent: aiVoiceAgentRouter,
 });

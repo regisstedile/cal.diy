@@ -1,9 +1,9 @@
 import dayjs from "@calcom/dayjs";
-import { getAllWorkflows } from "@calcom/ee/workflows/lib/getAllWorkflows";
-import type { ScheduleWorkflowRemindersArgs } from "@calcom/ee/workflows/lib/reminders/reminderScheduler";
-import { scheduleWorkflowReminders } from "@calcom/ee/workflows/lib/reminders/reminderScheduler";
-import type { timeUnitLowerCase } from "@calcom/ee/workflows/lib/reminders/smsReminderManager";
-import type { Workflow, WorkflowStep } from "@calcom/ee/workflows/lib/types";
+import { getAllWorkflows } from "@calcom/features/ee/workflows/lib/getAllWorkflows";
+import type { ScheduleWorkflowRemindersArgs } from "@calcom/features/ee/workflows/lib/reminders/reminderScheduler";
+import { scheduleWorkflowReminders } from "@calcom/features/ee/workflows/lib/reminders/reminderScheduler";
+import type { timeUnitLowerCase } from "@calcom/features/ee/workflows/lib/reminders/smsReminderManager";
+import type { Workflow, WorkflowStep } from "@calcom/features/ee/workflows/lib/types";
 import type { CreditCheckFn } from "@calcom/features/ee/billing/credit-service";
 import { TeamRepository } from "@calcom/features/ee/teams/repositories/TeamRepository";
 import { WorkflowReminderRepository } from "@calcom/features/ee/workflows/repositories/WorkflowReminderRepository";

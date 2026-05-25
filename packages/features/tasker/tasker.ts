@@ -24,6 +24,12 @@ type TaskPayloads = {
   webhookDelivery: z.infer<
     typeof import("@calcom/features/webhooks/lib/types/webhookTask").webhookTaskPayloadSchema
   >;
+  // Workflow tasks
+  sendWorkflowEmails: unknown;
+  executeAIPhoneCall: unknown;
+  triggerFormSubmittedNoEventWorkflow: unknown;
+  translateWorkflowStepData: unknown;
+  scanWorkflowBody: unknown;
 };
 export type TaskTypes = keyof TaskPayloads;
 export type TaskHandler = (payload: string, taskId?: string) => Promise<void>;

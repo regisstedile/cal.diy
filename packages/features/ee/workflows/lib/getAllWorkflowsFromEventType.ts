@@ -1,5 +1,5 @@
-import { getAllWorkflows } from "@calcom/ee/workflows/lib/getAllWorkflows";
-import type { Workflow as WorkflowType } from "@calcom/ee/workflows/lib/types";
+import { getAllWorkflows } from "@calcom/features/ee/workflows/lib/getAllWorkflows";
+import type { Workflow as WorkflowType } from "@calcom/features/ee/workflows/lib/types";
 import getOrgIdFromMemberOrTeamId from "@calcom/lib/getOrgIdFromMemberOrTeamId";
 import { getTeamIdFromEventType } from "@calcom/lib/getTeamIdFromEventType";
 import type { Prisma } from "@calcom/prisma/client";

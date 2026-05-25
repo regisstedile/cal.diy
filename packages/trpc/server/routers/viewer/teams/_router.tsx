@@ -238,6 +238,38 @@ export const teamsRouter = router({
     }));
   }),
 
+  list: authedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
+    const memberships = await ctx.prisma.membership.findMany({
+      where: {
+        userId: ctx.user.id,
+        accepted: true,
+        team: {
+          isOrganization: false,
+        },
+      },
+      select: {
+        id: true,
+        role: true,
+        accepted: true,
+        team: {
+          select: teamSelect,
+        },
+      },
+      orderBy: {
+        team: {
+          name: "asc",
+        },
+      },
+    });
+
+    return memberships.map((membership) => ({
+      ...membership.team,
+      role: membership.role,
+      accepted: membership.accepted,
+      membershipId: membership.id,
+    }));
+  }),
+
   getById: authedProcedure.input(teamIdSchema).query(async ({ ctx, input }) => {
     const membership = await getMembershipOrThrow({
       prisma: ctx.prisma,

@@ -98,7 +98,7 @@ const processWorkflowStep = async (
 ) => {
   if (!step?.verifiedAt) return;
 
-  const evt = calendarEvent ? formatCalEventExtended(calendarEvent) : undefined;
+  const evt = calendarEvent ? (formatCalEventExtended(calendarEvent) as unknown as BookingInfo) : undefined;
 
   if (!evt && !formData) return;
 
@@ -150,7 +150,7 @@ const processWorkflowStep = async (
     const bookingSeatRepository = new BookingSeatRepository(prisma);
     const emailWorkflowService = new EmailWorkflowService(workflowReminderRepository, bookingSeatRepository);
     const emailParams = await emailWorkflowService.generateParametersToBuildEmailWorkflowContent({
-      evt,
+      evt: evt as unknown as import("@calcom/types/Calendar").CalendarEvent,
       workflowStep: step,
       workflow,
       emailAttendeeSendToOverride,

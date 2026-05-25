@@ -1,8 +1,8 @@
-import { FORM_TRIGGER_WORKFLOW_EVENTS } from "@calcom/ee/workflows/lib/constants";
-import { deleteScheduledAIPhoneCall } from "@calcom/ee/workflows/lib/reminders/aiPhoneCallManager";
-import { deleteScheduledEmailReminder } from "@calcom/ee/workflows/lib/reminders/emailReminderManager";
-import { deleteScheduledSMSReminder } from "@calcom/ee/workflows/lib/reminders/smsReminderManager";
-import type { WorkflowStep, WorkflowListType as WorkflowType } from "@calcom/ee/workflows/lib/types";
+import { FORM_TRIGGER_WORKFLOW_EVENTS } from "@calcom/features/ee/workflows/lib/constants";
+import { deleteScheduledAIPhoneCall } from "@calcom/features/ee/workflows/lib/reminders/aiPhoneCallManager";
+import { deleteScheduledEmailReminder } from "@calcom/features/ee/workflows/lib/reminders/emailReminderManager";
+import { deleteScheduledSMSReminder } from "@calcom/features/ee/workflows/lib/reminders/smsReminderManager";
+import type { WorkflowStep, WorkflowListType as WorkflowType } from "@calcom/features/ee/workflows/lib/types";
 import type { filterQuerySchemaStrict } from "@calcom/features/filters/lib/getTeamsFiltersFromQuery";
 import { hasFilter } from "@calcom/features/filters/lib/hasFilter";
 import { PermissionCheckService } from "@calcom/features/pbac/services/permission-check.service";

@@ -25,6 +25,11 @@ export type EventTypeTranslationLookupOptions = {
   includeDescription?: boolean;
 };
 
+export type WorkflowStepTranslationResult = {
+  translatedBody?: string;
+  translatedSubject?: string;
+};
+
 export interface ITranslationService {
   translateText(params: TranslateTextParams): Promise<TranslateTextResult>;
   getTargetLocales(sourceLocale: string): TranslationSupportedLocale[];
@@ -33,4 +38,9 @@ export interface ITranslationService {
     targetLocale: string,
     options?: EventTypeTranslationLookupOptions
   ): Promise<EventTypeTranslationLookupResult>;
+  getWorkflowStepTranslation(
+    workflowStepId: number,
+    targetLocale: string,
+    options?: { includeBody?: boolean; includeSubject?: boolean }
+  ): Promise<WorkflowStepTranslationResult>;
 }

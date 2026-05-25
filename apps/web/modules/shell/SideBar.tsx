@@ -56,19 +56,15 @@ export function SideBarContainer({ bannersHeight, isPlatformUser = false }: Side
 }
 
 export function SideBar({ bannersHeight, user }: SideBarProps) {
-  const session = useSession();
   const { t, isLocaleReady } = useLocale();
   const pathname = usePathname();
   const isPlatformPages = pathname?.startsWith("/settings/platform");
-  const isAdmin = session.data?.user.role === UserPermissionRole.ADMIN;
   const flags = useFlagMap();
 
   const publicPageUrl = `${getBookerBaseUrlSync(user?.org?.slug ?? null)}/${user?.orgAwareUsername}`;
 
   const bottomNavItems = useBottomNavItems({
     publicPageUrl,
-    isAdmin,
-    user,
   });
 
   const sidebarStylingAttributes = {
@@ -138,7 +134,7 @@ export function SideBar({ bannersHeight, user }: SideBarProps) {
           <Link href="/event-types" className="text-center md:inline lg:hidden">
             <Logo small icon />
           </Link>
-          <Navigation isPlatformNavigation={isPlatformPages} />
+          <Navigation />
         </div>
 
         {!isPlatformPages && (
