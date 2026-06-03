@@ -2,6 +2,7 @@ import type { TFunction } from "i18next";
 
 import { prisma } from "@calcom/prisma";
 import type { PrismaClient } from "@calcom/prisma";
+import { CancellationReasonRequirement } from "@calcom/prisma/enums";
 import i18nMock from "@calcom/testing/lib/__mocks__/libServerI18n";
 
 // import { mockNoTranslations } from "@calcom/testing/lib/bookingScenario/bookingScenario";
@@ -49,7 +50,14 @@ describe("getRawEventType", () => {
     return user;
   };
 
-  const createTestEventType = async (userId: number, overrides?: { slug?: string; title?: string }) => {
+  const createTestEventType = async (
+    userId: number,
+    overrides?: {
+      slug?: string;
+      title?: string;
+      requiresCancellationReason?: CancellationReasonRequirement | null;
+    }
+  ) => {
     const timestamp = Date.now() + Math.random();
     const eventType = await prisma.eventType.create({
       data: {
@@ -57,6 +65,7 @@ describe("getRawEventType", () => {
         slug: overrides?.slug ?? `test-event-${timestamp}`,
         length: 30,
         userId,
+        requiresCancellationReason: overrides?.requiresCancellationReason,
         users: {
           connect: [{ id: userId }],
         },
@@ -105,6 +114,25 @@ describe("getRawEventType", () => {
       expect(result?.id).toBe(eventType.id);
       expect(result?.title).toBe("Test Event Type");
       expect(result?.userId).toBe(user.id);
+    });
+
+    test("should fetch requiresCancellationReason when it is configured", async () => {
+      const user = await createTestUser();
+      const eventType = await createTestEventType(user.id, {
+        requiresCancellationReason: CancellationReasonRequirement.MANDATORY_ATTENDEE_ONLY,
+      });
+
+      const result = await getRawEventType({
+        userId: user.id,
+        eventTypeId: eventType.id,
+        isUserOrganizationAdmin: false,
+        currentOrganizationId: null,
+        prisma: prisma as unknown as PrismaClient,
+      });
+
+      expect(result?.requiresCancellationReason).toBe(
+        CancellationReasonRequirement.MANDATORY_ATTENDEE_ONLY
+      );
     });
 
     test.skip("should return null when user doesn't have access to event type", async () => {
