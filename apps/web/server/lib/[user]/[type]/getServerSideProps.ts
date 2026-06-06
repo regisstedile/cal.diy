@@ -6,6 +6,7 @@ import type { getPublicEvent } from "@calcom/features/eventtypes/lib/getPublicEv
 import { EventRepository } from "@calcom/features/eventtypes/repositories/EventRepository";
 import { shouldHideBrandingForUserEvent } from "@calcom/features/profile/lib/hideBranding";
 import { UserRepository } from "@calcom/features/users/repositories/UserRepository";
+import { SINGLE_ORG_SLUG } from "@calcom/lib/constants";
 import slugify from "@calcom/lib/slugify";
 import { prisma } from "@calcom/prisma";
 import { BookingStatus, RedirectType } from "@calcom/prisma/enums";
@@ -116,8 +117,8 @@ async function getDynamicGroupPageProps(context: GetServerSidePropsContext) {
   const { user: usernames, type: slug } = paramsSchema.parse(context.params);
   const { rescheduleUid, bookingUid } = context.query;
   const allowRescheduleForCancelledBooking = context.query.allowRescheduleForCancelledBooking === "true";
-  const currentOrgDomain = null;
-  const isValidOrgDomain = false;
+  const currentOrgDomain = SINGLE_ORG_SLUG ?? null;
+  const isValidOrgDomain = !!currentOrgDomain;
   const org = isValidOrgDomain ? currentOrgDomain : null;
 
   const redirect = await handleOrgRedirect({
@@ -215,8 +216,8 @@ async function getUserPageProps(context: GetServerSidePropsContext) {
   const username = usernames[0];
   const { rescheduleUid, bookingUid } = context.query;
   const allowRescheduleForCancelledBooking = context.query.allowRescheduleForCancelledBooking === "true";
-  const currentOrgDomain = null;
-  const isValidOrgDomain = false;
+  const currentOrgDomain = SINGLE_ORG_SLUG ?? null;
+  const isValidOrgDomain = !!currentOrgDomain;
 
   const redirect = await handleOrgRedirect({
     slugs: usernames,

@@ -14,33 +14,29 @@ import type { ReactElement } from "react";
 
 import { EventTypesWrapper } from "./EventTypesWrapper";
 
-const getCachedEventGroups: (
+type EventGroupFilters = {
+  teamIds?: number[] | undefined;
+  userIds?: number[] | undefined;
+  upIds?: string[] | undefined;
+};
+
+const getCachedEventGroups = (
+  userId: number,
   headers: ReadonlyHeaders,
   cookies: ReadonlyRequestCookies,
-  filters?: {
-    teamIds?: number[] | undefined;
-    userIds?: number[] | undefined;
-    upIds?: string[] | undefined;
-  }
-) => Promise<RouterOutputs["viewer"]["eventTypes"]["getUserEventGroups"]> = unstable_cache(
-  async (
-    headers: ReadonlyHeaders,
-    cookies: ReadonlyRequestCookies,
-    filters?: {
-      teamIds?: number[] | undefined;
-      userIds?: number[] | undefined;
-      upIds?: string[] | undefined;
-    }
-  ): Promise<RouterOutputs["viewer"]["eventTypes"]["getUserEventGroups"]> => {
-    const eventTypesCaller = await createRouterCaller(
-      eventTypesRouter,
-      await getTRPCContext(headers, cookies)
-    );
-    return await eventTypesCaller.getUserEventGroups({ filters });
-  },
-  ["viewer.eventTypes.getUserEventGroups"],
-  { revalidate: 3600 } // seconds
-);
+  filters?: EventGroupFilters
+): Promise<RouterOutputs["viewer"]["eventTypes"]["getUserEventGroups"]> =>
+  unstable_cache(
+    async (): Promise<RouterOutputs["viewer"]["eventTypes"]["getUserEventGroups"]> => {
+      const eventTypesCaller = await createRouterCaller(
+        eventTypesRouter,
+        await getTRPCContext(headers, cookies)
+      );
+      return await eventTypesCaller.getUserEventGroups({ filters });
+    },
+    [`viewer.eventTypes.getUserEventGroups.${userId}`, JSON.stringify(filters ?? null)],
+    { revalidate: 3600 }
+  )();
 
 const Page = async ({ searchParams }: PageProps): Promise<ReactElement> => {
   const _searchParams = await searchParams;
@@ -66,7 +62,7 @@ const Page = async ({ searchParams }: PageProps): Promise<ReactElement> => {
   }
 
   const filters = getTeamsFiltersFromQuery(_searchParams);
-  const userEventGroupsData = await getCachedEventGroups(_headers, _cookies, filters);
+  const userEventGroupsData = await getCachedEventGroups(session.user.id, _headers, _cookies, filters);
 
   return <EventTypesWrapper userEventGroupsData={userEventGroupsData} user={session.user} />;
 };
