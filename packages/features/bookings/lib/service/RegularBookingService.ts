@@ -2202,6 +2202,66 @@ async function handler(
     }
   }
 
+  if (!isDryRun) {
+    try {
+      const workflowsForEventType = await deps.prismaClient.workflow.findMany({
+        where: {
+          activeOn: { some: { eventTypeId: eventType.id } },
+        },
+        select: {
+          id: true,
+          name: true,
+          trigger: true,
+          time: true,
+          timeUnit: true,
+          userId: true,
+          teamId: true,
+          steps: {
+            select: {
+              id: true,
+              action: true,
+              sendTo: true,
+              template: true,
+              reminderBody: true,
+              emailSubject: true,
+              sender: true,
+              includeCalendarEvent: true,
+              numberVerificationPending: true,
+              numberRequired: true,
+              verifiedAt: true,
+              autoTranslateEnabled: true,
+              sourceLocale: true,
+            },
+          },
+        },
+      });
+      if (workflowsForEventType.length > 0) {
+        const { WorkflowService } = await import(
+          "@calcom/features/ee/workflows/lib/service/WorkflowService"
+        );
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const extendedEvt = {
+          ...evt,
+          eventType: {
+            slug: eventType.slug,
+            schedulingType: eventType.schedulingType,
+          },
+        };
+        await WorkflowService.scheduleWorkflowsForNewBooking({
+          calendarEvent: extendedEvt as any,
+          smsReminderNumber: smsReminderNumber ?? null,
+          workflows: workflowsForEventType as any,
+          isConfirmedByDefault,
+          isRescheduleEvent: !!rescheduleUid,
+          isNormalBookingOrFirstRecurringSlot,
+          creditCheckFn: async () => true,
+        });
+      }
+    } catch (error) {
+      tracingLogger.error("Failed to schedule workflow reminders", safeStringify(error));
+    }
+  }
+
   if (booking.location?.startsWith("http")) {
     videoCallUrl = booking.location;
   }

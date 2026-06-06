@@ -39,4 +39,6 @@ export const ENDPOINTS = [
   "filterSegments",
   "phoneNumber",
   "teams",
+  "workflows",
+  "aiVoiceAgent",
 ] as const;

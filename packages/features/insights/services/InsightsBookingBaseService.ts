@@ -413,13 +413,10 @@ export class InsightsBookingBaseService {
     });
     const teamIds = [options.orgId, ...teamsFromOrg.map((t) => t.id)];
 
-    // Get all users from the organization
-    const userIdsFromOrg =
-      teamsFromOrg.length > 0
-        ? (await MembershipRepository.findAllByTeamIds({ teamIds, select: { userId: true } })).map(
-            (m) => m.userId
-          )
-        : [];
+    // Get all users from the organization (teamIds always includes orgId itself)
+    const userIdsFromOrg = (
+      await MembershipRepository.findAllByTeamIds({ teamIds, select: { userId: true } })
+    ).map((m) => m.userId);
 
     const conditions: Prisma.Sql[] = [Prisma.sql`("teamId" = ANY(${teamIds})) AND ("isTeamBooking" = true)`];
 
