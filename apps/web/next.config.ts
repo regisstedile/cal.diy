@@ -222,6 +222,7 @@ const nextConfig = (phase: string): NextConfig => {
   }
 
   return {
+    poweredByHeader: false,
     output: process.env.BUILD_STANDALONE === "true" ? "standalone" : undefined,
     serverExternalPackages: [
       "@sendgrid/mail",
@@ -411,6 +412,10 @@ const nextConfig = (phase: string): NextConfig => {
             {
               key: "Referrer-Policy",
               value: "strict-origin-when-cross-origin",
+            },
+            {
+              key: "Permissions-Policy",
+              value: "camera=(), microphone=(), geolocation=()",
             },
           ],
         },
