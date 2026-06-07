@@ -38,6 +38,7 @@ import { userAdminRouter } from "./users/_router";
 import { webhookRouter } from "./webhook/_router";
 import { workflowsRouter } from "./workflows/_router";
 import { ssoRouter } from "./sso/_router";
+import { delegationCredentialRouter } from "./delegationCredential/_router";
 
 export const viewerRouter = router({
   loggedInViewerRouter,
@@ -79,4 +80,5 @@ export const viewerRouter = router({
   workflows: workflowsRouter,
   aiVoiceAgent: aiVoiceAgentRouter,
   sso: ssoRouter,
+  delegationCredential: delegationCredentialRouter,
 });
