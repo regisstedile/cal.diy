@@ -752,3 +752,5 @@ export const teamsRouter = router({
     }),
   }),
 });
+
+export { teamsRouter as viewerTeamsRouter };
