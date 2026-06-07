@@ -27,11 +27,14 @@ export const deleteHandler = async ({ ctx, input }: Options) => {
     });
   }
 
-  await prisma.dSyncData.deleteMany({
-    where: {
-      organizationId: input.organizationId || undefined,
-    },
+  const record = await prisma.dSyncData.findUnique({
+    where: { organizationId: input.organizationId! },
   });
+  if (!record || record.directoryId !== input.directoryId) {
+    throw new TRPCError({ code: "NOT_FOUND" });
+  }
+
+  await prisma.dSyncData.delete({ where: { organizationId: input.organizationId! } });
   await dsyncController.directories.delete(input.directoryId);
 
   return null;
