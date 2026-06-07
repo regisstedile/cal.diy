@@ -5,7 +5,14 @@ import { CalUnifiedCalendarsModule } from "@/modules/cal-unified-calendars/cal-u
 import { ConferencingModule } from "@/modules/conferencing/conferencing.module";
 import { DestinationCalendarsModule } from "@/modules/destination-calendars/destination-calendars.module";
 import { OAuthClientModule } from "@/modules/oauth-clients/oauth-client.module";
+import { OrganizationsBookingsModule } from "@/modules/organizations/bookings/organizations.bookings.module";
+import { OrganizationsRoutingFormsModule } from "@/modules/organizations/routing-forms/organizations-routing-forms.module";
+import { OrganizationsTeamsBookingsModule } from "@/modules/organizations/teams/bookings/organizations-teams-bookings.module";
+import { OrganizationsUsersBookingsModule } from "@/modules/organizations/users/bookings/organizations-users-bookings.module";
+import { RouterModule } from "@/modules/router/router.module";
 import { StripeModule } from "@/modules/stripe/stripe.module";
+import { TeamsBookingsModule } from "@/modules/teams/bookings/teams-bookings.module";
+import { TeamsSchedulesModule } from "@/modules/teams/schedules/teams-schedules.module";
 import { TimezoneModule } from "@/modules/timezones/timezones.module";
 import { VerifiedResourcesModule } from "@/modules/verified-resources/verified-resources.module";
 import type { MiddlewareConsumer, NestModule } from "@nestjs/common";
@@ -28,6 +35,13 @@ import { WebhooksModule } from "./webhooks/webhooks.module";
     ConferencingModule,
     CalUnifiedCalendarsModule,
     VerifiedResourcesModule,
+    RouterModule,
+    TeamsSchedulesModule,
+    TeamsBookingsModule,
+    OrganizationsTeamsBookingsModule,
+    OrganizationsUsersBookingsModule,
+    OrganizationsBookingsModule,
+    OrganizationsRoutingFormsModule,
   ],
 })
 export class EndpointsModule implements NestModule {
