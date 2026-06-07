@@ -44,4 +44,5 @@ export const ENDPOINTS = [
   "workflows",
   "aiVoiceAgent",
   "routingForms",
+  "sso",
 ] as const;
