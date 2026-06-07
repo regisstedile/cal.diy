@@ -512,9 +512,12 @@ model User {
 
   autoOptInFeatures Boolean @default(false)
 
-  routingForms       App_RoutingForms_Form[] @relation("routing-form")
-  workflows          Workflow[]
-  whitelistWorkflows Boolean                 @default(false)
+  routingForms         App_RoutingForms_Form[] @relation("routing-form")
+  workflows            Workflow[]
+  whitelistWorkflows   Boolean                 @default(false)
+  disableImpersonation Boolean                 @default(false)
+  impersonatedUsers    Impersonations[]        @relation("impersonated_user")
+  impersonatedBy       Impersonations[]        @relation("impersonated_by_user")
 
   @@unique([email])
   @@unique([email, username])
@@ -525,6 +528,18 @@ model User {
   @@index([identityProvider])
   @@index([identityProviderId])
   @@map(name: "users")
+}
+
+model Impersonations {
+  id                 Int      @id @default(autoincrement())
+  createdAt          DateTime @default(now())
+  impersonatedUser   User     @relation("impersonated_user", fields: [impersonatedUserId], references: [id], onDelete: Cascade)
+  impersonatedBy     User     @relation("impersonated_by_user", fields: [impersonatedById], references: [id], onDelete: Cascade)
+  impersonatedUserId Int
+  impersonatedById   Int
+
+  @@index([impersonatedUserId])
+  @@index([impersonatedById])
 }
 
 model NotificationsSubscriptions {
