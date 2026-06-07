@@ -7,6 +7,7 @@ import { loggedInViewerRouter } from "../loggedInViewer/_router";
 import { publicViewerRouter } from "../publicViewer/_router";
 import { timezonesRouter } from "../publicViewer/timezones/_router";
 import { adminRouter } from "./admin/_router";
+import { attributeSyncRouter } from "./attribute-sync/_router";
 import { attributesRouter } from "./attributes/_router";
 import { apiKeysRouter } from "./apiKeys/_router";
 import { appsRouter } from "./apps/_router";
@@ -64,6 +65,7 @@ export const viewerRouter = router({
   googleWorkspace: googleWorkspaceRouter,
   admin: adminRouter,
   attributes: attributesRouter,
+  attributeSync: attributeSyncRouter,
   apiKeys: apiKeysRouter,
   ooo: oooRouter,
   phoneNumber: phoneNumberRouter,
