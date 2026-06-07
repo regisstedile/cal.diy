@@ -1,4 +1,5 @@
 import app_RoutingForms from "@calcom/app-store/routing-forms/trpc-router";
+import { routingFormsRouter } from "./routing-forms/_router";
 import { router } from "../../trpc";
 import { aiVoiceAgentRouter } from "./aiVoiceAgent/_router";
 import { featureFlagRouter } from "../features/_router";
@@ -69,6 +70,7 @@ export const viewerRouter = router({
   holidays: holidaysRouter,
   travelSchedules: travelSchedulesRouter,
   appRoutingForms: app_RoutingForms,
+  routingForms: routingFormsRouter,
   workflows: workflowsRouter,
   aiVoiceAgent: aiVoiceAgentRouter,
 });
