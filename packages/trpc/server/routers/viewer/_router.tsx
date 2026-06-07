@@ -40,6 +40,8 @@ import { workflowsRouter } from "./workflows/_router";
 import { ssoRouter } from "./sso/_router";
 import { delegationCredentialRouter } from "./delegationCredential/_router";
 import { dsyncRouter } from "./dsync/_router";
+import { featureOptInRouter } from "./featureOptIn/_router";
+import { permissionsRouter } from "./pbac/_router";
 
 export const viewerRouter = router({
   loggedInViewerRouter,
@@ -83,4 +85,6 @@ export const viewerRouter = router({
   sso: ssoRouter,
   delegationCredential: delegationCredentialRouter,
   dsync: dsyncRouter,
+  featureOptIn: featureOptInRouter,
+  permissions: permissionsRouter,
 });
