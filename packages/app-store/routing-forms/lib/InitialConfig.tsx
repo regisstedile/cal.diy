@@ -1,3 +1,9 @@
-import QueryBuilderInitialConfig from "../components/react-awesome-query-builder/config/config";
+import {
+  FormFieldsBaseConfig,
+  AttributesBaseConfig,
+} from "../components/react-awesome-query-builder/config/config";
 
-export const InitialConfig = QueryBuilderInitialConfig;
+// InitialConfig is kept for backward compatibility with existing code that imports it
+export const InitialConfig = FormFieldsBaseConfig;
+export const FormFieldsInitialConfig = FormFieldsBaseConfig;
+export const AttributesInitialConfig = AttributesBaseConfig;

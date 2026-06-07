@@ -1,6 +1,7 @@
 import type { App_RoutingForms_Form } from "@calcom/prisma/client";
 import type z from "zod";
 
+import type { AttributeType } from "@calcom/prisma/enums";
 import type { RoutingFormSettings } from "@calcom/prisma/zod-utils";
 
 import type QueryBuilderInitialConfig from "../components/react-awesome-query-builder/config/config";
@@ -56,3 +57,34 @@ export type SerializableRoute =
   | GlobalRoute;
 
 export type OrderedResponses = Response[string][];
+
+export type Attribute = {
+  name: string;
+  slug: string;
+  type: AttributeType;
+  id: string;
+  isWeightsEnabled?: boolean;
+  options: {
+    id: string;
+    value: string;
+    slug: string;
+  }[];
+};
+
+export type AttributeName = string;
+export type AttributeId = string;
+
+export type AttributeOptionValue = {
+  isGroup: boolean;
+  value: string;
+  contains: { id: string; value: string; slug: string }[];
+};
+
+export type AttributeOptionValueWithType = {
+  type: AttributeType;
+  attributeOption: AttributeOptionValue | AttributeOptionValue[];
+};
+
+export type AttributesQueryValue = NonNullable<LocalRoute["attributesQueryValue"]>;
+export type FormFieldsQueryValue = LocalRoute["queryValue"];
+export type AttributeRoutingConfig = NonNullable<LocalRoute["attributeRoutingConfig"]>;

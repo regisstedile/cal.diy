@@ -167,7 +167,7 @@ function resolveFieldTemplateValue(
   }
 
   const { fields, response } = dynamicFieldValueOperands;
-  const field = fields.find((f) => f.id === fieldId);
+  const field = fields.find((f: { id: string }) => f.id === fieldId);
 
   if (!field) {
     // Field definition not found - return original template

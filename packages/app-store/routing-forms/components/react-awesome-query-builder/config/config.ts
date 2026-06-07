@@ -98,3 +98,5 @@ export const AttributesBaseConfig = {
   widgets: getWidgetsWithoutFactory(ConfigFor.Attributes),
   settings: getSettingsWithoutRenderFns(),
 };
+
+export default FormFieldsBaseConfig;

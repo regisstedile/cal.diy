@@ -1,4 +1,7 @@
+import { raqbQueryValueSchema } from "@calcom/lib/raqb/zod";
 import { z } from "zod";
+
+import { routingFormAppDataSchemas } from "./appDataSchemas";
 
 export const zodNonRouterField = z.object({
   id: z.string(),
@@ -35,6 +38,21 @@ export const zodFieldView = z.union([zodNonRouterFieldView, zodRouterFieldView])
 
 export const zodFieldsView = z.array(zodFieldView).optional();
 
+export enum RouteActionType {
+  CustomPageMessage = "customPageMessage",
+  ExternalRedirectUrl = "externalRedirectUrl",
+  EventTypeRedirectUrl = "eventTypeRedirectUrl",
+}
+
+export const routeActionTypeSchema = z.nativeEnum(RouteActionType);
+
+export const attributeRoutingConfigSchema = z
+  .object({
+    skipContactOwner: z.boolean().optional(),
+    salesforce: routingFormAppDataSchemas["salesforce"],
+  })
+  .nullish();
+
 export const zodNonRouterRoute = z.object({
   id: z.string(),
   queryValue: z.object({
@@ -43,6 +61,8 @@ export const zodNonRouterRoute = z.object({
     children1: z.any(),
     properties: z.any(),
   }),
+  attributesQueryValue: raqbQueryValueSchema.optional(),
+  attributeRoutingConfig: attributeRoutingConfigSchema,
   isFallback: z.boolean().optional(),
   action: z.object({
     // TODO: Make it a union type of "customPageMessage" and ..

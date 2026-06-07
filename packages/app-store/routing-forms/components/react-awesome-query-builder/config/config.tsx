@@ -150,3 +150,7 @@ const config = {
   settings,
 };
 export default config;
+
+// Named exports for attribute-aware query builder consumers
+export const FormFieldsBaseConfig = config;
+export const AttributesBaseConfig = config;
