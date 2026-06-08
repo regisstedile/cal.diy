@@ -1,15 +1,15 @@
 # Análise Completa: Fork cal-diy vs REF
 
-**Data:** 2026-06-07  
+**Data:** 2026-06-08  
 **REF:** `docs/cal-fork/cal-diy-opensource/cal-diy-opensource/`  
 **Fork:** `/home/regis/stack/cal-diy` — rodando em `:3005` (Docker `cal-src`)  
-**Total restaurado (Sprints 1–8):** 352 arquivos, 38.651 inserções
+**Total restaurado (Sprints 1–9):** 387 arquivos, 43.465 inserções
 
 ---
 
 ## Resumo Executivo
 
-O fork foi reconstruído em 8 sprints a partir da análise diff entre o repositório base e o REF (código-fonte completo da versão enterprise). Todas as features críticas foram restauradas. Restam apenas gaps em áreas de onboarding, embed e páginas secundárias — não bloqueantes para operação.
+O fork foi reconstruído em 9 sprints a partir da análise diff entre o repositório base e o REF (código-fonte completo da versão enterprise). Todas as features críticas foram restauradas. Restam apenas gaps em áreas de onboarding, embed e páginas secundárias — não bloqueantes para operação.
 
 ---
 
@@ -157,6 +157,27 @@ O fork foi reconstruído em 8 sprints a partir da análise diff entre o reposit�
 
 ---
 
+### Sprint 9 — `7f15b47692`
+**Todos os módulos `apps/web/modules/` ausentes (sub-components + views)**
+
+| Área | Arquivos | Status |
+|------|----------|--------|
+| `modules/ee/common/components/` | BrandColorsForm, CommonSkeletonLoaders | ✅ |
+| `modules/ee/dsync/components/` | ConfigureDirectorySync, CreateDirectory, CreateTeamDialog, DirectoryInfo, GroupNameCell, GroupTeamMappingTable | ✅ |
+| `modules/ee/dsync/views/` | team-dsync-view | ✅ |
+| `modules/ee/sso/components/` | ConnectionInfo, OIDCConnection, SAMLConnection, SSOConfiguration | ✅ |
+| `modules/ee/sso/views/` | orgs-sso-view, user-sso-view | ✅ |
+| `modules/ee/organizations/components/` | DisableGuestBookingEmailsSetting, MemberListItem, OrgAutoJoinSetting, OtherTeamList, OtherTeamListItem, OtherTeamsListing | ✅ |
+| `modules/ee/organizations/attributes/` | DeleteAttributeModal, ListSkeleton, attributes-list-view | ✅ |
+| `modules/ee/organizations/privacy/` | blocklist-table | ✅ |
+| `modules/ee/organizations/` | features-view, guest-notifications, privacy, other-team-members-view, other-team-profile-view, delegationCredential | ✅ |
+| `modules/ee/teams/components/` | MakeTeamPrivateSwitch, MemberInvitationModal | ✅ |
+| `modules/feature-opt-in/` | FeaturesSettings, useOrganizationFeatureOptIn | ✅ |
+
+**35 arquivos, 4.814 inserções**
+
+---
+
 ### Sprint 8 — `d7f354db69`
 **Org admin pages, Roles PBAC UI, featureOptIn + pbac tRPC routers**
 
@@ -230,6 +251,8 @@ O fork foi reconstruído em 8 sprints a partir da análise diff entre o reposit�
 | E2E Organizations | 7 testes passando |
 | Workflows | Feature restaurada + integrada no booking flow |
 | AI Voice Agent | Endpoint registrado |
+| modules/ee/ views | dsync, SSO, org admin views, delegation cred, attributes-list, features, privacy, guest-notifications, other-team |
+| modules/feature-opt-in/ | FeaturesSettings + useOrganizationFeatureOptIn hook |
 
 ---
 
@@ -291,7 +314,7 @@ O fork foi reconstruído em 8 sprints a partir da análise diff entre o reposit�
 | Item | Status |
 |------|--------|
 | Container `cal-src` `:3005` | Rodando em pre-Sprint-4 state |
-| Sprints 1–8 no código | ✅ Commitados |
+| Sprints 1–9 no código | ✅ Commitados |
 | Docker rebuild necessário | ⚠️ Pendente para cal.allged.com.br |
 | cal-api-v2 `:5555` | Rodando |
 | Traefik proxy | Configurado |
@@ -307,6 +330,7 @@ docker compose -f docker-compose.yml up --build -d cal
 ## Estrutura de Commits
 
 ```
+7f15b47692  Sprint 9: add all missing apps/web/modules/ view files and sub-components
 d7f354db69  feat(sprint-8): org admin pages, roles PBAC, featureOptIn + pbac routers
 16c3d65b84  fix(dsync): verify directoryId ownership before delete  ← SECURITY
 e417e73a7e  Sprint 7: saml.ts canAccessOrganization, dsync router, teams settings pages
