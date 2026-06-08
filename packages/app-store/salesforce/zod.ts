@@ -8,6 +8,13 @@ export const writeToBookingEntry = z.object({
   whenToWrite: z.nativeEnum(WhenToWriteToRecord),
 });
 
+export const routingFormOptions = z
+  .object({
+    rrSkipToAccountLookupField: z.boolean().optional(),
+    rrSKipToAccountLookupFieldName: z.string().optional(),
+  })
+  .optional();
+
 export const writeToRecordEntrySchema = z.object({
   field: z.string(),
   fieldType: z.nativeEnum(SalesforceFieldType),
