@@ -2297,6 +2297,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@calcom/ee@workspace:packages/features/ee":
+  version: 0.0.0-use.local
+  resolution: "@calcom/ee@workspace:packages/features/ee"
+  languageName: unknown
+  linkType: soft
+
 "@calcom/eightxeight@workspace:packages/app-store/eightxeight":
   version: 0.0.0-use.local
   resolution: "@calcom/eightxeight@workspace:packages/app-store/eightxeight"

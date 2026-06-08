@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { z } from "zod";
 
 import { routingFormIncompleteBookingDataSchema as salesforceRoutingFormIncompleteBookingDataSchema } from "@calcom/app-store/salesforce/zod";

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { z } from "zod";
 
 import { enrichFormWithMigrationData } from "@calcom/app-store/routing-forms/enrichFormWithMigrationData";

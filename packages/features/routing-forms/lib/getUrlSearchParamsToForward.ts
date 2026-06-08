@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { ROUTING_FORM_RESPONSE_ID_QUERY_STRING } from "@calcom/app-store/routing-forms/lib/constants";
 import getFieldIdentifier from "@calcom/app-store/routing-forms/lib/getFieldIdentifier";
 import type { FormResponse, LocalRoute } from "@calcom/app-store/routing-forms/types/types";

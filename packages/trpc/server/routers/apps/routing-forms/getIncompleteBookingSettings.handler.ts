@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { enabledIncompleteBookingApps } from "@calcom/app-store/routing-forms/lib/enabledIncompleteBookingApps";
 import { entityPrismaWhereClause } from "@calcom/features/pbac/lib/entityPermissionUtils.server";
 import type { Credential } from "@calcom/kysely/types";

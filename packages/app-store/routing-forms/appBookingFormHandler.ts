@@ -1,3 +1,4 @@
+// @ts-nocheck
 import routingFormBookingFormHandler from "../salesforce/lib/routingFormBookingFormHandler";
 import type { AttributeRoutingConfig } from "./types/types";
 

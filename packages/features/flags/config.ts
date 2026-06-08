@@ -28,6 +28,7 @@ export type AppFlags = {
   "sink-shortener": boolean;
   insights: boolean;
   "cal-ai-voice-agents": boolean;
+  pbac: boolean;
 };
 
 export type TeamFeatures = Record<keyof AppFlags, boolean>;

@@ -5,6 +5,7 @@ import type { CalendarEvent } from "@calcom/types/Calendar";
 import { formatCalEvent } from "@calcom/lib/formatCalendarEvent";
 
 import BrokenIntegrationEmail from "./templates/broken-integration-email";
+import DelegationCredentialDisabledEmail from "./templates/delegation-credential-disabled-email";
 import DisabledAppEmail from "./templates/disabled-app-email";
 import SlugReplacementEmail from "./templates/slug-replacement-email";
 
@@ -40,6 +41,28 @@ export const sendDisabledAppEmail = async ({
   eventTypeId?: number;
 }) => {
   await sendEmail(() => new DisabledAppEmail(email, appName, appType, t, title, eventTypeId));
+};
+
+export const sendDelegationCredentialDisabledEmail = async ({
+  recipientEmail,
+  recipientName,
+  calendarAppName,
+  conferencingAppName,
+}: {
+  recipientEmail: string;
+  recipientName?: string;
+  calendarAppName: string;
+  conferencingAppName: string;
+}) => {
+  await sendEmail(
+    () =>
+      new DelegationCredentialDisabledEmail({
+        recipientEmail,
+        recipientName,
+        calendarAppName,
+        conferencingAppName,
+      })
+  );
 };
 
 export const sendSlugReplacementEmail = async ({

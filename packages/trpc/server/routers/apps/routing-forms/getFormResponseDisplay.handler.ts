@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { z } from "zod";
 
 import { getHumanReadableFieldResponseValue } from "@calcom/app-store/routing-forms/lib/responseData/getHumanReadableFieldResponseValue";

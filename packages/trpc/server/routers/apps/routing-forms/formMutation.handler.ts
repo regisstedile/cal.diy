@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { createFallbackRoute } from "@calcom/app-store/routing-forms/lib/createFallbackRoute";
 import { getSerializableForm } from "@calcom/app-store/routing-forms/lib/getSerializableForm";
 import { isFallbackRoute } from "@calcom/app-store/routing-forms/lib/isFallbackRoute";

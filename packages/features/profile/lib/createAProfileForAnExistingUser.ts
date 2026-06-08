@@ -1,4 +1,6 @@
 import { getOrgUsernameFromEmail } from "@calcom/features/auth/signup/utils/getOrgUsernameFromEmail";
+import { getParsedTeam } from "@calcom/features/ee/teams/lib/getParsedTeam";
+import { TeamRepository } from "@calcom/features/ee/teams/repositories/TeamRepository";
 import { ProfileRepository } from "@calcom/features/profile/repositories/ProfileRepository";
 import { UserRepository } from "@calcom/features/users/repositories/UserRepository";
 import { WEBAPP_URL } from "@calcom/lib/constants";
@@ -20,10 +22,11 @@ export const createAProfileForAnExistingUser = async ({
   organizationId: number;
 }) => {
   const teamRepo = new TeamRepository(prisma);
-  const org = await teamRepo.findById({ id: organizationId });
-  if (!org) {
+  const rawOrg = await teamRepo.findById({ id: organizationId });
+  if (!rawOrg) {
     throw new Error(`Organization with id ${organizationId} not found`);
   }
+  const org = getParsedTeam(rawOrg);
 
   const existingProfile = await ProfileRepository.findByUserIdAndOrgId({
     userId: user.id,

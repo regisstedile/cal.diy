@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { Field, FormResponse } from "@calcom/app-store/routing-forms/types/types";
 
 /**

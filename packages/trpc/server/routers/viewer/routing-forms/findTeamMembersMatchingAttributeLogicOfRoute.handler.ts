@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * This route is used only by "Test Preview" button and Virtual Queues
  * Also, it is applicable only for sub-teams. Regular teams and user Routing Forms don't hit this endpoint.

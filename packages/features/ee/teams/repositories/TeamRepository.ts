@@ -7,7 +7,10 @@ export class TeamRepository {
   constructor(private db: PrismaLike = defaultPrisma) {}
 
   async findById({ id }: { id: number }) {
-    return this.db.team.findUnique({ where: { id } });
+    return this.db.team.findUnique({
+      where: { id },
+      include: { organizationSettings: true },
+    });
   }
 
   async findOrganization({ teamId, userId: _userId }: { teamId?: number | null; userId?: number }) {
@@ -46,5 +49,13 @@ export class TeamRepository {
 
   async findAllByParentId({ parentId, select: _select }: { parentId: number; select?: Record<string, boolean> }) {
     return this.db.team.findMany({ where: { parentId } });
+  }
+
+  async findParentOrganizationByTeamId(teamId: number) {
+    const team = await this.db.team.findUnique({
+      where: { id: teamId },
+      select: { parent: { select: { id: true } } },
+    });
+    return team?.parent;
   }
 }
