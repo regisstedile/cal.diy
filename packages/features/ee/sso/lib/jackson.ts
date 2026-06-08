@@ -1,5 +1,7 @@
+import process from "node:process";
 import type {
   IConnectionAPIController,
+  IDirectorySyncController,
   IOAuthController,
   ISPSSOConfig,
   JacksonOption,
@@ -7,13 +9,12 @@ import type {
   OAuthTokenReq,
   SAMLResponsePayload,
 } from "@boxyhq/saml-jackson";
-
 import { WEBAPP_URL } from "@calcom/lib/constants";
-
 import { clientSecretVerifier, oidcPath, samlAudience, samlDatabaseUrl, samlPath } from "./saml";
 
-export type { OAuthReq, OAuthTokenReq, SAMLResponsePayload };
+export type { OAuthTokenReq, OAuthReq, SAMLResponsePayload };
 
+// Set the required options. Refer to https://github.com/boxyhq/jackson#configuration for the full list
 const opts: JacksonOption = {
   externalUrl: WEBAPP_URL,
   samlPath,
@@ -31,26 +32,32 @@ const opts: JacksonOption = {
 };
 
 declare global {
-  // eslint-disable-next-line no-var
+  /* eslint-disable no-var */
   var connectionController: IConnectionAPIController | undefined;
-  // eslint-disable-next-line no-var
   var oauthController: IOAuthController | undefined;
-  // eslint-disable-next-line no-var
   var samlSPConfig: ISPSSOConfig | undefined;
+  var dsyncController: IDirectorySyncController | undefined;
+  /* eslint-enable no-var */
 }
 
 export default async function init() {
-  if (!globalThis.connectionController || !globalThis.oauthController || !globalThis.samlSPConfig) {
-    const { controllers } = await import("@boxyhq/saml-jackson");
-    const ret = await controllers(opts);
+  if (
+    !globalThis.connectionController ||
+    !globalThis.oauthController ||
+    !globalThis.samlSPConfig ||
+    !globalThis.dsyncController
+  ) {
+    const ret = await (await import("@boxyhq/saml-jackson")).controllers(opts);
     globalThis.connectionController = ret.connectionAPIController;
     globalThis.oauthController = ret.oauthController;
     globalThis.samlSPConfig = ret.spConfig;
+    globalThis.dsyncController = ret.directorySyncController;
   }
 
   return {
-    connectionController: globalThis.connectionController as IConnectionAPIController,
-    oauthController: globalThis.oauthController as IOAuthController,
-    samlSPConfig: globalThis.samlSPConfig as ISPSSOConfig,
+    connectionController: globalThis.connectionController,
+    oauthController: globalThis.oauthController,
+    samlSPConfig: globalThis.samlSPConfig,
+    dsyncController: globalThis.dsyncController,
   };
 }

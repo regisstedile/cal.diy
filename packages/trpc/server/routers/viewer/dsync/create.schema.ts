@@ -1,9 +1,9 @@
 import { z } from "zod";
 
 export const ZCreateInputSchema = z.object({
-  organizationId: z.union([z.number(), z.null()]),
-  name: z.string(),
-  provider: z.string(),
+  organizationId: z.number().int().positive(),
+  name: z.string().trim().min(1),
+  provider: z.string().trim().min(1),
 });
 
 export type ZCreateInputSchema = z.infer<typeof ZCreateInputSchema>;

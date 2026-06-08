@@ -134,7 +134,7 @@ export function useBookingListColumns({
               isToday={isToday}
               loggedInUser={{
                 userId: user?.id,
-                userTimeZone: user?.timeZone,
+                userTimeZone: user?.timeZone ?? booking.user?.timeZone,
                 userTimeFormat: user?.timeFormat,
                 userEmail: user?.email,
               }}
