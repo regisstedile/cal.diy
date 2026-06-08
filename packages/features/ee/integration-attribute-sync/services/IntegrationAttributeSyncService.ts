@@ -55,4 +55,8 @@ export class IntegrationAttributeSyncService {
   ): Promise<{ app?: { slug: string }; type: string } | null> {
     return null;
   }
+
+  async getEnabledAppCredentials(_orgId: number): Promise<{ id: number; type: string; appId?: string | null }[]> {
+    return [];
+  }
 }
