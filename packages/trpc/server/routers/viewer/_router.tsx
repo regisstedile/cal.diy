@@ -82,7 +82,7 @@ export const viewerRouter = router({
   routingForms: routingFormsRouter,
   workflows: workflowsRouter,
   aiVoiceAgent: aiVoiceAgentRouter,
-  sso: ssoRouter,
+  saml: ssoRouter,
   delegationCredential: delegationCredentialRouter,
   dsync: dsyncRouter,
   featureOptIn: featureOptInRouter,

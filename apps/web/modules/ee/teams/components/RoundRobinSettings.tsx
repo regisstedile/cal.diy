@@ -1,3 +1,3 @@
-export default function RoundRobinSettings(_props: unknown) {
+export default function RoundRobinSettings(_props: Record<string, unknown>) {
   return null;
 }

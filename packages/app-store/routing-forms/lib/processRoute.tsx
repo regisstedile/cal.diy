@@ -45,10 +45,11 @@ export function processRoute({
       return false;
     }
     const state = {
-      tree: QbUtils.checkTree(QbUtils.loadTree(route.queryValue), queryBuilderConfig),
+      tree: QbUtils.checkTree(QbUtils.loadTree(route.queryValue), queryBuilderConfig as any),
       config: queryBuilderConfig,
     };
-    const jsonLogicQuery = QbUtils.jsonLogicFormat(state.tree, state.config);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const jsonLogicQuery = QbUtils.jsonLogicFormat(state.tree, state.config as any);
     const logic = jsonLogicQuery.logic;
     let result = false;
     const responseValues: Record<string, Response[string]["value"]> = {};
@@ -77,4 +78,44 @@ export function processRoute({
 
   // Without type assertion, it is never. See why https://github.com/microsoft/TypeScript/issues/16928
   return decidedAction as Route["action"];
+}
+
+export function findMatchingRoute({
+  form,
+  response,
+}: {
+  form: SerializableForm<App_RoutingForms_Form>;
+  response: Record<string, Pick<Response[string], "value">>;
+}): z.infer<typeof zodNonRouterRoute> | null {
+  const queryBuilderConfig = getQueryBuilderConfig(form);
+  const routes = form.routes || [];
+  const fallbackRoute = routes.find(isFallbackRoute);
+
+  if (!fallbackRoute) return null;
+
+  const routesWithFallbackInEnd = routes
+    .flatMap((r) => (isRouter(r) ? r.routes : r))
+    .filter((route) => route && !isFallbackRoute(route))
+    .concat([fallbackRoute]) as z.infer<typeof zodNonRouterRoute>[];
+
+  for (const route of routesWithFallbackInEnd) {
+    if (!route) continue;
+    const state = {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      tree: QbUtils.checkTree(QbUtils.loadTree(route.queryValue), queryBuilderConfig as any),
+      config: queryBuilderConfig,
+    };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const jsonLogicQuery = QbUtils.jsonLogicFormat(state.tree, state.config as any);
+    const logic = jsonLogicQuery.logic;
+    const responseValues: Record<string, Response[string]["value"]> = {};
+    for (const [uuid, { value }] of Object.entries(response)) {
+      responseValues[uuid] = value;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const result = logic ? jsonLogic.apply(logic as any, responseValues) : true;
+    if (result) return route;
+  }
+
+  return null;
 }

@@ -1,4 +1,4 @@
-export function FullscreenUpgradeBannerForRolesAndPermissions(_props: unknown) {
+export function FullscreenUpgradeBannerForRolesAndPermissions(_props: Record<string, unknown>) {
   return null;
 }
 

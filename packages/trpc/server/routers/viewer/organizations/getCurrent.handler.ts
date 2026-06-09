@@ -19,6 +19,7 @@ export const getCurrentHandler = async ({ ctx }: GetCurrentHandlerOptions) => {
   return {
     ...membership.team,
     role: membership.role,
+    user: { role: membership.role, accepted: membership.accepted },
     canUpdate: membership.role === MembershipRole.OWNER || membership.role === MembershipRole.ADMIN,
   };
 };

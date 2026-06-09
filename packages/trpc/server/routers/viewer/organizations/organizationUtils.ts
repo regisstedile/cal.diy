@@ -10,6 +10,7 @@ export const organizationSelect = {
   logoUrl: true,
   bio: true,
   isPlatform: true,
+  isPrivate: true,
   organizationSettings: true,
 } as const;
 
@@ -56,6 +57,7 @@ export const findCurrentOrganizationMembership = async ({ userId }: { userId: nu
     },
     select: {
       role: true,
+      accepted: true,
       team: {
         select: organizationSelect,
       },

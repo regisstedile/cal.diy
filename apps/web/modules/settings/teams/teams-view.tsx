@@ -261,7 +261,7 @@ export default function TeamsView() {
                       event.preventDefault();
                       inviteMemberMutation.mutate({
                         teamId: selectedTeam.id,
-                        email: inviteEmail,
+                        usernameOrEmail: inviteEmail,
                         role: inviteRole,
                       });
                     }}>

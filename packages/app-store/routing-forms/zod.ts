@@ -55,6 +55,7 @@ export const attributeRoutingConfigSchema = z
 
 export const zodNonRouterRoute = z.object({
   id: z.string(),
+  name: z.string().optional(),
   queryValue: z.object({
     id: z.string().optional(),
     type: z.union([z.literal("group"), z.literal("switch_group")]),
@@ -72,6 +73,7 @@ export const zodNonRouterRoute = z.object({
       z.literal("eventTypeRedirectUrl"),
     ]),
     value: z.string(),
+    eventTypeId: z.number().optional(),
   }),
 });
 

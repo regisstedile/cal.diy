@@ -128,7 +128,8 @@ const Result = ({ formId, jsonLogicQuery }: { formId: string; jsonLogicQuery: Js
 const getInitialQuery = (config: ReturnType<typeof getQueryBuilderConfig>) => {
   const uuid = QbUtils.uuid();
   const queryValue: JsonTree = { id: uuid, type: "group" } as JsonTree;
-  const tree = QbUtils.checkTree(QbUtils.loadTree(queryValue), config);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const tree = QbUtils.checkTree(QbUtils.loadTree(queryValue), config as any);
   return {
     state: { tree, config },
     queryValue,
@@ -141,14 +142,16 @@ const Reporter = ({ form }: { form: inferSSRProps<typeof getServerSideProps>["fo
   const [jsonLogicQuery, setJsonLogicQuery] = useState<JsonLogicResult | null>(null);
   const onChange = (immutableTree: ImmutableTree, config: QueryBuilderUpdatedConfig) => {
     const jsonTree = QbUtils.getTree(immutableTree);
-    setQuery(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    setQuery((() => {
       const newValue = {
         state: { tree: immutableTree, config: config },
         queryValue: jsonTree,
       };
-      setJsonLogicQuery(QbUtils.jsonLogicFormat(newValue.state.tree, config));
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      setJsonLogicQuery(QbUtils.jsonLogicFormat(newValue.state.tree, config as any));
       return newValue;
-    });
+    }) as any);
   };
 
   const renderBuilder = useCallback(
@@ -164,7 +167,7 @@ const Reporter = ({ form }: { form: inferSSRProps<typeof getServerSideProps>["fo
   return (
     <div className="cal-query-builder bg-default fixed inset-0 w-full overflow-scroll pt-12 ltr:mr-2 rtl:ml-2 sm:pt-0">
       <Query
-        {...config}
+        {...(config as any)}
         value={query.state.tree}
         onChange={(immutableTree, config) => {
           onChange(immutableTree, config as QueryBuilderUpdatedConfig);

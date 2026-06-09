@@ -62,7 +62,7 @@ const OtherTeamProfileView = () => {
       showToast(err.message, "error");
     },
     async onSuccess() {
-      await utils.viewer.teams.get.invalidate();
+      await utils.viewer.teams.getById.invalidate();
       if (team?.slug) {
         revalidateTeamDataCache({
           teamSlug: team.slug,

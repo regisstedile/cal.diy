@@ -355,6 +355,7 @@ export class OrganizationRepository {
         name: true,
         logoUrl: true,
         slug: true,
+        isPrivate: true,
       },
     });
 

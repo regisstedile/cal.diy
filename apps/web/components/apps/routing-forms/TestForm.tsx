@@ -10,7 +10,7 @@ import { TeamMembersMatchResult } from "@calcom/app-store/routing-forms/componen
 import type { MembersMatchResultType } from "@calcom/app-store/routing-forms/components/_components/TeamMembersMatchResult";
 import { findMatchingRoute } from "@calcom/app-store/routing-forms/lib/processRoute";
 import { substituteVariables } from "@calcom/app-store/routing-forms/lib/substituteVariables";
-import type { RoutingForm, FormResponse, NonRouterRoute } from "@calcom/app-store/routing-forms/types/types";
+import type { RoutingForm, Response as FormResponse, NonRouterRoute } from "@calcom/app-store/routing-forms/types/types";
 import { useOrgBranding } from "@calcom/features/ee/organizations/context/provider";
 import { WEBSITE_URL } from "@calcom/lib/constants";
 import { useCompatSearchParams } from "@calcom/lib/hooks/useCompatSearchParams";
@@ -22,7 +22,7 @@ import { Button } from "@calcom/ui/components/button";
 import { Dialog, DialogContent, DialogHeader, DialogFooter } from "@calcom/ui/components/dialog";
 import { showToast } from "@calcom/ui/components/toast";
 
-import type { getServerSidePropsForSingleFormView } from "@lib/apps/routing-forms/[...pages]/getServerSidePropsSingleForm";
+import type { getServerSidePropsForSingleFormView } from "@calcom/app-store/routing-forms/components/getServerSidePropsSingleForm";
 
 import { TRPCClientError } from "@trpc/react-query";
 

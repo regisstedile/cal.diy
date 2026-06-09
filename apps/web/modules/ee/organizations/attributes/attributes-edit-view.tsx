@@ -1,3 +1,3 @@
-export default function AttributesEditView(_props: unknown) {
+export default function AttributesEditView(_props: Record<string, unknown>) {
   return null;
 }

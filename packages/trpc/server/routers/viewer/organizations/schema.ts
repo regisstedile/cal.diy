@@ -14,9 +14,19 @@ export const ZCreateOrganizationInputSchema = z.object({
 });
 
 export const ZUpdateOrganizationInputSchema = z.object({
-  name: z.string().trim().min(2).max(80),
-  slug: slugSchema,
+  name: z.string().trim().min(2).max(80).optional(),
+  slug: slugSchema.optional(),
   bio: z.string().trim().max(500).optional().nullable(),
+  orgAutoJoinOnSignup: z.boolean().optional(),
+  disableAttendeeConfirmationEmail: z.boolean().optional(),
+  disableAttendeeCancellationEmail: z.boolean().optional(),
+  disableAttendeeRescheduledEmail: z.boolean().optional(),
+  disableAttendeeRequestEmail: z.boolean().optional(),
+  disableAttendeeReassignedEmail: z.boolean().optional(),
+  disableAttendeeAwaitingPaymentEmail: z.boolean().optional(),
+  disableAttendeeRescheduleRequestEmail: z.boolean().optional(),
+  disableAttendeeLocationChangeEmail: z.boolean().optional(),
+  disableAttendeeNewEventEmail: z.boolean().optional(),
 });
 
 export const ZListMembersInputSchema = z.object({

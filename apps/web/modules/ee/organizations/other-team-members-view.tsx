@@ -69,7 +69,7 @@ export const memberInvitationModalRef = {
 export const TeamMembersCTA = () => {
   const { t } = useLocale();
   const session = useSession();
-  const { data: currentOrg } = trpc.viewer.organizations.listCurrent.useQuery(undefined, {
+  const { data: currentOrg } = trpc.viewer.organizations.getCurrent.useQuery(undefined, {
     enabled: !!session.data?.user?.org,
   });
 
@@ -208,7 +208,7 @@ const MembersView = () => {
                   },
                   {
                     onSuccess: async (data) => {
-                      await utils.viewer.teams.get.invalidate();
+                      await utils.viewer.teams.getById.invalidate();
                       setShowMemberInvitationModal(false);
 
                       if (Array.isArray(data.usernameOrEmail)) {

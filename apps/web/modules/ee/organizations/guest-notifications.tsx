@@ -21,7 +21,7 @@ const SkeletonLoader = () => {
 };
 
 const GuestNotificationsView = ({ permissions }: { permissions: { canRead: boolean; canEdit: boolean } }) => {
-  const { data: currentOrg, isPending } = trpc.viewer.organizations.listCurrent.useQuery();
+  const { data: currentOrg, isPending } = trpc.viewer.organizations.getCurrent.useQuery();
   const isInviteOpen = !currentOrg?.user.accepted;
   const isDisabled = !permissions.canEdit || isInviteOpen;
 

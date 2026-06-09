@@ -1,3 +1,3 @@
-export default function InviteLinkSettingsModal(_props: { isOpen: boolean; onExit: () => void; teamId: number }) {
+export default function InviteLinkSettingsModal(_props: Record<string, unknown>) {
   return null;
 }

@@ -1,3 +1,3 @@
-export default function InternalNotePresetsView(_props: { teamId: number }) {
+export default function InternalNotePresetsView(_props: Record<string, unknown>) {
   return null;
 }

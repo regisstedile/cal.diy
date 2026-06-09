@@ -27,6 +27,7 @@ const initialData: AppFlags = {
   "signup-watchlist-review": false,
   "sink-shortener": false,
   insights: false,
+  pbac: false,
 };
 
 export function useFlags(): Partial<AppFlags> {

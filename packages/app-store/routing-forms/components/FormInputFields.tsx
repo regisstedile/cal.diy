@@ -1,5 +1,5 @@
 import type { App_RoutingForms_Form } from "@calcom/prisma/client";
-import type { Dispatch, SetStateAction } from "react";
+import type { ComponentType, Dispatch, SetStateAction } from "react";
 import getFieldIdentifier from "../lib/getFieldIdentifier";
 import { getQueryBuilderConfig } from "../lib/getQueryBuilderConfig";
 import isRouterLinkedField from "../lib/isRouterLinkedField";
@@ -28,7 +28,7 @@ export default function FormInputFields(props: Props) {
         if (!("factory" in widget)) {
           return null;
         }
-        const Component = widget.factory;
+        const Component = widget.factory as ComponentType<Record<string, unknown>>;
 
         const optionValues = field.selectText?.trim().split("\n");
         const options = optionValues?.map((value) => {
@@ -48,9 +48,6 @@ export default function FormInputFields(props: Props) {
             <Component
               value={response[field.id]?.value ?? ""}
               placeholder={field.placeholder ?? ""}
-              // required property isn't accepted by query-builder types
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              /* @ts-expect-error */
               required={!!field.required}
               listValues={options}
               data-testid={`form-field-${getFieldIdentifier(field)}`}

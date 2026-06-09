@@ -357,7 +357,7 @@ const Route = ({
               <>
                 <Divider className="mb-6 mt-3" />
                 <Query
-                  {...config}
+                  {...(config as any)}
                   value={route.state.tree}
                   onChange={(immutableTree, config) => {
                     onChange(route, immutableTree, config as QueryBuilderUpdatedConfig);
@@ -380,7 +380,8 @@ const deserializeRoute = (
   return {
     ...route,
     state: {
-      tree: QbUtils.checkTree(QbUtils.loadTree(route.queryValue), config),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      tree: QbUtils.checkTree(QbUtils.loadTree(route.queryValue), config as any),
       config: config,
     },
   };
@@ -593,7 +594,8 @@ const Routes = ({
                 {
                   ...newEmptyRoute,
                   state: {
-                    tree: QbUtils.checkTree(QbUtils.loadTree(newEmptyRoute.queryValue), config),
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    tree: QbUtils.checkTree(QbUtils.loadTree(newEmptyRoute.queryValue), config as any),
                     config,
                   },
                 },

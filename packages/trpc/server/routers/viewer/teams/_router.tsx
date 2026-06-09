@@ -1,5 +1,5 @@
 import type { PrismaClient } from "@calcom/prisma";
-import { MembershipRole, SchedulingType } from "@calcom/prisma/enums";
+import { CreationSource, MembershipRole, SchedulingType } from "@calcom/prisma/enums";
 import { router } from "@calcom/trpc/server/trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
@@ -20,6 +20,22 @@ const teamSelect = {
   bio: true,
   logoUrl: true,
   createdAt: true,
+  parentId: true,
+  isPrivate: true,
+  bookingLimits: true,
+  includeManagedEventsInLimits: true,
+  theme: true,
+  hideBranding: true,
+  hideBookATeamMember: true,
+  hideTeamProfileLink: true,
+  brandColor: true,
+  darkBrandColor: true,
+  metadata: true,
+  parent: {
+    select: {
+      slug: true,
+    },
+  },
   _count: {
     select: {
       members: true,
@@ -54,10 +70,22 @@ const createTeamSchema = z.object({
   bio: z.string().trim().max(500).optional().nullable(),
 });
 
-const updateTeamSchema = teamIdSchema.extend({
-  name: z.string().trim().min(1).max(64),
-  slug: slugSchema,
+const updateTeamSchema = z.object({
+  id: z.number(),
+  name: z.string().trim().min(1).max(64).optional(),
+  slug: slugSchema.optional(),
   bio: z.string().trim().max(500).optional().nullable(),
+  logo: z.string().nullable().optional(),
+  logoUrl: z.string().nullable().optional(),
+  bookingLimits: z.any().optional(),
+  includeManagedEventsInLimits: z.boolean().optional(),
+  hideBranding: z.boolean().optional(),
+  hideBookATeamMember: z.boolean().optional(),
+  hideTeamProfileLink: z.boolean().optional(),
+  theme: z.string().nullable().optional(),
+  brandColor: z.string().optional(),
+  darkBrandColor: z.string().optional(),
+  isPrivate: z.boolean().optional(),
 });
 
 const listMembersSchema = teamIdSchema.extend({
@@ -65,8 +93,10 @@ const listMembersSchema = teamIdSchema.extend({
 });
 
 const inviteMemberSchema = teamIdSchema.extend({
-  email: z.string().email(),
-  role: z.enum([MembershipRole.MEMBER, MembershipRole.ADMIN]).default(MembershipRole.MEMBER),
+  usernameOrEmail: z.union([z.string(), z.array(z.string())]),
+  role: z.enum([MembershipRole.MEMBER, MembershipRole.ADMIN, MembershipRole.OWNER]).default(MembershipRole.MEMBER),
+  language: z.string().optional(),
+  creationSource: z.nativeEnum(CreationSource).optional(),
 });
 
 const userMemberSchema = teamIdSchema.extend({
@@ -128,6 +158,7 @@ async function getMembershipOrThrow({
     select: {
       id: true,
       role: true,
+      accepted: true,
       team: {
         select: teamSelect,
       },
@@ -277,9 +308,22 @@ export const teamsRouter = router({
       userId: ctx.user.id,
     });
 
+    const isAdminOrOwner =
+      membership.role === MembershipRole.ADMIN || membership.role === MembershipRole.OWNER;
+
+    const inviteToken = isAdminOrOwner
+      ? await ctx.prisma.verificationToken.findFirst({
+          where: { teamId: input.teamId },
+          select: { token: true, expiresInDays: true },
+        })
+      : null;
+
     return {
       ...membership.team,
+      logo: membership.team.logoUrl,
       role: membership.role,
+      membership: { role: membership.role, accepted: membership.accepted },
+      inviteToken: inviteToken ?? null,
     };
   }),
 
@@ -331,7 +375,7 @@ export const teamsRouter = router({
   update: authedProcedure.input(updateTeamSchema).mutation(async ({ ctx, input }) => {
     const membership = await getMembershipOrThrow({
       prisma: ctx.prisma,
-      teamId: input.teamId,
+      teamId: input.id,
       userId: ctx.user.id,
     });
 
@@ -339,15 +383,27 @@ export const teamsRouter = router({
       throw new TRPCError({ code: "FORBIDDEN", message: "Only team owners and admins can edit a team." });
     }
 
-    const slug = normalizeSlug(input.slug);
-    await assertTeamSlugAvailable({ prisma: ctx.prisma, slug, currentTeamId: input.teamId });
+    const slug = input.slug ? normalizeSlug(input.slug) : undefined;
+    if (slug) {
+      await assertTeamSlugAvailable({ prisma: ctx.prisma, slug, currentTeamId: input.id });
+    }
 
     return ctx.prisma.team.update({
-      where: { id: input.teamId },
+      where: { id: input.id },
       data: {
-        name: input.name,
-        slug,
-        bio: input.bio || null,
+        ...(input.name !== undefined && { name: input.name }),
+        ...(slug !== undefined && { slug }),
+        ...(input.bio !== undefined && { bio: input.bio || null }),
+        ...((input.logo !== undefined || input.logoUrl !== undefined) && { logoUrl: input.logoUrl ?? input.logo }),
+        ...(input.bookingLimits !== undefined && { bookingLimits: input.bookingLimits }),
+        ...(input.includeManagedEventsInLimits !== undefined && { includeManagedEventsInLimits: input.includeManagedEventsInLimits }),
+        ...(input.hideBranding !== undefined && { hideBranding: input.hideBranding }),
+        ...(input.hideBookATeamMember !== undefined && { hideBookATeamMember: input.hideBookATeamMember }),
+        ...(input.hideTeamProfileLink !== undefined && { hideTeamProfileLink: input.hideTeamProfileLink }),
+        ...(input.theme !== undefined && { theme: input.theme }),
+        ...(input.brandColor !== undefined && { brandColor: input.brandColor }),
+        ...(input.darkBrandColor !== undefined && { darkBrandColor: input.darkBrandColor }),
+        ...(input.isPrivate !== undefined && { isPrivate: input.isPrivate }),
       },
       select: teamSelect,
     });
@@ -411,56 +467,40 @@ export const teamsRouter = router({
       throw new TRPCError({ code: "FORBIDDEN", message: "Only team owners and admins can invite members." });
     }
 
-    const user = await ctx.prisma.user.findFirst({
-      where: {
-        email: {
-          equals: input.email,
-          mode: "insensitive",
-        },
-      },
-      select: {
-        id: true,
-      },
-    });
+    const emails = Array.isArray(input.usernameOrEmail)
+      ? input.usernameOrEmail
+      : [input.usernameOrEmail];
 
-    if (!user) {
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: "User not found. Create the user first, then invite.",
+    let numUsersInvited = 0;
+
+    for (const emailOrUsername of emails) {
+      const user = await ctx.prisma.user.findFirst({
+        where: {
+          OR: [
+            { email: { equals: emailOrUsername, mode: "insensitive" } },
+            { username: { equals: emailOrUsername, mode: "insensitive" } },
+          ],
+        },
+        select: { id: true },
       });
+
+      if (!user) continue;
+
+      const existingMembership = await ctx.prisma.membership.findUnique({
+        where: { userId_teamId: { userId: user.id, teamId: input.teamId } },
+        select: { id: true },
+      });
+
+      if (existingMembership) continue;
+
+      await ctx.prisma.membership.create({
+        data: { userId: user.id, teamId: input.teamId, accepted: false, role: input.role },
+      });
+
+      numUsersInvited++;
     }
 
-    const existingMembership = await ctx.prisma.membership.findUnique({
-      where: {
-        userId_teamId: {
-          userId: user.id,
-          teamId: input.teamId,
-        },
-      },
-      select: {
-        id: true,
-        accepted: true,
-      },
-    });
-
-    if (existingMembership) {
-      throw new TRPCError({
-        code: "CONFLICT",
-        message: existingMembership.accepted
-          ? "This user is already a team member."
-          : "This user already has a pending invite.",
-      });
-    }
-
-    return ctx.prisma.membership.create({
-      data: {
-        userId: user.id,
-        teamId: input.teamId,
-        accepted: false,
-        role: input.role,
-      },
-      select: memberSelect,
-    });
+    return { usernameOrEmail: input.usernameOrEmail, numUsersInvited };
   }),
 
   removeMember: authedProcedure.input(userMemberSchema).mutation(async ({ ctx, input }) => {
@@ -623,6 +663,48 @@ export const teamsRouter = router({
     });
 
     return { success: true };
+  }),
+
+  createInvite: authedProcedure
+    .input(z.object({ teamId: z.number(), token: z.string().optional() }))
+    .mutation(async ({ ctx, input }) => {
+      const membership = await getMembershipOrThrow({
+        prisma: ctx.prisma,
+        teamId: input.teamId,
+        userId: ctx.user.id,
+      });
+      if (membership.role !== MembershipRole.ADMIN && membership.role !== MembershipRole.OWNER) {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Only team admins and owners can create invite links." });
+      }
+      const token = input.token ?? "";
+      const inviteLink = `${process.env.NEXT_PUBLIC_WEBAPP_URL ?? ""}/teams?token=${token}`;
+      return { inviteLink };
+    }),
+
+  checkIfMembershipExists: authedProcedure
+    .input(z.object({ teamId: z.number(), value: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const callerMembership = await getMembershipOrThrow({
+        prisma: ctx.prisma,
+        teamId: input.teamId,
+        userId: ctx.user.id,
+      });
+      if (callerMembership.role !== MembershipRole.ADMIN && callerMembership.role !== MembershipRole.OWNER) {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Only team admins and owners can check membership." });
+      }
+      const membership = await ctx.prisma.membership.findFirst({
+        where: {
+          teamId: input.teamId,
+          user: { OR: [{ email: input.value }, { username: input.value }] },
+        },
+        select: { id: true },
+      });
+      return !!membership;
+    }),
+
+  publish: authedProcedure.input(teamIdSchema).mutation(async ({ ctx, input }) => {
+    await getMembershipOrThrow({ prisma: ctx.prisma, teamId: input.teamId, userId: ctx.user.id });
+    return { message: "ok", url: undefined as string | undefined };
   }),
 
   eventTypes: router({

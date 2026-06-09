@@ -1,3 +1,3 @@
-export default function DisableTeamImpersonation(_props: { teamId: number; memberId: number }) {
+export default function DisableTeamImpersonation(_props: Record<string, unknown>) {
   return null;
 }

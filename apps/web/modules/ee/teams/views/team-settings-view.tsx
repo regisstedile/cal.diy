@@ -28,7 +28,7 @@ import { default as InternalNotePresetsView } from "../components/InternalNotePr
 import MakeTeamPrivateSwitch from "../components/MakeTeamPrivateSwitch";
 import RoundRobinSettings from "../components/RoundRobinSettings";
 
-type ProfileViewProps = { team: RouterOutputs["viewer"]["teams"]["get"] };
+type ProfileViewProps = { team: RouterOutputs["viewer"]["teams"]["getById"] };
 
 const BookingLimitsView = ({ team }: ProfileViewProps) => {
   const { t } = useLocale();
@@ -36,7 +36,7 @@ const BookingLimitsView = ({ team }: ProfileViewProps) => {
 
   const form = useForm<{ bookingLimits?: IntervalLimit; includeManagedEventsInLimits: boolean }>({
     defaultValues: {
-      bookingLimits: team?.bookingLimits || undefined,
+      bookingLimits: (team?.bookingLimits as IntervalLimit) || undefined,
       includeManagedEventsInLimits: team?.includeManagedEventsInLimits ?? false,
     },
   });
@@ -51,10 +51,10 @@ const BookingLimitsView = ({ team }: ProfileViewProps) => {
       showToast(err.message, "error");
     },
     async onSuccess(res) {
-      await utils.viewer.teams.get.invalidate();
+      await utils.viewer.teams.getById.invalidate();
       if (res) {
         reset({
-          bookingLimits: res.bookingLimits,
+          bookingLimits: res.bookingLimits as IntervalLimit | undefined,
           includeManagedEventsInLimits: res.includeManagedEventsInLimits,
         });
       }
@@ -194,7 +194,7 @@ const TeamSettingsViewWrapper = () => {
     data: team,
     isPending,
     error,
-  } = trpc.viewer.teams.get.useQuery(
+  } = trpc.viewer.teams.getById.useQuery(
     { teamId: Number(params.id) },
     {
       enabled: !!Number(params.id),

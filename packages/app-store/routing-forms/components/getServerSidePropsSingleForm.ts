@@ -108,6 +108,8 @@ export const getServerSidePropsForSingleFormView = async function getServerSideP
     user: await UserRepository.enrichUserWithItsProfile({ user: form.user }),
   };
 
+  const isOwner = form.userId === user.id;
+
   return {
     props: {
       trpcState: await ssr.dehydrate(),
@@ -115,6 +117,12 @@ export const getServerSidePropsForSingleFormView = async function getServerSideP
       enrichedWithUserProfileForm: await getSerializableForm({
         form: enrichFormWithMigrationData(formWithUserInfoProfil),
       }),
+      permissions: {
+        canCreate: isOwner,
+        canRead: true,
+        canEdit: isOwner,
+        canDelete: isOwner,
+      },
     },
   };
 };

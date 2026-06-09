@@ -6,7 +6,7 @@ import { useFormContext } from "react-hook-form";
 import type { UseFormReturn } from "react-hook-form";
 
 import { InfoLostWarningDialog } from "@calcom/app-store/routing-forms/components/InfoLostWarningDialog";
-import type { RoutingFormWithResponseCount } from "@calcom/app-store/routing-forms/types/types";
+import type { RoutingFormWithResponseCount } from "@calcom/app-store/routing-forms/components/SingleForm";
 import LicenseRequired from "~/ee/common/components/LicenseRequired";
 import { useLocale } from "@calcom/lib/hooks/useLocale";
 import { trpc } from "@calcom/trpc/react";
@@ -15,7 +15,7 @@ import classNames from "@calcom/ui/classNames";
 import { Form } from "@calcom/ui/components/form";
 import { showToast } from "@calcom/ui/components/toast";
 
-import type { getServerSidePropsForSingleFormView } from "@lib/apps/routing-forms/[...pages]/getServerSidePropsSingleForm";
+import type { getServerSidePropsForSingleFormView } from "@calcom/app-store/routing-forms/components/getServerSidePropsSingleForm";
 
 import type { NewFormDialogState } from "./FormActions";
 import { FormActionsProvider } from "./FormActions";

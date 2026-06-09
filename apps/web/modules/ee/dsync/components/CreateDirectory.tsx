@@ -50,6 +50,7 @@ const CreateDirectory = ({ orgId }: { orgId: number | null }) => {
           <Form
             form={form}
             handleSubmit={(values) => {
+              if (!orgId) return;
               mutation.mutate({
                 ...values,
                 organizationId: orgId,

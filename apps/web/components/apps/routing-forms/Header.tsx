@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 
 import { useLocale } from "@calcom/lib/hooks/useLocale";
-import type { RoutingFormWithResponseCount } from "@calcom/routing-forms/types/types";
+import type { RoutingFormWithResponseCount } from "@calcom/app-store/routing-forms/components/SingleForm";
 import { Button } from "@calcom/ui/components/button";
 import { DropdownMenuSeparator } from "@calcom/ui/components/dropdown";
 import { ToggleGroup } from "@calcom/ui/components/form";

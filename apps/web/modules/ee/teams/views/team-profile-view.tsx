@@ -82,7 +82,7 @@ const ProfileView = () => {
     data: team,
     isPending,
     error,
-  } = trpc.viewer.teams.get.useQuery(
+  } = trpc.viewer.teams.getById.useQuery(
     { teamId },
     {
       enabled: !!teamId,
@@ -126,7 +126,7 @@ const ProfileView = () => {
 
   const removeMemberMutation = trpc.viewer.teams.removeMember.useMutation({
     async onSuccess() {
-      await utils.viewer.teams.get.invalidate();
+      await utils.viewer.teams.getById.invalidate();
       await utils.viewer.teams.list.invalidate();
       revalidateTeamsList();
       await utils.viewer.eventTypes.invalidate();
@@ -144,8 +144,8 @@ const ProfileView = () => {
   function leaveTeam() {
     if (team?.id && session.data)
       removeMemberMutation.mutate({
-        teamIds: [team.id],
-        memberIds: [session.data.user.id],
+        teamId: team.id,
+        userId: session.data.user.id,
       });
   }
 
@@ -243,7 +243,7 @@ const ProfileView = () => {
 };
 
 export type TeamProfileFormProps = {
-  team: RouterOutputs["viewer"]["teams"]["get"];
+  team: RouterOutputs["viewer"]["teams"]["getById"];
   teamId: number;
 };
 
@@ -278,7 +278,7 @@ const TeamProfileForm = ({ team, teamId }: TeamProfileFormProps) => {
         bio: (res?.bio || "") as string,
         slug: res?.slug as string,
       });
-      await utils.viewer.teams.get.invalidate();
+      await utils.viewer.teams.getById.invalidate();
       await utils.viewer.eventTypes.getUserEventGroups.invalidate();
       revalidateEventTypesList();
       // TODO: Not all changes require list invalidation
@@ -299,7 +299,7 @@ const TeamProfileForm = ({ team, teamId }: TeamProfileFormProps) => {
   const defaultValues: FormValues = {
     id: team?.id,
     name: team?.name || "",
-    logo: team?.logo || "",
+    logo: team?.logoUrl || "",
     bio: team?.bio || "",
     slug: team?.slug || ((team?.metadata as Prisma.JsonObject)?.requestedSlug as string) || "",
   };

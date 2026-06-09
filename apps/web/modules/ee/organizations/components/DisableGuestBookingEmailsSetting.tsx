@@ -123,7 +123,7 @@ const DisableGuestBookingEmailsSetting = (props: IDisableGuestBookingEmailsSetti
       showToast(t("error_updating_settings"), "error");
     },
     onSettled: () => {
-      utils.viewer.organizations.listCurrent.invalidate();
+      utils.viewer.organizations.getCurrent.invalidate();
     },
   });
 

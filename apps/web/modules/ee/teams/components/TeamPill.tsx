@@ -1,9 +1,9 @@
-export enum TeamRole {
-  OWNER = "OWNER",
-  ADMIN = "ADMIN",
-  MEMBER = "MEMBER",
+import { MembershipRole } from "@calcom/prisma/enums";
+
+export default function TeamPill(_props: { color?: string; text?: string }) {
+  return null;
 }
 
-export default function TeamPill(_props: { name: string; role?: TeamRole }) {
-  return null;
+export function TeamRole({ role }: { role: MembershipRole | string }) {
+  return <TeamPill color="gray" text={role.toLowerCase()} />;
 }

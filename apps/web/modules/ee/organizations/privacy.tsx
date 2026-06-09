@@ -25,7 +25,7 @@ const PrivacyView = ({
 }) => {
   const pathname = usePathname();
   const { t } = useLocale();
-  const { data: currentOrg } = trpc.viewer.organizations.listCurrent.useQuery();
+  const { data: currentOrg } = trpc.viewer.organizations.getCurrent.useQuery();
   const isInviteOpen = !currentOrg?.user.accepted;
   const isDisabled = !permissions.canEdit || isInviteOpen;
 

@@ -26,7 +26,7 @@ type BrandColorsFormValues = {
   darkBrandColor: string;
 };
 
-type ProfileViewProps = { team: RouterOutputs["viewer"]["teams"]["get"] };
+type ProfileViewProps = { team: RouterOutputs["viewer"]["teams"]["getById"] };
 
 const ProfileView = ({ team }: ProfileViewProps) => {
   const { t } = useLocale();
@@ -61,7 +61,7 @@ const ProfileView = ({ team }: ProfileViewProps) => {
       showToast(err.message, "error");
     },
     async onSuccess(res) {
-      await utils.viewer.teams.get.invalidate();
+      await utils.viewer.teams.getById.invalidate();
       if (res) {
         resetTheme({ theme: res.theme });
         resetBrandColors({
@@ -209,7 +209,7 @@ const ProfileViewWrapper = () => {
     data: team,
     isPending,
     error,
-  } = trpc.viewer.teams.get.useQuery(
+  } = trpc.viewer.teams.getById.useQuery(
     { teamId: Number(params.id) },
     {
       enabled: !!Number(params.id),

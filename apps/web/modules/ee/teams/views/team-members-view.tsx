@@ -13,10 +13,10 @@ import InviteLinkSettingsModal from "~/ee/teams/components/InviteLinkSettingsMod
 import MemberList from "../components/MemberList";
 
 interface TeamMembersViewProps {
-  team: NonNullable<RouterOutputs["viewer"]["teams"]["get"]>;
+  team: NonNullable<RouterOutputs["viewer"]["teams"]["getById"]>;
   facetedTeamValues?: {
     roles: { id: string; name: string }[];
-    teams: RouterOutputs["viewer"]["teams"]["get"][];
+    teams: RouterOutputs["viewer"]["teams"]["getById"][];
     attributes: {
       id: string;
       name: string;

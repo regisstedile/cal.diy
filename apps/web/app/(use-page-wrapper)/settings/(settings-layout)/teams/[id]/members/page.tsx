@@ -65,7 +65,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   }
 
   const teamCaller = await createRouterCaller(viewerTeamsRouter);
-  const team = await teamCaller.get({ teamId });
+  const team = await teamCaller.getById({ teamId });
 
   if (!team) {
     throw new Error("Team not found");

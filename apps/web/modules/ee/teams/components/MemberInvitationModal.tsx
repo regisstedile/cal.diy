@@ -73,7 +73,7 @@ export default function MemberInvitationModal(props: MemberInvitationModalProps)
   const { disableCopyLink = false, isOrg = false } = props;
   const trpcContext = trpc.useUtils();
   const session = useSession();
-  const { data: currentOrg } = trpc.viewer.organizations.listCurrent.useQuery(undefined, {
+  const { data: currentOrg } = trpc.viewer.organizations.getCurrent.useQuery(undefined, {
     enabled: !!session.data?.user?.org,
   });
 
@@ -93,7 +93,7 @@ export default function MemberInvitationModal(props: MemberInvitationModalProps)
 
   const createInviteMutation = trpc.viewer.teams.createInvite.useMutation({
     async onSuccess() {
-      trpcContext.viewer.teams.get.invalidate();
+      trpcContext.viewer.teams.getById.invalidate();
       trpcContext.viewer.teams.list.invalidate();
       revalidateTeamsList();
     },
@@ -545,7 +545,7 @@ export const MemberInvitationModalWithoutMembers = ({
           },
           {
             onSuccess: async (data) => {
-              await utils.viewer.teams.get.invalidate();
+              await utils.viewer.teams.getById.invalidate();
               await utils.viewer.teams.listMembers.invalidate();
               await utils.viewer.organizations.getMembers.invalidate();
               hideInvitationModal();
