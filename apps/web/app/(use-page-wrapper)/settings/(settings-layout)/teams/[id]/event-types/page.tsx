@@ -18,18 +18,23 @@ export const generateMetadata = async () =>
     "/settings/teams"
   );
 
-const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
-  const { slug } = await params;
+const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
+  const teamId = parseInt(id, 10);
+
+  if (Number.isNaN(teamId)) {
+    notFound();
+  }
 
   const session = await getServerSession({ req: buildLegacyRequest(await headers(), await cookies()) });
   await getTranslate();
 
   if (!session) {
-    redirect(`/auth/login?callbackUrl=/settings/teams/${slug}/event-types`);
+    redirect(`/auth/login?callbackUrl=/settings/teams/${id}/event-types`);
   }
 
   const team = await prisma.team.findFirst({
-    where: { slug, isOrganization: false },
+    where: { id: teamId, isOrganization: false },
     select: { id: true, slug: true },
   });
 
@@ -37,7 +42,7 @@ const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
     notFound();
   }
 
-  return <TeamEventTypesView teamId={team.id} teamSlug={team.slug ?? slug} />;
+  return <TeamEventTypesView teamId={team.id} teamSlug={team.slug ?? ""} />;
 };
 
 export default Page;

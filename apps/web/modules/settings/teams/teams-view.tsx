@@ -234,7 +234,7 @@ export default function TeamsView() {
                     <h2 className="font-semibold text-emphasis text-base">{selectedTeam.name}</h2>
                     <p className="text-default text-sm">/{selectedTeam.slug}</p>
                     <Link
-                      href={`/settings/teams/${selectedTeam.slug}/event-types`}
+                      href={`/settings/teams/${selectedTeam.id}/event-types`}
                       className="text-default mt-1 flex items-center gap-1 text-xs hover:underline">
                       Tipos de evento →
                     </Link>
