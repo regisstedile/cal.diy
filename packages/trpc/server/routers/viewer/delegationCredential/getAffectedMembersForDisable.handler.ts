@@ -7,12 +7,18 @@ import type { TDelegationCredentialGetAffectedMembersForDisableSchema } from "./
 const log = logger.getSubLogger({ prefix: ["[DelegationCredential]"] });
 export async function getAffectedMembersForDisable({
   delegationCredentialId,
+  organizationId,
 }: {
   delegationCredentialId: string;
+  organizationId: number | null;
 }) {
   const delegationCredential = await DelegationCredentialRepository.findById({ id: delegationCredentialId });
   if (!delegationCredential) {
     // If we cant find the delegation credential, we assume no members were affected
+    return [];
+  }
+  // Ownership check: never expose member emails/names of another organization
+  if (!organizationId || delegationCredential.organizationId !== organizationId) {
     return [];
   }
   const lastEnabledAt = delegationCredential.lastEnabledAt;
@@ -39,10 +45,13 @@ export async function getAffectedMembersForDisable({
 
 export default function getAffectedMembersForDisableHandler({
   input,
+  ctx,
 }: {
   input: TDelegationCredentialGetAffectedMembersForDisableSchema;
+  ctx: { user: { organizationId: number | null } };
 }) {
   return getAffectedMembersForDisable({
     delegationCredentialId: input.id,
+    organizationId: ctx.user.organizationId,
   });
 }

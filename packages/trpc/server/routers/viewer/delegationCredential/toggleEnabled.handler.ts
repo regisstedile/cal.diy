@@ -75,7 +75,10 @@ export async function toggleDelegationCredentialEnabled(
   }
 
   if (!shouldBeEnabled) {
-    const affectedMemberships = await getAffectedMembersForDisable({ delegationCredentialId: input.id });
+    const affectedMemberships = await getAffectedMembersForDisable({
+      delegationCredentialId: input.id,
+      organizationId: loggedInUser.organizationId,
+    });
     const slug = currentDelegationCredential.workspacePlatform?.slug;
     if (!slug) {
       log.error(`Delegation credential ${input.id} has no workspace platform slug`);

@@ -30,6 +30,16 @@ export default async function handler({
     });
   }
 
+  const existingDelegationCredential = await DelegationCredentialRepository.findById({ id });
+
+  // Same error for "not found" and "not owned" so we don't leak other orgs' credential ids
+  if (!existingDelegationCredential || existingDelegationCredential.organizationId !== organizationId) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: "Delegation credential not found",
+    });
+  }
+
   await ensureDelegationCredentialNotAlreadyConfigured({
     domain,
     currentOrganizationId: organizationId,
