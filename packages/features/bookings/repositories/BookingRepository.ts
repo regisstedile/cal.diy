@@ -340,6 +340,21 @@ const selectStatementToGetBookingForCalEventBuilder = {
 export class BookingRepository implements IBookingRepository {
   constructor(private prismaClient: PrismaClient) {}
 
+  async findFirstBookingFromResponse({ responseId }: { responseId: number }) {
+    const booking = await this.prismaClient.booking.findFirst({
+      where: {
+        routedFromRoutingFormReponse: {
+          id: responseId,
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    return booking;
+  }
+
   /**
    * Gets the fromReschedule field for a booking by UID
    * Used to identify if this booking was created from a reschedule
