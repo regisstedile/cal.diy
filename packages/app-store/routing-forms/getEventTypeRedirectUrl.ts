@@ -86,3 +86,14 @@ export function getAbsoluteEventTypeRedirectUrl({
 
   return `${origin}/${eventTypeRedirectUrl}?${allURLSearchParams}`;
 }
+
+export function getAbsoluteEventTypeRedirectUrlWithEmbedSupport({
+  isEmbed,
+  eventTypeRedirectUrl,
+  ...rest
+}: Parameters<typeof getAbsoluteEventTypeRedirectUrl>[0] & { isEmbed?: boolean }) {
+  return getAbsoluteEventTypeRedirectUrl({
+    ...rest,
+    eventTypeRedirectUrl: `${eventTypeRedirectUrl}${isEmbed ? "/embed" : ""}`,
+  });
+}

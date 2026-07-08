@@ -5,7 +5,7 @@ import { type Tasker, type TaskTypes } from "./tasker";
  * WIP: This is a work in progress and is not fully implemented yet.
  **/
 export class RedisTasker implements Tasker {
-  async create(type: TaskTypes, payload: string): Promise<string> {
+  async create(type: TaskTypes, payload: unknown): Promise<string> {
     throw new Error("Method not implemented.");
   }
 
@@ -14,6 +14,14 @@ export class RedisTasker implements Tasker {
   }
 
   cleanup(): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
+
+  cancel(id: string): Promise<string> {
+    throw new Error("Method not implemented.");
+  }
+
+  cancelWithReference(referenceUid: string, type: TaskTypes): Promise<string | null> {
     throw new Error("Method not implemented.");
   }
 }

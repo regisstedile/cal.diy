@@ -1,9 +1,10 @@
 "use client";
 
+import type { RoutingFormTraceService } from "@calcom/features/routing-trace/domains/RoutingFormTraceService";
 import type { App_RoutingForms_Form } from "@calcom/prisma/client";
 import { Utils as QbUtils } from "react-awesome-query-builder";
 import type { z } from "zod";
-import type { Response, Route, SerializableForm } from "../types/types";
+import type { NonRouterRoute, Response, SerializableForm } from "../types/types";
 import type { zodNonRouterRoute } from "../zod";
 import { getQueryBuilderConfig } from "./getQueryBuilderConfig";
 import { isFallbackRoute } from "./isFallbackRoute";
@@ -21,7 +22,7 @@ export function processRoute({
 
   const routes = form.routes || [];
 
-  let decidedAction: Route["action"] | null = null;
+  let decidedAction: NonRouterRoute["action"] | null = null;
 
   const fallbackRoute = routes.find(isFallbackRoute);
 
@@ -77,15 +78,17 @@ export function processRoute({
   }
 
   // Without type assertion, it is never. See why https://github.com/microsoft/TypeScript/issues/16928
-  return decidedAction as Route["action"];
+  return decidedAction as NonRouterRoute["action"];
 }
 
 export function findMatchingRoute({
   form,
   response,
+  routingFormTraceService,
 }: {
   form: SerializableForm<App_RoutingForms_Form>;
   response: Record<string, Pick<Response[string], "value">>;
+  routingFormTraceService?: RoutingFormTraceService;
 }): z.infer<typeof zodNonRouterRoute> | null {
   const queryBuilderConfig = getQueryBuilderConfig(form);
   const routes = form.routes || [];
@@ -114,7 +117,24 @@ export function findMatchingRoute({
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = logic ? jsonLogic.apply(logic as any, responseValues) : true;
-    if (result) return route;
+    if (result) {
+      if (routingFormTraceService) {
+        let routeName: string;
+        if ("name" in route && route.name) {
+          routeName = route.name;
+        } else if (isFallbackRoute(route)) {
+          routeName = "default_route";
+        } else {
+          routeName = route.id;
+        }
+        if (isFallbackRoute(route)) {
+          routingFormTraceService.fallbackRouteUsed({ routeId: route.id, routeName });
+        } else {
+          routingFormTraceService.routeMatched({ routeId: route.id, routeName });
+        }
+      }
+      return route;
+    }
   }
 
   return null;

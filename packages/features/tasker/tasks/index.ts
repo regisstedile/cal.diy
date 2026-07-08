@@ -22,6 +22,10 @@ const tasks: Record<TaskTypes, () => Promise<TaskHandler>> = {
     import("./sendAwaitingPaymentEmail").then((module) => module.sendAwaitingPaymentEmail),
   bookingAudit: () => import("./bookingAudit").then((module) => module.bookingAudit),
   webhookDelivery: () => import("./webhookDelivery").then((module) => module.webhookDelivery),
+  triggerFormSubmittedNoEventWebhook: () =>
+    import("./triggerFormSubmittedNoEvent/triggerFormSubmittedNoEventWebhook").then(
+      (module) => module.triggerFormSubmittedNoEventWebhook
+    ),
   // Workflow tasks - no-op stubs for cal.diy
   sendWorkflowEmails: () => Promise.resolve(() => Promise.resolve()),
   executeAIPhoneCall: () => Promise.resolve(() => Promise.resolve()),

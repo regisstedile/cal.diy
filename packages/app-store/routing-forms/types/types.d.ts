@@ -20,10 +20,20 @@ export type Response = Record<
   }
 >;
 
+export type FormResponse = Record<
+  // Field ID
+  string,
+  {
+    value: number | string | string[];
+    label: string;
+    identifier?: string;
+  }
+>;
+
 export type Fields = z.infer<typeof zodFieldsView>;
-export type Field = Fields[number];
+export type Field = NonNullable<Fields>[number];
 export type Routes = z.infer<typeof zodRoutesView>;
-export type Route = Routes[0];
+export type Route = NonNullable<Routes>[0];
 export type NonRouterRoute = z.infer<typeof zodNonRouterRoute>;
 
 export type SerializableFormTeamMembers = {
@@ -88,3 +98,4 @@ export type AttributeOptionValueWithType = {
 export type AttributesQueryValue = NonNullable<LocalRoute["attributesQueryValue"]>;
 export type FormFieldsQueryValue = LocalRoute["queryValue"];
 export type AttributeRoutingConfig = NonNullable<LocalRoute["attributeRoutingConfig"]>;
+export type SerializableField = NonNullable<SerializableForm<App_RoutingForms_Form>["fields"]>[number];

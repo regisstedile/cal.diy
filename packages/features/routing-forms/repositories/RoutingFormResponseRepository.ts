@@ -1,4 +1,3 @@
-// @ts-nocheck
 import type { PrismaClient } from "@calcom/prisma";
 import type { Prisma } from "@calcom/prisma/client";
 

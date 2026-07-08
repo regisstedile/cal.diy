@@ -72,6 +72,7 @@ const TRIGGER_TO_BUILDER_CATEGORY: Record<WebhookTriggerEvents, BuilderCategory>
   // Form events (mapped to booking as fallback)
   [WebhookTriggerEvents.FORM_SUBMITTED]: "booking",
   [WebhookTriggerEvents.FORM_SUBMITTED_NO_EVENT]: "booking",
+  [WebhookTriggerEvents.ROUTING_FORM_FALLBACK_HIT]: "booking",
 
   // OOO events
   [WebhookTriggerEvents.OOO_CREATED]: "ooo",

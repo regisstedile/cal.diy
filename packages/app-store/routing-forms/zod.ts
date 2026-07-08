@@ -1,18 +1,15 @@
+import { zodNonRouterField } from "@calcom/features/routing-forms/lib/zod";
 import { raqbQueryValueSchema } from "@calcom/lib/raqb/zod";
 import { z } from "zod";
 
 import { routingFormAppDataSchemas } from "./appDataSchemas";
 
-export const zodNonRouterField = z.object({
-  id: z.string(),
-  label: z.string(),
-  identifier: z.string().optional(),
-  placeholder: z.string().optional(),
-  type: z.string(),
-  selectText: z.string().optional(),
-  required: z.boolean().optional(),
-  deleted: z.boolean().optional(),
-});
+export {
+  type FieldOption,
+  routingFormResponseInDbSchema,
+  type TNonRouterField,
+  zodNonRouterField,
+} from "@calcom/features/routing-forms/lib/zod";
 
 export const zodRouterField = zodNonRouterField.extend({
   routerId: z.string(),
@@ -63,6 +60,11 @@ export const zodNonRouterRoute = z.object({
     properties: z.any(),
   }),
   attributesQueryValue: raqbQueryValueSchema.optional(),
+  /**
+   * RAQB query value for fallback of `attributesQueryValue`
+   */
+  fallbackAttributesQueryValue: raqbQueryValueSchema.optional(),
+  attributeIdForWeights: z.string().optional(),
   attributeRoutingConfig: attributeRoutingConfigSchema,
   isFallback: z.boolean().optional(),
   action: z.object({
@@ -75,6 +77,17 @@ export const zodNonRouterRoute = z.object({
     value: z.string(),
     eventTypeId: z.number().optional(),
   }),
+  /**
+   * Fallback action used when the main attributes query finds no matching team members
+   * and no CRM contact owner (if configured to check) exists.
+   */
+  fallbackAction: z
+    .object({
+      type: routeActionTypeSchema,
+      eventTypeId: z.number().optional(),
+      value: z.string(),
+    })
+    .optional(),
 });
 
 export const zodNonRouterRouteView = zodNonRouterRoute;

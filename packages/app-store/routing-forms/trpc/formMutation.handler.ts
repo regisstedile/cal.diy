@@ -50,6 +50,7 @@ export const formMutationHandler = async ({ ctx, input }: FormMutationHandlerOpt
       name: true,
       description: true,
       userId: true,
+      updatedById: true,
       disabled: true,
       createdAt: true,
       updatedAt: true,

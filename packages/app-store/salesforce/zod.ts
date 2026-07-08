@@ -24,6 +24,10 @@ export const writeToRecordEntrySchema = z.object({
 
 export const writeToRecordDataSchema = z.record(z.string(), writeToBookingEntry);
 
+export const routingFormIncompleteBookingDataSchema = z.object({
+  writeToRecordObject: writeToRecordDataSchema.optional(),
+});
+
 export const RRSkipFieldRuleActionEnum = {
   IGNORE: "ignore",
   MUST_INCLUDE: "must_include",

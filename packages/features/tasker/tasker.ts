@@ -24,6 +24,9 @@ type TaskPayloads = {
   webhookDelivery: z.infer<
     typeof import("@calcom/features/webhooks/lib/types/webhookTask").webhookTaskPayloadSchema
   >;
+  triggerFormSubmittedNoEventWebhook: z.infer<
+    typeof import("./tasks/triggerFormSubmittedNoEvent/triggerFormSubmittedNoEventWebhook").ZTriggerFormSubmittedNoEventWebhookPayloadSchema
+  >;
   // Workflow tasks
   sendWorkflowEmails: unknown;
   executeAIPhoneCall: unknown;
