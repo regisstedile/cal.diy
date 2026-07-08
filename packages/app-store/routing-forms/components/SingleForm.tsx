@@ -34,7 +34,7 @@ import { getAbsoluteEventTypeRedirectUrl } from "../getEventTypeRedirectUrl";
 import { isFallbackRoute } from "../lib/isFallbackRoute";
 import { processRoute } from "../lib/processRoute";
 import { RoutingPages } from "../lib/RoutingPages";
-import type { Response, Route, SerializableForm } from "../types/types";
+import type { NonRouterRoute, Response, SerializableForm } from "../types/types";
 import { FormAction, FormActionsDropdown, FormActionsProvider } from "./FormActions";
 import FormInputFields from "./FormInputFields";
 import type { getServerSidePropsForSingleFormView } from "./getServerSidePropsSingleForm";
@@ -237,12 +237,17 @@ function SingleForm({ form, appUrl, Page, enrichedWithUserProfileForm }: SingleF
 
   const [isTestPreviewOpen, setIsTestPreviewOpen] = useState(false);
   const [response, setResponse] = useState<Response>({});
-  const [decidedAction, setDecidedAction] = useState<Route["action"] | null>(null);
+  const [decidedAction, setDecidedAction] = useState<NonRouterRoute["action"] | null>(null);
   const [skipFirstUpdate, setSkipFirstUpdate] = useState(true);
   const [eventTypeUrl, setEventTypeUrl] = useState("");
 
   function testRouting() {
     const action = processRoute({ form, response });
+    if (!action) {
+      setDecidedAction(null);
+      setEventTypeUrl("");
+      return;
+    }
     if (action.type === "eventTypeRedirectUrl") {
       setEventTypeUrl(
         enrichedWithUserProfileForm
