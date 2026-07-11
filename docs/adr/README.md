@@ -1,16 +1,28 @@
 # Architecture Decision Records (ADRs)
 
-Decisões arquiteturais do cal-diy documentadas. Cada ADR registra **o contexto**, **a decisão** e **as consequências** — incluindo os trade-offs negativos.
+Decisões arquiteturais documentadas. Cada ADR registra **o contexto**, **a decisão**
+e **as consequências** — incluindo os trade-offs negativos.
+
+0001–0005 são de **arquitetura de código do cal.diy**. 0006+ são decisões de
+**processo/escopo/plataforma** (várias transversais a todos os projetos — ver
+coluna Escopo). Todas vivem aqui por ser repo versionado; as transversais espelham
+para `/home/regis/OPS/` quando este virar git.
 
 ## Índice
 
-| # | Decisão | Status |
-|---|---|---|
-| [0001](0001-vertical-slice-architecture.md) | Vertical Slice Architecture como estrutura base | ✅ Aceito |
-| [0002](0002-trpc-como-boundary.md) | tRPC como boundary entre backend e frontend | ✅ Aceito |
-| [0003](0003-di-container-ioctopus.md) | Dependency Injection com @evyweb/ioctopus | ✅ Aceito |
-| [0004](0004-repository-pattern.md) | Repository Pattern com interfaces explícitas | ✅ Aceito |
-| [0005](0005-separacao-features-modules.md) | Separação packages/features vs apps/web/modules | ✅ Aceito |
+| # | Decisão | Status | Escopo |
+|---|---|---|---|
+| [0001](0001-vertical-slice-architecture.md) | Vertical Slice Architecture como estrutura base | ✅ Aceito | Cal.diy |
+| [0002](0002-trpc-como-boundary.md) | tRPC como boundary entre backend e frontend | ✅ Aceito | Cal.diy |
+| [0003](0003-di-container-ioctopus.md) | Dependency Injection com @evyweb/ioctopus | ✅ Aceito | Cal.diy |
+| [0004](0004-repository-pattern.md) | Repository Pattern com interfaces explícitas | ✅ Aceito | Cal.diy |
+| [0005](0005-separacao-features-modules.md) | Separação packages/features vs apps/web/modules | ✅ Aceito | Cal.diy |
+| [0006](0006-fetch-first-remote-source-of-truth.md) | Git remoto é fonte de verdade; fetch antes de afirmar sync | ✅ Aceito | Todos |
+| [0007](0007-sql-server-only-no-sqlite.md) | SQL Server é o único dialeto; SQLite proibido | ✅ Aceito | ADMCOPY/MSSQL |
+| [0008](0008-allged-scope-excludes-enterprise-saas.md) | Escopo ALLGED exclui billing/AI Phone/SCIM/Platform | ✅ Aceito | Cal.diy |
+| [0009](0009-upstream-first-on-ambiguity.md) | Em ambiguidade, seguir o upstream cal.com | ✅ Aceito | Cal.diy |
+| [0010](0010-audit-protocol-mandatory.md) | Protocolo de auditoria A–H obrigatório | ✅ Aceito | Todos |
+| [0011](0011-dual-metrics-coverage-readiness.md) | Métricas = cobertura auditada × prontidão | ✅ Aceito | Todos |
 
 ## Como Criar um Novo ADR
 

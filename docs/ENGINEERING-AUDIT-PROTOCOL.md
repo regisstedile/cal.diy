@@ -14,56 +14,62 @@ mais que qualquer prompt isolado.
 
 ## As 8 fases (A–H)
 
-Cada projeto segue exatamente esta ordem. Só se avança de fase quando a anterior
-tem evidência registrada.
+Cada projeto segue exatamente esta ordem. Cada fase tem **entrada** e **saída
+obrigatória** (critério de saída) — não se avança sem produzir a saída. Uma fase
+não terminou até a saída existir e estar registrada.
 
 ### Fase A — Inventário
 Levantar o que existe, sem interpretar ainda. Estrutura, apps, packages, deps,
 entrypoints, banco, filas, webhooks, CI, Docker, cron, integrações, testes, docs.
-**Saída:** `docs/<projeto>/00-MAPA-GERAL.md` (ou equivalente).
-**Gate:** o inventário foi feito lendo o disco/banco AO VIVO, não de memória.
+- **Entrada:** projeto identificado, acesso a disco/banco/containers.
+- **Saída obrigatória:** `docs/<projeto>/00-MAPA-GERAL.md`; inventário feito AO VIVO
+  (não de memória); `git fetch` rodado se for repo (ADR-0006).
 
 ### Fase B — Análise
 Como o sistema realmente funciona: fluxo usuário → frontend → API → services →
 repos → banco → webhooks → integrações → workers → retorno. Mapear domínios.
-**Saída:** `docs/<projeto>/02-MAPA-DOS-DOMINIOS.md`.
-**Gate:** cada afirmação de comportamento aponta para `arquivo:linha` ou query.
+- **Entrada:** mapa geral da Fase A.
+- **Saída obrigatória:** `docs/<projeto>/02-MAPA-DOS-DOMINIOS.md`; cada afirmação de
+  comportamento com `arquivo:linha` ou query.
 
 ### Fase C — Revisão crítica (da própria análise)
-Criticar as conclusões da Fase B. Para cada uma: **confirmar de novo no código** e
-classificar `✅ confirmado` / `🟡 provável` / `❓ não verificado`. Listar tudo sem
-evidência suficiente. **Gate anti-fraqueza #2** (docs longos viram "verdade" cedo
-demais): nenhum documento é fonte de verdade antes de passar por esta fase.
+Criticar as conclusões da Fase B. **Gate anti-fraqueza #2** (docs longos viram
+"verdade" cedo demais).
+- **Entrada:** análise da Fase B.
+- **Saída obrigatória:** cada conclusão reclassificada `✅ confirmado`/`🟡 provável`/
+  `❓ não verificado`; lista explícita do que ficou sem evidência. Nenhum doc é fonte
+  de verdade antes desta saída.
 
 ### Fase D — Prova experimental
-**Gate anti-fraqueza #1** (conclusão antes do experimento — o erro da migration
-0050): nenhuma conclusão CAUSAL é aceita sem um experimento reproduzível. Subir
-container descartável, rodar a migration real, reproduzir o bug, medir. Se a
-hipótese não sobreviver ao experimento, refiná-la — e registrar que foi refinada.
-**Saída:** evidência (comando + output) no doc de auditoria.
+**Gate anti-fraqueza #1** (conclusão antes do experimento — o erro da migration 0050).
+- **Entrada:** hipótese causal + experimento definido.
+- **Saída obrigatória:** hipótese **confirmada OU refutada**; evidência reproduzível
+  (comando + output) no doc; se refinada, registrar a versão anterior e por que caiu;
+  **decisão registrada em ADR quando a conclusão vira regra** (ex.: ADR-0007).
 
 ### Fase E — Correção mínima
-UMA melhoria por vez: **< 10 arquivos, < 500 linhas de diff, um fluxo, um commit
-lógico, sem mudar comportamento não-relacionado**. Antes de editar, registrar:
-arquivos a modificar/criar, contratos a preservar, migrations (se houver), riscos,
-testes a rodar. Não importar dependências (billing/PBAC/enterprise) só para
-satisfazer tipos.
+- **Entrada:** conclusão provada da Fase D; contrato pré-implementação registrado
+  (arquivos a mudar/criar, contratos a preservar, migrations, riscos, testes).
+- **Saída obrigatória:** diff **< 10 arquivos, < 500 linhas, 1 fluxo, 1 commit lógico**,
+  sem comportamento não-relacionado, sem importar billing/PBAC/enterprise só p/ tipo.
 
 ### Fase F — Evidência de funcionamento
-Rodar type-check + lint + testes da área tocada. **Diferenciar explicitamente
-erros NOVOS (provocados pelo diff) de erros PRÉ-EXISTENTES (baseline)** — nunca
-esconder um no outro. Para deploy: cadeia completa código → imagem → container →
-proxy → rota pública → dependências → comportamento, cada elo verificado.
-**Gate:** se algo falha, não declarar pronto; corrigir o mínimo e revalidar.
+- **Entrada:** correção da Fase E aplicada.
+- **Saída obrigatória:** type-check + lint + testes da área rodados; **erros NOVOS
+  separados do baseline** explicitamente; para deploy, cadeia código → imagem →
+  container → proxy → rota pública → dependências verificada elo a elo. Se algo falha,
+  fase NÃO terminou.
 
 ### Fase G — Atualização da documentação
-Atualizar mapas/matrizes/status no mesmo commit ou imediatamente após. Regenerar o
-que for automatizável (ex.: `scripts/parity_*.py`) em vez de editar número na mão.
+- **Entrada:** funcionamento comprovado (Fase F).
+- **Saída obrigatória:** mapas/matrizes/status atualizados no mesmo commit ou logo após;
+  números regenerados por script (ex.: `scripts/parity_*.py`), não editados à mão;
+  ADR criado se uma decisão nova foi tomada.
 
 ### Fase H — Planejamento da próxima sprint
-Só agora, com o terreno provado. Triagem verificável do backlog (não "achei →
-porto"): matriz → priorização → primeira fatia pequena. Fechamento formal da fatia
-anterior antes de abrir a próxima.
+- **Entrada:** fatia anterior fechada formalmente (doc de fechamento).
+- **Saída obrigatória:** triagem verificável (matriz → priorização, não "achei→porto");
+  próxima fatia definida e pequena. Não abrir fatia nova sem fechar a anterior.
 
 ---
 
