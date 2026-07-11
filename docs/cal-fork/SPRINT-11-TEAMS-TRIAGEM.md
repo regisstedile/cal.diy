@@ -88,6 +88,24 @@ nominal — exatamente o que a triagem deveria filtrar.
 - **11.5 Round robin** / **11.6 Managed events** — depois de membership sólido; dependem de handlers que vêm por spread (não confirmados nesta passada).
 - **11.7 Limpeza de stubs + `python3 scripts/parity_procedures.py`** para fechar a matriz.
 
+## ✅ Sprint 11.1A ENTREGUE (2026-07-11)
+
+3 procedures aditivas no router custom, lógica em `invites.ts` (testável),
+15 testes unit passando, tsc do pacote trpc limpo (0 erros). Router custom
+intacto (17 consumers preservados). `viewer.teams`: 21→24 procedures no fork.
+
+- `listInvites({teamId})` — owner/admin listam convites pendentes do time
+  (memberships accepted=false + invite links), **sem** expor `token`.
+- `deleteInvite({teamId, membershipId?|tokenId?})` — revoga convite pendente;
+  só pendente; IDOR cross-team bloqueado.
+- `setInviteExpiration({teamId, tokenId, expiresInDays})` — ajusta expiração do
+  link; `0 = expira agora` (ação explícita); não troca o token.
+
+Diferença vs REF registrada: REF `listInvites` é do USUÁRIO (= `listPendingInvites`
+custom, já existia); REF `deleteInvite`/`setInviteExpiration` identificam por
+`token` bruto — a versão do fork usa `id` interno (mais seguro, alinhado à regra
+"não expor token"). Detalhe: `docs/sprints/SPRINT-11.1A-FECHAMENTO.md`.
+
 ## Plano da PRIMEIRA fatia — Sprint 11.1A (criação/listagem/admin de convites)
 
 Divisão adotada (o fluxo completo passa de 10 arquivos/500 linhas):

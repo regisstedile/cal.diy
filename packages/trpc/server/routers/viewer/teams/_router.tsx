@@ -1,10 +1,11 @@
+import process from "node:process";
 import type { PrismaClient } from "@calcom/prisma";
 import { CreationSource, MembershipRole, SchedulingType } from "@calcom/prisma/enums";
 import { router } from "@calcom/trpc/server/trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-
 import authedProcedure from "../../../procedures/authedProcedure";
+import { deleteTeamInvite, listTeamInvites, setTeamInviteExpiration } from "./invites";
 
 const slugSchema = z
   .string()
@@ -94,7 +95,9 @@ const listMembersSchema = teamIdSchema.extend({
 
 const inviteMemberSchema = teamIdSchema.extend({
   usernameOrEmail: z.union([z.string(), z.array(z.string())]),
-  role: z.enum([MembershipRole.MEMBER, MembershipRole.ADMIN, MembershipRole.OWNER]).default(MembershipRole.MEMBER),
+  role: z
+    .enum([MembershipRole.MEMBER, MembershipRole.ADMIN, MembershipRole.OWNER])
+    .default(MembershipRole.MEMBER),
   language: z.string().optional(),
   creationSource: z.nativeEnum(CreationSource).optional(),
 });
@@ -394,9 +397,13 @@ export const teamsRouter = router({
         ...(input.name !== undefined && { name: input.name }),
         ...(slug !== undefined && { slug }),
         ...(input.bio !== undefined && { bio: input.bio || null }),
-        ...((input.logo !== undefined || input.logoUrl !== undefined) && { logoUrl: input.logoUrl ?? input.logo }),
+        ...((input.logo !== undefined || input.logoUrl !== undefined) && {
+          logoUrl: input.logoUrl ?? input.logo,
+        }),
         ...(input.bookingLimits !== undefined && { bookingLimits: input.bookingLimits }),
-        ...(input.includeManagedEventsInLimits !== undefined && { includeManagedEventsInLimits: input.includeManagedEventsInLimits }),
+        ...(input.includeManagedEventsInLimits !== undefined && {
+          includeManagedEventsInLimits: input.includeManagedEventsInLimits,
+        }),
         ...(input.hideBranding !== undefined && { hideBranding: input.hideBranding }),
         ...(input.hideBookATeamMember !== undefined && { hideBookATeamMember: input.hideBookATeamMember }),
         ...(input.hideTeamProfileLink !== undefined && { hideTeamProfileLink: input.hideTeamProfileLink }),
@@ -467,9 +474,7 @@ export const teamsRouter = router({
       throw new TRPCError({ code: "FORBIDDEN", message: "Only team owners and admins can invite members." });
     }
 
-    const emails = Array.isArray(input.usernameOrEmail)
-      ? input.usernameOrEmail
-      : [input.usernameOrEmail];
+    const emails = Array.isArray(input.usernameOrEmail) ? input.usernameOrEmail : [input.usernameOrEmail];
 
     let numUsersInvited = 0;
 
@@ -674,7 +679,10 @@ export const teamsRouter = router({
         userId: ctx.user.id,
       });
       if (membership.role !== MembershipRole.ADMIN && membership.role !== MembershipRole.OWNER) {
-        throw new TRPCError({ code: "FORBIDDEN", message: "Only team admins and owners can create invite links." });
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Only team admins and owners can create invite links.",
+        });
       }
       const token = input.token ?? "";
       const inviteLink = `${process.env.NEXT_PUBLIC_WEBAPP_URL ?? ""}/teams?token=${token}`;
@@ -690,7 +698,10 @@ export const teamsRouter = router({
         userId: ctx.user.id,
       });
       if (callerMembership.role !== MembershipRole.ADMIN && callerMembership.role !== MembershipRole.OWNER) {
-        throw new TRPCError({ code: "FORBIDDEN", message: "Only team admins and owners can check membership." });
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Only team admins and owners can check membership.",
+        });
       }
       const membership = await ctx.prisma.membership.findFirst({
         where: {
@@ -700,6 +711,69 @@ export const teamsRouter = router({
         select: { id: true },
       });
       return !!membership;
+    }),
+
+  // Sprint 11.1A — authenticated team-invite administration (owner/admin).
+  // Logic lives in ./invites.ts (unit tested). These procedures only resolve
+  // the caller's membership (auth + isolation) and delegate.
+  listInvites: authedProcedure.input(teamIdSchema).query(async ({ ctx, input }) => {
+    const membership = await getMembershipOrThrow({
+      prisma: ctx.prisma,
+      teamId: input.teamId,
+      userId: ctx.user.id,
+    });
+    return listTeamInvites({ prisma: ctx.prisma, teamId: input.teamId, callerRole: membership.role });
+  }),
+
+  deleteInvite: authedProcedure
+    .input(
+      z
+        .object({
+          teamId: z.number(),
+          membershipId: z.number().optional(),
+          tokenId: z.number().optional(),
+        })
+        .refine((v) => (v.membershipId == null) !== (v.tokenId == null), {
+          message: "Provide exactly one of membershipId or tokenId.",
+        })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const membership = await getMembershipOrThrow({
+        prisma: ctx.prisma,
+        teamId: input.teamId,
+        userId: ctx.user.id,
+      });
+      return deleteTeamInvite({
+        prisma: ctx.prisma,
+        teamId: input.teamId,
+        callerRole: membership.role,
+        membershipId: input.membershipId,
+        tokenId: input.tokenId,
+      });
+    }),
+
+  setInviteExpiration: authedProcedure
+    .input(
+      z.object({
+        teamId: z.number(),
+        tokenId: z.number(),
+        // 0 = expire immediately (explicit action); >0 = now + N days.
+        expiresInDays: z.number().int().min(0).max(365),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const membership = await getMembershipOrThrow({
+        prisma: ctx.prisma,
+        teamId: input.teamId,
+        userId: ctx.user.id,
+      });
+      return setTeamInviteExpiration({
+        prisma: ctx.prisma,
+        teamId: input.teamId,
+        callerRole: membership.role,
+        tokenId: input.tokenId,
+        expiresInDays: input.expiresInDays,
+      });
     }),
 
   publish: authedProcedure.input(teamIdSchema).mutation(async ({ ctx, input }) => {
@@ -742,7 +816,10 @@ export const teamsRouter = router({
       });
 
       if (!canManageMembers(membership.role)) {
-        throw new TRPCError({ code: "FORBIDDEN", message: "Only team owners and admins can create event types." });
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Only team owners and admins can create event types.",
+        });
       }
 
       const existing = await ctx.prisma.eventType.findFirst({
@@ -750,7 +827,10 @@ export const teamsRouter = router({
         select: { id: true },
       });
       if (existing) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: "An event type with this slug already exists in the team." });
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "An event type with this slug already exists in the team.",
+        });
       }
 
       return ctx.prisma.eventType.create({
@@ -774,7 +854,10 @@ export const teamsRouter = router({
       });
 
       if (!canManageMembers(membership.role)) {
-        throw new TRPCError({ code: "FORBIDDEN", message: "Only team owners and admins can delete event types." });
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Only team owners and admins can delete event types.",
+        });
       }
 
       const eventType = await ctx.prisma.eventType.findFirst({
