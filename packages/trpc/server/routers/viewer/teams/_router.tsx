@@ -1,3 +1,4 @@
+import { MembershipRepository } from "@calcom/features/membership/repositories/MembershipRepository";
 import type { PrismaClient } from "@calcom/prisma";
 import { CreationSource, MembershipRole, SchedulingType } from "@calcom/prisma/enums";
 import { router } from "@calcom/trpc/server/trpc";
@@ -12,6 +13,7 @@ import {
   listTeamInvites,
   setTeamInviteExpiration,
 } from "./invites";
+import { getOwnMembership } from "./membership";
 
 const slugSchema = z
   .string()
@@ -706,6 +708,28 @@ export const teamsRouter = router({
     .mutation(async ({ ctx, input }) =>
       inviteMemberByToken({ prisma: ctx.prisma, token: input.token, userId: ctx.user.id })
     ),
+
+  // Sprint 11.2 — self-service membership (own membership only)
+  hasTeamMembership: authedProcedure.query(async ({ ctx }) => {
+    const hasTeamMembership = await MembershipRepository.hasAnyTeamMembershipByUserId({
+      userId: ctx.user.id,
+    });
+    return { hasTeamMembership };
+  }),
+
+  getMembershipbyUser: authedProcedure
+    .input(z.object({ teamId: z.number(), memberId: z.number() }))
+    .query(async ({ ctx, input }) =>
+      getOwnMembership({
+        prisma: ctx.prisma,
+        callerId: ctx.user.id,
+        teamId: input.teamId,
+        memberId: input.memberId,
+      })
+    ),
+
+  // updateMembership deferred — depends on Membership.disableImpersonation, a
+  // column present in schema.prisma but not applied to the cal_src DB. See membership.ts.
 
   checkIfMembershipExists: authedProcedure
     .input(z.object({ teamId: z.number(), value: z.string() }))
