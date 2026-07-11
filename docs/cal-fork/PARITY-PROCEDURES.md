@@ -27,18 +27,18 @@
 | ✅ `googleWorkspace` | 3 | 3 | 0 | 0 |
 | ✅ `holidays` | 5 | 5 | 0 | 0 |
 | ✅ `i18n` | 1 | 1 | 0 | 0 |
-| ✅ `insights` | 32 | 32 (fork usa spread — conferir) | 0 | 0 |
+| ✅ `insights` | 32 | 32 | 0 | 0 |
 | ✅ `me` | 8 | 8 | 0 | 0 |
 | ✅ `oAuth` | 8 | 8 | 0 | 0 |
 | ✅ `ooo` | 4 | 4 | 0 | 0 |
-| 🔴 `organizations` | 41 | 26 (fork usa spread — conferir) | 25 | 10 |
+| 🔴 `organizations` | 41 | 26 | 25 | 10 |
 | ✅ `payments` | 1 | 1 | 0 | 0 |
-| ✅ `pbac` | 8 | 8 (fork usa spread — conferir) | 0 | 0 |
+| ✅ `pbac` | 8 | 8 | 0 | 0 |
 | ⚠️ `phoneNumber` | 6 | 5 | 1 | 0 |
 | ✅ `routing-forms` | 2 | 2 | 0 | 0 |
 | ✅ `slots` | 4 | 4 | 0 | 0 |
 | ✅ `sso` | 4 | 4 | 0 | 0 |
-| 🔴 `teams` | 45 | 29 (fork usa spread — conferir) | 28 | 12 |
+| 🔴 `teams` | 45 | 29 | 28 | 12 |
 | ✅ `travelSchedules` | 1 | 1 | 0 | 0 |
 | ✅ `users` | 5 | 5 | 0 | 0 |
 | ✅ `webhook` | 7 | 7 | 0 | 0 |

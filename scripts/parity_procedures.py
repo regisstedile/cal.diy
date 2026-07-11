@@ -33,7 +33,10 @@ PROC_RE = re.compile(
     r"\w*[Pp]rocedure\b|router\()",
 )
 NESTED_RE = re.compile(r"^\s*([A-Za-z_]\w*)\s*:\s*router\(")
-SPREAD_RE = re.compile(r"^\s*\.\.\.\s*(\w+)")
+# Only treat a spread as a *router merge* if the spread name looks like a router
+# (…somethingRouter). `{ ...ctx, req }` and other object spreads are not merges
+# and must not trigger the "fork uses spread" note (false positive fixed 2026-07-11).
+SPREAD_RE = re.compile(r"^\s*\.\.\.\s*(\w*[Rr]outer)\b")
 
 TEST_MARKERS = (".test.", ".spec.", "__tests__", "/test/")
 
