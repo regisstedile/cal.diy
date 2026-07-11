@@ -21,7 +21,11 @@ export default function NewTeamView() {
   const { t } = useLocale();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const returnTo = searchParams?.get("returnTo") ?? "/settings/teams";
+  // Only same-origin relative paths: blocks open redirect via
+  // ?returnTo=https://evil.com and protocol-relative //evil.com
+  const rawReturnTo = searchParams?.get("returnTo") ?? "";
+  const returnTo =
+    rawReturnTo.startsWith("/") && !rawReturnTo.startsWith("//") ? rawReturnTo : "/settings/teams";
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [bio, setBio] = useState("");
