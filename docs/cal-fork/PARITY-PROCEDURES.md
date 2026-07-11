@@ -38,12 +38,12 @@
 | ✅ `routing-forms` | 2 | 2 | 0 | 0 |
 | ✅ `slots` | 4 | 4 | 0 | 0 |
 | ✅ `sso` | 4 | 4 | 0 | 0 |
-| 🔴 `teams` | 45 | 28 (fork usa spread — conferir) | 29 | 12 |
+| 🔴 `teams` | 45 | 29 (fork usa spread — conferir) | 28 | 12 |
 | ✅ `travelSchedules` | 1 | 1 | 0 | 0 |
 | ✅ `users` | 5 | 5 | 0 | 0 |
 | ✅ `webhook` | 7 | 7 | 0 | 0 |
 | ✅ `workflows` | 15 | 15 | 0 | 0 |
-| **TOTAL** | **374** | **323** | **73** | — |
+| **TOTAL** | **374** | **324** | **72** | — |
 
 ## Detalhe dos gaps
 
@@ -67,6 +67,6 @@
 - **Faltam (1):** `list`
 
 ### `teams`
-- **Faltam (29):** `acceptOrLeave`, `addMembersToEventTypes`, `changeMemberRole`, `get`, `getActiveUserBookings`, `getActiveUserBreakdown`, `getInternalNotesPresets`, `getManagedEventUsersToReassign`, `getMemberAvailability`, `getRoundRobinHostsToReassign`, `getSubscriptionStatus`, `getUpgradeable`, `getUserConnectedApps`, `hasActiveTeamPlan`, `hasEditPermissionForUser`, `legacyListMembers`, `listInvoices`, `listOwnedTeams`, `listSimpleMembers`, `managedEventManualReassign`, `managedEventReassign`, `removeHostsFromEventTypes`, `resendInvitation`, `roundRobinManualReassign`, `roundRobinReassign`, `skipTeamTrials`, `skipTrialForTeam`, `updateInternalNotesPresets`, `updateMembership`
+- **Faltam (28):** `acceptOrLeave`, `addMembersToEventTypes`, `changeMemberRole`, `get`, `getActiveUserBookings`, `getActiveUserBreakdown`, `getInternalNotesPresets`, `getManagedEventUsersToReassign`, `getMemberAvailability`, `getRoundRobinHostsToReassign`, `getSubscriptionStatus`, `getUpgradeable`, `getUserConnectedApps`, `hasActiveTeamPlan`, `legacyListMembers`, `listInvoices`, `listOwnedTeams`, `listSimpleMembers`, `managedEventManualReassign`, `managedEventReassign`, `removeHostsFromEventTypes`, `resendInvitation`, `roundRobinManualReassign`, `roundRobinReassign`, `skipTeamTrials`, `skipTrialForTeam`, `updateInternalNotesPresets`, `updateMembership`
 - **Só no fork (12):** `acceptInvite`, `checkSlugAvailability`, `declineInvite`, `eventTypes.create`, `eventTypes.delete`, `eventTypes.list`, `eventTypes.setHosts`, `getById`, `getInviteByToken`, `listForUser`, `listPendingInvites`, `updateMemberRole`
 

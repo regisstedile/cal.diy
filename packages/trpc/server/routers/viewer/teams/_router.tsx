@@ -1,4 +1,5 @@
 import { MembershipRepository } from "@calcom/features/membership/repositories/MembershipRepository";
+import { hasEditPermissionForUserID } from "@calcom/lib/hasEditPermissionForUser";
 import type { PrismaClient } from "@calcom/prisma";
 import { CreationSource, MembershipRole, SchedulingType } from "@calcom/prisma/enums";
 import { router } from "@calcom/trpc/server/trpc";
@@ -14,6 +15,7 @@ import {
   setTeamInviteExpiration,
 } from "./invites";
 import { getOwnMembership } from "./membership";
+import { assertNotLastOwner } from "./ownership";
 
 const slugSchema = z
   .string()
@@ -210,42 +212,6 @@ async function assertTeamSlugAvailable({
 
   if (existingTeam || existingUser) {
     throw new TRPCError({ code: "CONFLICT", message: "This team URL is already in use." });
-  }
-}
-
-async function assertCanChangeOwner({
-  prisma,
-  teamId,
-  userId,
-}: {
-  prisma: PrismaClient;
-  teamId: number;
-  userId: number;
-}) {
-  const membership = await prisma.membership.findUnique({
-    where: {
-      userId_teamId: {
-        userId,
-        teamId,
-      },
-    },
-    select: {
-      role: true,
-    },
-  });
-
-  if (membership?.role !== MembershipRole.OWNER) return;
-
-  const owners = await prisma.membership.count({
-    where: {
-      teamId,
-      accepted: true,
-      role: MembershipRole.OWNER,
-    },
-  });
-
-  if (owners <= 1) {
-    throw new TRPCError({ code: "BAD_REQUEST", message: "A team must have at least one owner." });
   }
 }
 
@@ -545,7 +511,7 @@ export const teamsRouter = router({
       throw new TRPCError({ code: "FORBIDDEN", message: "Only owners can remove another owner." });
     }
 
-    await assertCanChangeOwner({ prisma: ctx.prisma, teamId: input.teamId, userId: input.userId });
+    await assertNotLastOwner({ prisma: ctx.prisma, teamId: input.teamId, userId: input.userId });
 
     await ctx.prisma.membership.delete({
       where: {
@@ -574,7 +540,7 @@ export const teamsRouter = router({
       throw new TRPCError({ code: "FORBIDDEN", message: "Only owners can promote another owner." });
     }
 
-    await assertCanChangeOwner({ prisma: ctx.prisma, teamId: input.teamId, userId: input.userId });
+    await assertNotLastOwner({ prisma: ctx.prisma, teamId: input.teamId, userId: input.userId });
 
     return ctx.prisma.membership.update({
       where: {
@@ -728,8 +694,15 @@ export const teamsRouter = router({
       })
     ),
 
-  // updateMembership deferred — depends on Membership.disableImpersonation, a
-  // column present in schema.prisma but not applied to the cal_src DB. See membership.ts.
+  // updateMembership deferred — fork's Membership model has no disableImpersonation
+  // field (only User does); porting it is a product decision. See membership.ts + SCHEMA-DRIFT-AUDIT.md.
+
+  // Sprint 11.3 — can the caller edit the given user (share an admin/owner team)?
+  hasEditPermissionForUser: authedProcedure
+    .input(z.object({ memberId: z.number() }))
+    .query(async ({ ctx, input }) =>
+      hasEditPermissionForUserID({ ctx: { user: { id: ctx.user.id } }, input })
+    ),
 
   checkIfMembershipExists: authedProcedure
     .input(z.object({ teamId: z.number(), value: z.string() }))
