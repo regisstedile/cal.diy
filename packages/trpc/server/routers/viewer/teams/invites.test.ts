@@ -1,6 +1,13 @@
 import prismaMock from "@calcom/testing/lib/__mocks__/prismaMock";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { deleteTeamInvite, listTeamInvites, setTeamInviteExpiration } from "./invites";
+import {
+  createTeamInviteLink,
+  deleteTeamInvite,
+  getTeamInviteByToken,
+  inviteMemberByToken,
+  listTeamInvites,
+  setTeamInviteExpiration,
+} from "./invites";
 
 const TEAM = 1;
 const OTHER_TEAM = 2;
@@ -170,5 +177,127 @@ describe("setTeamInviteExpiration", () => {
       })
     ).rejects.toMatchObject({ code: "NOT_FOUND" });
     expect(prismaMock.verificationToken.update).not.toHaveBeenCalled();
+  });
+});
+
+describe("createTeamInviteLink", () => {
+  it("creates a new invite token when none is provided", async () => {
+    prismaMock.team.findFirst.mockResolvedValue({ id: TEAM } as never);
+    prismaMock.verificationToken.create.mockResolvedValue({} as never);
+
+    const res = await createTeamInviteLink({
+      prisma: prismaMock,
+      teamId: TEAM,
+      callerRole: "OWNER",
+      webappUrl: "https://cal.test",
+    });
+
+    expect(res.token).toHaveLength(64);
+    expect(res.inviteLink).toBe(`https://cal.test/teams?token=${res.token}`);
+    expect(prismaMock.verificationToken.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        identifier: `invite-link-for-teamId-${TEAM}`,
+        token: res.token,
+        expiresInDays: 7,
+        teamId: TEAM,
+      }),
+    });
+  });
+
+  it("reuses an existing token scoped to the team", async () => {
+    prismaMock.team.findFirst.mockResolvedValue({ id: TEAM } as never);
+    prismaMock.verificationToken.findFirst.mockResolvedValue({ token: "abc" } as never);
+
+    const res = await createTeamInviteLink({
+      prisma: prismaMock,
+      teamId: TEAM,
+      callerRole: "ADMIN",
+      token: "abc",
+      webappUrl: "https://cal.test",
+    });
+
+    expect(res).toEqual({ token: "abc", inviteLink: "https://cal.test/teams?token=abc" });
+    expect(prismaMock.verificationToken.create).not.toHaveBeenCalled();
+  });
+
+  it("plain member cannot create invite links", async () => {
+    await expect(
+      createTeamInviteLink({ prisma: prismaMock, teamId: TEAM, callerRole: "MEMBER" })
+    ).rejects.toMatchObject({ code: "FORBIDDEN" });
+    expect(prismaMock.verificationToken.create).not.toHaveBeenCalled();
+  });
+});
+
+describe("getTeamInviteByToken", () => {
+  it("returns a valid team invite preview", async () => {
+    const expires = new Date(Date.now() + 86400000);
+    prismaMock.verificationToken.findFirst.mockResolvedValue({
+      teamId: TEAM,
+      expires,
+      team: { id: TEAM, name: "Astoria", slug: "astoria", isOrganization: false },
+    } as never);
+
+    const res = await getTeamInviteByToken({ prisma: prismaMock, token: "abc" });
+
+    expect(res).toEqual({ team: { id: TEAM, name: "Astoria", slug: "astoria" }, expires });
+    expect(prismaMock.verificationToken.findFirst).toHaveBeenCalledWith({
+      where: {
+        token: "abc",
+        teamId: { not: null },
+        OR: [{ expiresInDays: null }, { expires: { gte: expect.any(Date) } }],
+      },
+      select: expect.any(Object),
+    });
+  });
+
+  it("rejects missing or expired invite token", async () => {
+    prismaMock.verificationToken.findFirst.mockResolvedValue(null as never);
+    await expect(getTeamInviteByToken({ prisma: prismaMock, token: "expired" })).rejects.toMatchObject({
+      code: "NOT_FOUND",
+    });
+  });
+});
+
+describe("inviteMemberByToken", () => {
+  it("creates a pending member from a valid team invite token", async () => {
+    prismaMock.verificationToken.findFirst.mockResolvedValue({
+      teamId: TEAM,
+      expires: new Date(Date.now() + 86400000),
+      team: { id: TEAM, name: "Astoria", slug: "astoria", isOrganization: false },
+    } as never);
+    prismaMock.membership.findUnique.mockResolvedValue(null as never);
+    prismaMock.membership.create.mockResolvedValue({} as never);
+
+    await expect(inviteMemberByToken({ prisma: prismaMock, token: "abc", userId: 10 })).resolves.toEqual({
+      id: TEAM,
+      name: "Astoria",
+      slug: "astoria",
+    });
+
+    expect(prismaMock.membership.create).toHaveBeenCalledWith({
+      data: {
+        createdAt: expect.any(Date),
+        teamId: TEAM,
+        userId: 10,
+        role: "MEMBER",
+        accepted: false,
+      },
+    });
+  });
+
+  it("does not create duplicate membership from token", async () => {
+    prismaMock.verificationToken.findFirst.mockResolvedValue({
+      teamId: TEAM,
+      expires: new Date(Date.now() + 86400000),
+      team: { id: TEAM, name: "Astoria", slug: "astoria", isOrganization: false },
+    } as never);
+    prismaMock.membership.findUnique.mockResolvedValue({ id: 99 } as never);
+
+    await expect(inviteMemberByToken({ prisma: prismaMock, token: "abc", userId: 10 })).rejects.toMatchObject(
+      {
+        code: "FORBIDDEN",
+      }
+    );
+    expect(prismaMock.membership.create).not.toHaveBeenCalled();
   });
 });

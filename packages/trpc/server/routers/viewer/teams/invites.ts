@@ -1,3 +1,5 @@
+import { randomBytes } from "node:crypto";
+import process from "node:process";
 import type { PrismaClient } from "@calcom/prisma";
 import type { MembershipRole } from "@calcom/prisma/enums";
 import { TRPCError } from "@trpc/server";
@@ -11,6 +13,7 @@ import { TRPCError } from "@trpc/server";
 // only identifier that leaves the server.
 
 const canManage = (role: MembershipRole) => role === "OWNER" || role === "ADMIN";
+const INVITE_EXPIRES_IN_DAYS = 7;
 
 function assertCanManage(role: MembershipRole, action: string) {
   if (!canManage(role)) {
@@ -142,4 +145,128 @@ export async function setTeamInviteExpiration({
     // token is not touched — same link stays valid, only its expiry changes
   });
   return { id: token.id, expires, expiresInDays };
+}
+
+export async function createTeamInviteLink({
+  prisma,
+  teamId,
+  callerRole,
+  token: requestedToken,
+  webappUrl = process.env.NEXT_PUBLIC_WEBAPP_URL ?? "",
+}: {
+  prisma: PrismaClient;
+  teamId: number;
+  callerRole: MembershipRole;
+  token?: string;
+  webappUrl?: string;
+}) {
+  assertCanManage(callerRole, "create invite links");
+
+  const team = await prisma.team.findFirst({
+    where: { id: teamId, isOrganization: false },
+    select: { id: true },
+  });
+  if (!team) {
+    throw new TRPCError({ code: "NOT_FOUND", message: "Team not found." });
+  }
+
+  if (requestedToken) {
+    const existingToken = await prisma.verificationToken.findFirst({
+      where: { token: requestedToken, teamId },
+      select: { token: true },
+    });
+    if (!existingToken) {
+      throw new TRPCError({ code: "NOT_FOUND", message: "Invite link not found for this team." });
+    }
+    return {
+      token: existingToken.token,
+      inviteLink: `${webappUrl}/teams?token=${existingToken.token}`,
+    };
+  }
+
+  const token = randomBytes(32).toString("hex");
+  await prisma.verificationToken.create({
+    data: {
+      identifier: `invite-link-for-teamId-${teamId}`,
+      token,
+      expires: new Date(Date.now() + INVITE_EXPIRES_IN_DAYS * 24 * 60 * 60 * 1000),
+      expiresInDays: INVITE_EXPIRES_IN_DAYS,
+      teamId,
+    },
+  });
+
+  return {
+    token,
+    inviteLink: `${webappUrl}/teams?token=${token}`,
+  };
+}
+
+export async function getTeamInviteByToken({ prisma, token }: { prisma: PrismaClient; token: string }) {
+  const invite = await prisma.verificationToken.findFirst({
+    where: {
+      token,
+      teamId: { not: null },
+      OR: [{ expiresInDays: null }, { expires: { gte: new Date() } }],
+    },
+    select: {
+      teamId: true,
+      expires: true,
+      team: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          isOrganization: true,
+        },
+      },
+    },
+  });
+
+  if (!invite?.teamId || !invite.team || invite.team.isOrganization) {
+    throw new TRPCError({ code: "NOT_FOUND", message: "Invite link not found or expired." });
+  }
+
+  return {
+    team: {
+      id: invite.team.id,
+      name: invite.team.name,
+      slug: invite.team.slug,
+    },
+    expires: invite.expires,
+  };
+}
+
+export async function inviteMemberByToken({
+  prisma,
+  token,
+  userId,
+}: {
+  prisma: PrismaClient;
+  token: string;
+  userId: number;
+}) {
+  const invite = await getTeamInviteByToken({ prisma, token });
+
+  const existingMembership = await prisma.membership.findUnique({
+    where: { userId_teamId: { userId, teamId: invite.team.id } },
+    select: { id: true },
+  });
+  if (existingMembership) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "This user is already a member of this team or has a pending invitation.",
+    });
+  }
+
+  await prisma.membership.create({
+    data: {
+      createdAt: new Date(),
+      teamId: invite.team.id,
+      userId,
+      role: "MEMBER",
+      accepted: false,
+    },
+  });
+
+  return invite.team;
 }

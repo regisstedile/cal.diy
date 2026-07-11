@@ -106,6 +106,22 @@ custom, já existia); REF `deleteInvite`/`setInviteExpiration` identificam por
 `token` bruto — a versão do fork usa `id` interno (mais seguro, alinhado à regra
 "não expor token"). Detalhe: `docs/sprints/SPRINT-11.1A-FECHAMENTO.md`.
 
+
+## ✅ Sprint 11.1B ENTREGUE (2026-07-11)
+
+2 procedures aditivas no router custom + correção de `createInvite`:
+
+- `createInvite({teamId, token?})` agora cria `VerificationToken` real quando não recebe token (7 dias) e reaproveita token existente escopado ao time quando recebe. Antes montava `/teams?token=` vazio no caminho sem token.
+- `getInviteByToken({token})` — preview autenticado do convite por link, sem expor token bruto no output; bloqueia token expirado, sem `teamId` ou organização.
+- `inviteMemberByToken({token, creationSource?})` — cria membership pendente `MEMBER` para usuário autenticado a partir de link válido; membership duplicada vira `FORBIDDEN`.
+- `/teams?token=` preservado no redirect de login (`callbackUrl`) para não perder o token no primeiro acesso deslogado.
+
+Sem billing/seat tracking/TeamService REF. A página `/teams?token=` consome o token no server: usuário logado com link válido ganha membership pendente e é redirecionado para `/teams`, onde o fluxo custom existente mostra o botão de aceite.
+
+Validação: `invites.test.ts` 22/22 ✅; `tsc --noEmit --project packages/trpc/tsconfig.json` exit=0; `biome check --write` exit=0 com warnings nursery/preexistentes de tipagem explícita. `apps/web` tsc continua falhando em baseline fora da fatia (contracts legados de teams/organizations e routing-forms), então não é usado como gate desta entrega.
+
+Paridade: `viewer.teams` 24→26 procedures; faltantes teams 32→31; total 76→75. `getInviteByToken` é extra custom do fork e aparece em “Só no fork”.
+
 ## Plano da PRIMEIRA fatia — Sprint 11.1A (criação/listagem/admin de convites)
 
 Divisão adotada (o fluxo completo passa de 10 arquivos/500 linhas):

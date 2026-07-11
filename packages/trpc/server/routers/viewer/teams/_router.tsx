@@ -1,11 +1,17 @@
-import process from "node:process";
 import type { PrismaClient } from "@calcom/prisma";
 import { CreationSource, MembershipRole, SchedulingType } from "@calcom/prisma/enums";
 import { router } from "@calcom/trpc/server/trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import authedProcedure from "../../../procedures/authedProcedure";
-import { deleteTeamInvite, listTeamInvites, setTeamInviteExpiration } from "./invites";
+import {
+  createTeamInviteLink,
+  deleteTeamInvite,
+  getTeamInviteByToken,
+  inviteMemberByToken,
+  listTeamInvites,
+  setTeamInviteExpiration,
+} from "./invites";
 
 const slugSchema = z
   .string()
@@ -678,16 +684,28 @@ export const teamsRouter = router({
         teamId: input.teamId,
         userId: ctx.user.id,
       });
-      if (membership.role !== MembershipRole.ADMIN && membership.role !== MembershipRole.OWNER) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "Only team admins and owners can create invite links.",
-        });
-      }
-      const token = input.token ?? "";
-      const inviteLink = `${process.env.NEXT_PUBLIC_WEBAPP_URL ?? ""}/teams?token=${token}`;
-      return { inviteLink };
+      return createTeamInviteLink({
+        prisma: ctx.prisma,
+        teamId: input.teamId,
+        callerRole: membership.role,
+        token: input.token,
+      });
     }),
+
+  getInviteByToken: authedProcedure
+    .input(z.object({ token: z.string().trim().min(1) }))
+    .query(async ({ ctx, input }) => getTeamInviteByToken({ prisma: ctx.prisma, token: input.token })),
+
+  inviteMemberByToken: authedProcedure
+    .input(
+      z.object({
+        token: z.string().trim().min(1),
+        creationSource: z.nativeEnum(CreationSource).optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) =>
+      inviteMemberByToken({ prisma: ctx.prisma, token: input.token, userId: ctx.user.id })
+    ),
 
   checkIfMembershipExists: authedProcedure
     .input(z.object({ teamId: z.number(), value: z.string() }))
