@@ -25,6 +25,13 @@ const getNavigationItems = (): NavigationItemType[] => [
     icon: "clock",
   },
   {
+    name: "teams",
+    href: "/teams",
+    icon: "users",
+    isCurrent: ({ pathname }) => pathname?.startsWith("/teams") ?? false,
+    moreOnMobile: true,
+  },
+  {
     name: "workflows",
     href: "/workflows",
     icon: "zap",
@@ -110,7 +117,11 @@ const useNavigationItems = () => {
   }, []);
 };
 
-export const Navigation = ({ isPlatformNavigation: _isPlatformNavigation }: { isPlatformNavigation?: boolean }) => {
+export const Navigation = ({
+  isPlatformNavigation: _isPlatformNavigation,
+}: {
+  isPlatformNavigation?: boolean;
+}) => {
   const { desktopNavigationItems } = useNavigationItems();
 
   return (
