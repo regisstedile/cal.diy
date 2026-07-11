@@ -16,20 +16,21 @@ gerenciando outros, sem roles, sem billing.
 Lógica self-only em `membership.ts` (`getOwnMembership`), testável sem session
 middleware. `hasTeamMembership` é inline (trivial, sem input).
 
-## Fase D pegou um bug antes do commit (valor do protocolo)
+## Fase D/F pegou um bug antes do commit (valor do protocolo)
 
 Ao type-checkar, `updateMembership` falhou: `disableImpersonation` não existe no
-tipo do Prisma Client. Investigação (Fase D):
-- coluna **existe** em `schema.prisma:519` mas **NÃO existe no banco `cal_src`**
-  (query em `information_schema.columns` retornou vazio);
-- o client TS gerado também não a conhece → schema nunca foi `generate`+`migrate`.
+tipo do Prisma Client. **Removida da fatia** — sem o type-check da Fase F isso
+teria sido commitado quebrado.
 
-Conclusão: portar `updateMembership` agora entregaria uma escrita que quebra em
-runtime. **Removida da fatia** (exigiria migration, fora do escopo). Sem o
-type-check da Fase F, isso teria sido commitado quebrado — exatamente o tipo de
-erro que o gate D/F existe para pegar. Transferido para quando o campo
-`disableImpersonation` for aplicado (migration/db push), aí `updateMembership`
-volta como fatia própria.
+**Causa (corrigida após auditoria de drift, `docs/cal-fork/SCHEMA-DRIFT-AUDIT.md`):**
+minha primeira explicação — "coluna no schema mas não no banco" — estava imprecisa.
+O correto: `schema.prisma:519` (`disableImpersonation`) é do model **User**, não
+Membership. O **fork removeu** impersonation do model Membership (só User tem;
+banco e schema do Membership concordam, sem drift). Portar o `updateMembership` do
+REF exigiria readicionar o campo ao model Membership + migration — **decisão de
+produto**, não correção de drift. A decisão (não portar) segue certa; a causa foi
+corrigida no código (`membership.ts`) e aqui. Exemplo de Fase C funcionando:
+reverificar derrubou minha própria hipótese inicial.
 
 ## Espelha o REF
 
@@ -67,11 +68,11 @@ Produção: `_router.tsx` (+2 procedures) + `membership.ts` (novo). Teste:
 
 ## Transferido
 
-- **`updateMembership`** — bloqueado por schema drift (`disableImpersonation` no
-  schema mas não no banco). Volta como fatia própria APÓS aplicar o campo.
-- **Achado de infra a registrar:** o `schema.prisma` do fork tem pelo menos 1
-  campo (`Membership.disableImpersonation`) não aplicado ao banco `cal_src` — vale
-  um `prisma migrate diff` completo para achar outros drifts antes que virem bug.
+- **`updateMembership`** — incompatível com o model Membership do fork (sem
+  `disableImpersonation`). Volta só se for decisão de produto readicionar o campo.
+- **Auditoria de drift feita** (`docs/cal-fork/SCHEMA-DRIFT-AUDIT.md`): banco vs
+  schema tem só 1 drift, benigno (`App_RoutingForms_FormResponse.uuid` DB-default
+  redundante). Nenhum drift bloqueante. Meu alarme inicial era falso positivo.
 - 11.3 permissão (`hasEditPermissionForUser` + proteção do último owner)
 - 11.1C resend + UI feedback
 

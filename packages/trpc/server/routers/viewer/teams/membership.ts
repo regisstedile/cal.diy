@@ -32,7 +32,10 @@ export async function getOwnMembership({
   });
 }
 
-// NOTE: updateMembership (REF) writes Membership.disableImpersonation, a column
-// that exists in schema.prisma but is NOT applied to the cal_src database (schema
-// drift — never migrated, and the generated client doesn't know it either).
-// Deferred until the column is applied; porting it now would ship a broken write.
+// NOTE: updateMembership (REF) writes Membership.disableImpersonation, but the
+// FORK removed that field from the Membership model — only User has
+// disableImpersonation here (schema.prisma:519 is on model User). Membership in
+// the fork has no such column (schema and cal_src DB agree). Porting REF's
+// updateMembership would require adding the field to the Membership model +
+// migration — a product decision, not a bug fix. Deferred. (Verified via
+// prisma migrate diff + information_schema, 2026-07-11.)
