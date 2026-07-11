@@ -19,15 +19,16 @@ PBAC/Attributes              █████████████████
 Insights                     ██████████████████░░  90.4%  (75/83)
 Event Types                  ██████████████████░░  89.5%  (128/143)
 Auth/SSO/DSync               ████████████████░░░░  78.0%  (39/50)
-Admin                        ██████████████░░░░░░  68.2%  (60/88)
+Admin (core)                 ███████████████░░░░░  77.0%  (57/74)
 Organizations                ████░░░░░░░░░░░░░░░░  17.6%  (31/176)
 Teams                        ███░░░░░░░░░░░░░░░░░  15.8%  (25/158)
 SCIM/attr-sync               IGNORADO (decisão)
+Admin playground/wksp-platforms IGNORADO (decisão)
 Billing SaaS/seats           IGNORADO (decisão)
 AI Phone (Cal AI)            IGNORADO (decisão)
 Platform/OAuth clients       IGNORADO (decisão)
 ─────────────────────────────────────────────
-PARIDADE GERAL (escopo ALLGED) ███████████████░░░░░  73.9%  (1030/1394)
+PARIDADE GERAL (escopo ALLGED) ███████████████░░░░░  74.4%  (1027/1380)
 ```
 
 ## Gap Matrix
@@ -43,10 +44,11 @@ PARIDADE GERAL (escopo ALLGED) ███████████████░�
 | Insights | ⚠️ core | 75/83 | 90.4% |  |
 | Event Types | ⚠️ core | 128/143 | 89.5% |  |
 | Auth/SSO/DSync | ⚠️ core | 39/50 | 78.0% |  |
-| Admin | ⚠️ core | 60/88 | 68.2% | playground/workspace-platforms dentro deste número são candidatos a ignorar |
+| Admin (core) | ⚠️ core | 57/74 | 77.0% | sem playground/workspace-platforms (reclassificados ignorados 2026-07-11) |
 | Organizations | 🔴 core | 31/176 | 17.6% | idem Teams: CRUD custom no fork; wizard/onboarding ausentes de verdade |
 | Teams | 🔴 core | 25/158 | 15.8% | fork tem router custom (1 arquivo cobre CRUD; arquivos REF contam como ausentes) — paridade FUNCIONAL maior que a numérica |
 | SCIM/attr-sync | ❌ IGNORADO | — (31 no REF) | — | só com IdP corporativo |
+| Admin playground/wksp-platforms | ❌ IGNORADO | — (14 no REF) | — | demos internas da Cal.com — decisão 2026-07-11 |
 | Billing SaaS/seats | ❌ IGNORADO | — (135 no REF) | — | cobrança por assento p/ vender SaaS — não se aplica |
 | AI Phone (Cal AI) | ❌ IGNORADO | — (70 no REF) | — | depende de Retell/telefonia paga |
 | Platform/OAuth clients | ❌ IGNORADO | — (11 no REF) | — | produto Platform da Cal.com |

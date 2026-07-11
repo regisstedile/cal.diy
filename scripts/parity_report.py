@@ -82,10 +82,10 @@ MODULES = {
         "packages/trpc/server/routers/viewer/pbac",
         "packages/trpc/server/routers/viewer/attributes",
     ], ""),
-    "Admin": ("core", [
+    "Admin (core)": ("core", [
         "packages/trpc/server/routers/viewer/admin",
         "apps/web/app/(use-page-wrapper)/settings/(admin-layout)",
-    ], "playground/workspace-platforms dentro deste número são candidatos a ignorar"),
+    ], "sem playground/workspace-platforms (reclassificados ignorados 2026-07-11)"),
     "Payments (Stripe checkout)": ("core", [
         "packages/features/ee/payments",
         "packages/trpc/server/routers/viewer/payments",
@@ -109,6 +109,21 @@ MODULES = {
         "apps/web/app/(use-page-wrapper)/settings/platform",
         "apps/web/app/(use-page-wrapper)/auth/platform",
     ], "produto Platform da Cal.com"),
+    "Admin playground/wksp-platforms": ("ignored", [
+        "packages/trpc/server/routers/viewer/admin/workspacePlatform",
+        "apps/web/app/(use-page-wrapper)/settings/(admin-layout)/admin/playground",
+        "apps/web/app/(use-page-wrapper)/settings/(admin-layout)/admin/workspace-platforms",
+    ], "demos internas da Cal.com — decisão 2026-07-11"),
+}
+
+# paths (substring de rel path) subtraídos de módulos core que os englobam —
+# evita dupla contagem quando um sub-path vira "ignored"
+CORE_EXCLUDES = {
+    "Admin (core)": [
+        "viewer/admin/workspacePlatform/",
+        "(admin-layout)/admin/playground/",
+        "(admin-layout)/admin/workspace-platforms/",
+    ],
 }
 
 TEST_MARKERS = (".test.", ".spec.", "__tests__", "/test/", "playwright")
@@ -143,7 +158,10 @@ def main():
         ref_files = []
         for p in prefixes:
             ref_files.extend(list_files(REF, p))
-        ref_files = sorted(set(ref_files))
+        excludes = CORE_EXCLUDES.get(name, [])
+        ref_files = sorted(
+            {f for f in ref_files if not any(x in f for x in excludes)}
+        )
         present = [f for f in ref_files if os.path.exists(os.path.join(REPO, f))]
         total, have = len(ref_files), len(present)
         pct = 100.0 * have / total if total else 100.0
