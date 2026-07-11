@@ -23,6 +23,7 @@ para `/home/regis/OPS/` quando este virar git.
 | [0009](0009-upstream-first-on-ambiguity.md) | Em ambiguidade, seguir o upstream cal.com | ✅ Aceito | Cal.diy |
 | [0010](0010-audit-protocol-mandatory.md) | Protocolo de auditoria A–H obrigatório | ✅ Aceito | Todos |
 | [0011](0011-dual-metrics-coverage-readiness.md) | Métricas = cobertura auditada × prontidão | ✅ Aceito | Todos |
+| [0012](0012-git-worktree-per-agent.md) | Trabalho multi-agente usa git worktree por agente | ✅ Aceito | Todos |
 
 ## Como Criar um Novo ADR
 

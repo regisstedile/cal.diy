@@ -99,6 +99,15 @@ nunca de impressão.
 
 ---
 
+## Trabalho paralelo (múltiplos agentes)
+
+Dois atores nunca editam o mesmo working tree ao mesmo tempo (ADR-0012). Cada
+agente/tarefa paralela usa `git worktree add ../<repo>-<tarefa> -b agent/<tarefa>`,
+commita na sua branch, faz push; merge é ponto de sincronização explícito. Ao fim,
+`git worktree remove` + `git worktree prune`. Se herdar working tree com trabalho
+não-commitado de outro agente: NÃO commitar cego — revisar, validar (testes/tsc),
+e reconciliar antes; a decisão de commitar/reverter é do dono.
+
 ## Classificação de fatos (usar em todo doc)
 
 `✅ confirmado` (comando rodado, output conferido nesta sessão) ·
