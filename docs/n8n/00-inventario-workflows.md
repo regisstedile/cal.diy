@@ -17,8 +17,9 @@ CRM, intake de PDFs. Se algo "parece funcionar", não é por este n8n.
 Correlação: Baserow também está OFF (destino dos 3 SYNC), o que torna a
 reativação dos espelhos inútil até o Baserow voltar.
 
-**NÃO VERIFICADO:** por que foram desativados (decisão deliberada? restore?
-crash?). O dono precisa confirmar antes de qualquer reativação.
+**✅ CONFIRMADO pelo dono (2026-07-11):** a desativação de 30/06 foi **decisão
+deliberada** (junto com Agno e Baserow). Não é incidente. Reativação, se e
+quando houver, é escolha de produto — ordem sugerida na seção Pendências.
 
 ## Inventário (18 workflows)
 
@@ -76,7 +77,7 @@ docker exec postgres psql -U n8n -d n8n -tAc \
 
 ## Pendências geradas
 
-1. **Decisão do dono:** a desativação em massa de 2026-06-30 foi intencional?
+1. ~~Decisão do dono~~ **RESPONDIDO 2026-07-11: intencional.**
 2. Se reativar: ordem sugerida — Baserow primeiro (senão SYNC falha), depois
    `[CAL] Booking Events` (integração Cal.diy), depois o resto conforme uso real.
 3. Credenciais dos workflows não auditadas aqui (tabela `credentials_entity`

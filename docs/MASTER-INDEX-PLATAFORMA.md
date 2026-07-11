@@ -58,7 +58,7 @@ Legenda portas: todas em 129 salvo nota. "loopback" = publicado só em 127.0.0.1
 ### 4. n8n — motor de workflows (lógica de negócio real)
 - **Container:** `n8n` (`n8n-local:latest`) porta 5678 ✅ healthy · **Banco:** PostgreSQL `n8n` · **volume:** `/home/regis/stack/volumes/n8n`
 - **Integrações:** hub central — Cal webhooks, Evolution/WhatsApp, Agno/Bia, MSSQL, Baserow. **MCP:** n8n-mcp (localhost:5678)
-- **Estado:** ⚠️ container ✅ healthy, mas **TODOS os 18 workflows INATIVOS desde 2026-06-30** (zero execuções em 7 dias) — nenhuma integração via n8n opera hoje. Inventário completo: `docs/n8n/00-inventario-workflows.md`. Decisão do dono pendente sobre reativação · aux: `n8n-template-search` porta 8000 ✅ · [[project-agno-n8n]] [[reference-mcp]]
+- **Estado:** ✅ serviço no ar (container healthy, editor acessível). Os 18 workflows estão INATIVOS desde 2026-06-30 **por decisão deliberada do dono (confirmado 2026-07-11)** — não é incidente. Agno e Baserow desligados na mesma decisão. Inventário: `docs/n8n/00-inventario-workflows.md` · aux: `n8n-template-search` porta 8000 ✅ · [[project-agno-n8n]] [[reference-mcp]]
 
 ### 5. Evolution API — gateway WhatsApp
 - **Container:** `evolution` (`evoapicloud/evolution-api:v2.3.7`) porta 8080 ✅ (200) · domínio evo.allged.com.br
@@ -137,7 +137,7 @@ Manus ──► mcp.allged.com.br ──► mcp-allged :8055 ✅ ──► docke
 
 | # | O que falta | Evidência de que falta | Risco | Documento a criar | Prioridade | Critério de pronto |
 |---|---|---|---|---|---|---|
-| B1 | Doc do **FieldOps** (arquitetura ETL, schema `fieldops`, telas, geofence) | Sistema ✅ ativo (:8095 healthy, ETL 15min) mas nenhum doc dedicado; só memória `project_fieldops_astoria` | Novo agente/pessoa mexe no ETL sem entender cursor de punch events → duplica/perde dados | `docs/fieldops/00-arquitetura.md` + fluxo ETL | **ALTA** | ETL, schema, geofence e fonte Sólides documentados com evidência do disco |
+| B1 | ~~Doc do FieldOps~~ **FECHADO 2026-07-11** → `/home/regis/stack/timesheet-astoria/docs/00-ARQUITETURA.md` (commitado no repo solides). Cursor ETL, schema real, API, geofence, runbook. Achados: ETL usa `sa` no MSSQL; ledger append-only descarta correções retroativas de batidas; scripts .py vivem DENTRO da imagem (rebuild obrigatório) | — | — | — | fechado | — |
 | B2 | ~~Doc dos workflows n8n~~ **FECHADO 2026-07-11** → `docs/n8n/00-inventario-workflows.md`. Achado: 18 workflows, TODOS inativos desde 06-30. Restante: auditoria de credenciais (movida pro B3) e decisão de reativação (dono) | — | — | — | fechado | — |
 | B3 | Rotação de segredos pendente | `OPS/Secrets/01-ROTATION.md` lista pendências; `MCP_API_KEY` exposta (esta sessão) | Credencial viva em texto puro / exports vazados legíveis via MCP | atualizar `OPS/Secrets/01-ROTATION.md` + rotacionar | **ALTA** | MCP_API_KEY, n8n key, Supabase keys, Baserow tokens rotacionados e registrados |
 | B4 | Estado real do **Chatwoot** | 125:22, :3010 e público (502) todos sem resposta hoje | Serviço omnichannel possivelmente **caído** sem ninguém saber | `docs/chatwoot/status.md` após diagnóstico | **ALTA** | Causa do 502 identificada; up/down decidido |
