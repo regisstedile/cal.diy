@@ -14,19 +14,13 @@ import {
   listTeamInvites,
   setTeamInviteExpiration,
 } from "./invites";
-import { getManagedEventUsersToReassign } from "./managedEvents/getManagedEventUsersToReassign.handler";
 import { ZGetManagedEventUsersToReassignInputSchema } from "./managedEvents/getManagedEventUsersToReassign.schema";
-import { managedEventManualReassignHandler } from "./managedEvents/managedEventManualReassign.handler";
 import { ZManagedEventManualReassignInputSchema } from "./managedEvents/managedEventManualReassign.schema";
-import { managedEventReassignHandler } from "./managedEvents/managedEventReassign.handler";
 import { ZManagedEventReassignInputSchema } from "./managedEvents/managedEventReassign.schema";
 import { getOwnMembership } from "./membership";
 import { assertNotLastOwner } from "./ownership";
-import { getRoundRobinHostsToReassign } from "./roundRobin/getRoundRobinHostsToReasign.handler";
 import { ZGetRoundRobinHostsInputSchema } from "./roundRobin/getRoundRobinHostsToReasign.schema";
-import { roundRobinManualReassignHandler } from "./roundRobin/roundRobinManualReassign.handler";
 import { ZRoundRobinManualReassignInputSchema } from "./roundRobin/roundRobinManualReassign.schema";
-import { roundRobinReassignHandler } from "./roundRobin/roundRobinReassign.handler";
 import { ZRoundRobinReassignInputSchema } from "./roundRobin/roundRobinReassign.schema";
 
 const slugSchema = z
@@ -944,28 +938,51 @@ export const teamsRouter = router({
     }),
   }),
 
+  // Reassignment handlers are lazy-imported (REF pattern): their static import
+  // graph reaches routing-forms' query builder and, through the ui/form barrel,
+  // client-only components — which breaks the Next.js server build.
   roundRobin: router({
-    reassign: authedProcedure
-      .input(ZRoundRobinReassignInputSchema)
-      .mutation(({ ctx, input }) => roundRobinReassignHandler({ ctx, input })),
+    reassign: authedProcedure.input(ZRoundRobinReassignInputSchema).mutation(async ({ ctx, input }) => {
+      const { roundRobinReassignHandler } = await import("./roundRobin/roundRobinReassign.handler");
+      return roundRobinReassignHandler({ ctx, input });
+    }),
     manualReassign: authedProcedure
       .input(ZRoundRobinManualReassignInputSchema)
-      .mutation(({ ctx, input }) => roundRobinManualReassignHandler({ ctx, input })),
-    hostsToReassign: authedProcedure
-      .input(ZGetRoundRobinHostsInputSchema)
-      .query(({ ctx, input }) => getRoundRobinHostsToReassign({ ctx, input })),
+      .mutation(async ({ ctx, input }) => {
+        const { roundRobinManualReassignHandler } = await import(
+          "./roundRobin/roundRobinManualReassign.handler"
+        );
+        return roundRobinManualReassignHandler({ ctx, input });
+      }),
+    hostsToReassign: authedProcedure.input(ZGetRoundRobinHostsInputSchema).query(async ({ ctx, input }) => {
+      const { getRoundRobinHostsToReassign } = await import(
+        "./roundRobin/getRoundRobinHostsToReasign.handler"
+      );
+      return getRoundRobinHostsToReassign({ ctx, input });
+    }),
   }),
 
   managedEvents: router({
-    reassign: authedProcedure
-      .input(ZManagedEventReassignInputSchema)
-      .mutation(({ ctx, input }) => managedEventReassignHandler({ ctx, input })),
+    reassign: authedProcedure.input(ZManagedEventReassignInputSchema).mutation(async ({ ctx, input }) => {
+      const { managedEventReassignHandler } = await import("./managedEvents/managedEventReassign.handler");
+      return managedEventReassignHandler({ ctx, input });
+    }),
     manualReassign: authedProcedure
       .input(ZManagedEventManualReassignInputSchema)
-      .mutation(({ ctx, input }) => managedEventManualReassignHandler({ ctx, input })),
+      .mutation(async ({ ctx, input }) => {
+        const { managedEventManualReassignHandler } = await import(
+          "./managedEvents/managedEventManualReassign.handler"
+        );
+        return managedEventManualReassignHandler({ ctx, input });
+      }),
     usersToReassign: authedProcedure
       .input(ZGetManagedEventUsersToReassignInputSchema)
-      .query(({ ctx, input }) => getManagedEventUsersToReassign({ ctx, input })),
+      .query(async ({ ctx, input }) => {
+        const { getManagedEventUsersToReassign } = await import(
+          "./managedEvents/getManagedEventUsersToReassign.handler"
+        );
+        return getManagedEventUsersToReassign({ ctx, input });
+      }),
   }),
 });
 
