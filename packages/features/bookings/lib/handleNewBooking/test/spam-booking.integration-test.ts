@@ -33,7 +33,6 @@ const createTestWatchlistEntry = async (overrides: {
       type: overrides.type,
       value: overrides.value,
       action: overrides.action,
-      createdById: 0,
       organizationId: overrides.organizationId,
       isGlobal: overrides.organizationId !== null ? false : true,
     },
@@ -148,7 +147,7 @@ describe("handleNewBooking - Spam Detection", () => {
         });
 
         expectDecoyBookingResponse(createdBooking);
-        expect(createdBooking.attendees[0].email).toBe(blockedEmail);
+        expect(createdBooking.attendees?.[0]?.email).toBe(blockedEmail);
         await expectNoBookingInDatabase(blockedEmail);
       },
       timeout
@@ -291,7 +290,7 @@ describe("handleNewBooking - Spam Detection", () => {
         });
 
         expectDecoyBookingResponse(createdBooking);
-        expect(createdBooking.attendees[0].email).toBe(blockedEmail);
+        expect(createdBooking.attendees?.[0]?.email).toBe(blockedEmail);
         await expectNoBookingInDatabase(blockedEmail);
       },
       timeout
@@ -361,8 +360,12 @@ describe("handleNewBooking - Spam Detection", () => {
         const spamCheckService = getSpamCheckService();
         const originalIsBlocked = spamCheckService["isBlocked"].bind(spamCheckService);
 
-        // Use vi.spyOn to mock the private method
-        const isBlockedSpy = vi.spyOn(spamCheckService as never, "isBlocked");
+        // Use vi.spyOn to mock the private method; the cast is needed because
+        // isBlocked is private on SpamCheckService and not visible to spyOn's types
+        const isBlockedSpy = vi.spyOn(
+          spamCheckService as unknown as { isBlocked: (...args: unknown[]) => Promise<unknown> },
+          "isBlocked"
+        );
         isBlockedSpy.mockRejectedValue(new Error("Database connection failed"));
 
         try {
@@ -374,7 +377,7 @@ describe("handleNewBooking - Spam Detection", () => {
           expect(createdBooking).not.toHaveProperty("isShortCircuitedBooking");
           expect(createdBooking.status).toBe(BookingStatus.ACCEPTED);
           expect(createdBooking.id).not.toBe(0);
-          expect(createdBooking.attendees[0].email).toBe(bookerEmail);
+          expect(createdBooking.attendees?.[0]?.email).toBe(bookerEmail);
         } finally {
           // Restore original implementation and clean up spy
           isBlockedSpy.mockRestore();

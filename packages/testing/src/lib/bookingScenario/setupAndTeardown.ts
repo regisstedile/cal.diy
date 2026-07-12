@@ -4,11 +4,13 @@ import { afterEach, beforeEach } from "vitest";
 
 export function setupAndTeardown() {
   beforeEach(() => {
-    // Required to able to generate token in email in some cases
-    //@ts-expect-error - It is a readonly variable
-    process.env.CALENDSO_ENCRYPTION_KEY = "abcdefghjnmkljhjklmnhjklkmnbhjui";
-    //@ts-expect-error - It is a readonly variable
-    process.env.STRIPE_WEBHOOK_SECRET = "MOCK_STRIPE_WEBHOOK_SECRET";
+    // Required to able to generate token in email in some cases.
+    // The cast bypasses the readonly modifier from packages/types/environment.d.ts,
+    // which is only included in some tsconfigs (a @ts-expect-error would be
+    // "unused" in the compilations that don't include it).
+    const env = process.env as Record<string, string | undefined>;
+    env.CALENDSO_ENCRYPTION_KEY = "abcdefghjnmkljhjklmnhjklkmnbhjui";
+    env.STRIPE_WEBHOOK_SECRET = "MOCK_STRIPE_WEBHOOK_SECRET";
     // We are setting it in vitest.config.ts because otherwise it's too late to set it.
     // process.env.DAILY_API_KEY = "MOCK_DAILY_API_KEY";
 
@@ -21,10 +23,10 @@ export function setupAndTeardown() {
     fetchMock.resetMocks();
   });
   afterEach(() => {
-    //@ts-expect-error - It is a readonly variable
-    delete process.env.CALENDSO_ENCRYPTION_KEY;
-    //@ts-expect-error - It is a readonly variable
-    delete process.env.STRIPE_WEBHOOK_SECRET;
+    // Same readonly-bypass cast as in beforeEach above.
+    const env = process.env as Record<string, string | undefined>;
+    delete env.CALENDSO_ENCRYPTION_KEY;
+    delete env.STRIPE_WEBHOOK_SECRET;
     delete process.env.DAILY_API_KEY;
     globalThis.testEmails = [];
     fetchMock.resetMocks();

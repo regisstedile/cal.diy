@@ -4,7 +4,7 @@ import { CURRENT_TIMEZONE } from "@calcom/lib/timezoneConstants";
 import { createContext, useCallback, useContext, useRef, useState } from "react";
 import type { ColumnFilter, FilterValue, SortingState } from "./lib/types";
 
-interface DataTableContextValue {
+export interface DataTableContextValue {
   timeZone: string;
   columnFilters: ColumnFilter[];
   sorting: SortingState;

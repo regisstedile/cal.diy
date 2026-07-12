@@ -14,7 +14,9 @@ export class MockFeaturesRepository implements IFeaturesRepository {
     return slug === "mock-feature";
   }
 
-  async checkIfTeamHasFeature(_teamId: number, slug: FeatureId) {
+  // slug is widened to string (like the sibling checkIf*HasFeature mocks) so the
+  // test-only "mock-feature" slug can be matched without weakening AppFlags.
+  async checkIfTeamHasFeature(_teamId: number, slug: string) {
     return slug === "mock-feature";
   }
 

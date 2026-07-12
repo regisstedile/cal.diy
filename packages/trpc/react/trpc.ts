@@ -108,7 +108,7 @@ export const trpc: CreateTRPCNext<AppRouter, NextPageContext, null> = createTRPC
             /**
              * Retry `useQuery()` calls depending on this function
              */
-            retry(failureCount, _err) {
+            retry(failureCount: number, _err: unknown) {
               const err = _err as never as Maybe<TRPCClientErrorLike<AppRouter>>;
               const code = err?.data?.code;
               if (code === "BAD_REQUEST" || code === "FORBIDDEN" || code === "UNAUTHORIZED") {

@@ -1,3 +1,5 @@
+import type { TFunction } from "i18next";
+
 import { prisma } from "@calcom/prisma";
 import type { PrismaClient } from "@calcom/prisma";
 import i18nMock from "@calcom/testing/lib/__mocks__/libServerI18n";
@@ -12,7 +14,8 @@ export function mockNoTranslations() {
   console.log("Mocking i18n.getTranslation to return identity function");
   i18nMock.getTranslation.mockImplementation(() => {
     return new Promise((resolve) => {
-      const identityFn = (key: string) => key;
+      // The identity function only covers the plain-key call signature of TFunction
+      const identityFn = ((key: string) => key) as TFunction;
       resolve(identityFn);
     });
   });

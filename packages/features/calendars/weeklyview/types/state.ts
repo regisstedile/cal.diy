@@ -3,6 +3,18 @@ import type { TimeRange } from "@calcom/types/schedule";
 import type { BorderColor } from "./common";
 import type { CalendarEvent } from "./events";
 
+export type OutOfOfficeRenderProps = {
+  date: string;
+  fromUser?: IFromUser;
+  toUser?: IToUser;
+  emoji?: string;
+  reason?: string;
+  notes?: string | null;
+  showNotePublicly?: boolean;
+  borderDashed?: boolean;
+  className?: string;
+};
+
 export type View = "month" | "week" | "day";
 export type Hours =
   | 0
