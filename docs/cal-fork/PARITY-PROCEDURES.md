@@ -31,7 +31,7 @@
 | ✅ `me` | 8 | 8 | 0 | 0 |
 | ✅ `oAuth` | 8 | 8 | 0 | 0 |
 | ✅ `ooo` | 4 | 4 | 0 | 0 |
-| 🔴 `organizations` | 41 | 26 | 25 | 10 |
+| 🔴 `organizations` | 41 | 29 | 22 | 10 |
 | ✅ `payments` | 1 | 1 | 0 | 0 |
 | ✅ `pbac` | 8 | 8 | 0 | 0 |
 | ⚠️ `phoneNumber` | 6 | 5 | 1 | 0 |
@@ -43,7 +43,7 @@
 | ✅ `users` | 5 | 5 | 0 | 0 |
 | ✅ `webhook` | 7 | 7 | 0 | 0 |
 | ✅ `workflows` | 15 | 15 | 0 | 0 |
-| **TOTAL** | **374** | **324** | **72** | — |
+| **TOTAL** | **374** | **327** | **69** | — |
 
 ## Detalhe dos gaps
 
@@ -60,7 +60,7 @@
 - **Faltam (3):** `buyCredits`, `downloadExpenseLog`, `getAllCredits`
 
 ### `organizations`
-- **Faltam (25):** `addMembersToEventTypes`, `addMembersToTeams`, `adminDelete`, `adminGet`, `adminGetAll`, `adminUpdate`, `adminVerify`, `bulkDeleteUsers`, `checkIfOrgNeedsUpgrade`, `createPhoneCall`, `createSelfHosted`, `createTeams`, `createWithPaymentIntent`, `getBrand`, `getOrganizationOnboarding`, `getTeams`, `getUser`, `intentToCreateOrg`, `listCurrent`, `publish`, `removeHostsFromEventTypes`, `sendPasswordReset`, `setPassword`, `updateUser`, `verifyCode`
+- **Faltam (22):** `addMembersToEventTypes`, `adminDelete`, `adminGet`, `adminGetAll`, `adminUpdate`, `adminVerify`, `bulkDeleteUsers`, `checkIfOrgNeedsUpgrade`, `createPhoneCall`, `createSelfHosted`, `createTeams`, `createWithPaymentIntent`, `getBrand`, `getOrganizationOnboarding`, `getUser`, `intentToCreateOrg`, `publish`, `removeHostsFromEventTypes`, `sendPasswordReset`, `setPassword`, `updateUser`, `verifyCode`
 - **Só no fork (10):** `acceptInvite`, `declineInvite`, `deleteSamlConnection`, `getCurrent`, `getSamlSettings`, `inviteMember`, `listPendingInvites`, `removeMember`, `saveSamlConnection`, `updateMemberRole`
 
 ### `phoneNumber`

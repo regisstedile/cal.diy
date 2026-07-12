@@ -1,12 +1,11 @@
+import type { WatchlistType } from "@calcom/prisma/enums";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-
-import { WatchlistType } from "@calcom/prisma/enums";
-
 import authedProcedure from "../../../procedures/authedProcedure";
 import { router } from "../../../trpc";
 import {
   ZAcceptDeclineInviteInputSchema,
+  ZAddMembersToTeamsInputSchema,
   ZCreateOrganizationInputSchema,
   ZInviteMemberInputSchema,
   ZListMembersInputSchema,
@@ -93,6 +92,29 @@ export const organizationsRouter = router({
     const { deleteSamlConnectionHandler } = await import("./saml.handler");
 
     return deleteSamlConnectionHandler({ ctx });
+  }),
+
+  listCurrent: authedProcedure.query(async ({ ctx }) => {
+    const { listCurrentOrganization } = await import("./teams");
+
+    return listCurrentOrganization({ prisma: ctx.prisma, userId: ctx.user.id });
+  }),
+
+  getTeams: authedProcedure.query(async ({ ctx }) => {
+    const { getOrganizationTeams } = await import("./teams");
+
+    return getOrganizationTeams({ prisma: ctx.prisma, userId: ctx.user.id });
+  }),
+
+  addMembersToTeams: authedProcedure.input(ZAddMembersToTeamsInputSchema).mutation(async ({ ctx, input }) => {
+    const { addOrganizationMembersToTeams } = await import("./teams");
+
+    return addOrganizationMembersToTeams({
+      prisma: ctx.prisma,
+      userId: ctx.user.id,
+      userIds: input.userIds,
+      teamIds: input.teamIds,
+    });
   }),
 
   getOtherTeam: authedProcedure
