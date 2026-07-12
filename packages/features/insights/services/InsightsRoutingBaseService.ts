@@ -106,6 +106,27 @@ type ResponseWithForm = Prisma.App_RoutingForms_FormResponseGetPayload<{
   include: { form: { select: { id: true; name: true; teamId: true; userId: true } } };
 }>;
 
+type RoutedBooking = Prisma.BookingGetPayload<{
+  select: {
+    uid: true;
+    id: true;
+    status: true;
+    createdAt: true;
+    user: { select: { id: true; name: true; email: true; avatarUrl: true } };
+    attendees: { select: { name: true; email: true; phoneNumber: true } };
+    assignmentReason: { select: { reasonString: true } };
+  };
+}>;
+
+// Mirrors REF's calculate_booking_status_order() used by the denormalized table.
+const BOOKING_STATUS_ORDER: Record<string, number> = {
+  ACCEPTED: 1,
+  PENDING: 2,
+  AWAITING_HOST: 3,
+  CANCELLED: 4,
+  REJECTED: 5,
+};
+
 const EMPTY_ROUTING_PERIOD_DATA = {
   users: { data: [] as InsightsRoutingPeriodUser[], total: 0 },
   periodStats: { data: [] as InsightsRoutingPeriodStat[] },
@@ -169,7 +190,8 @@ export class InsightsRoutingBaseService {
   async getRoutingFormStats() {
     const responses = await this.findResponses();
     const total = responses.length;
-    return { total, totalWithoutBooking: total, totalWithBooking: 0 };
+    const totalWithBooking = responses.filter((response) => response.bookingUid !== null).length;
+    return { total, totalWithoutBooking: total - totalWithBooking, totalWithBooking };
   }
 
   async getTableData({
@@ -181,16 +203,15 @@ export class InsightsRoutingBaseService {
     limit?: number;
     offset?: number;
   }) {
-    const data = this.sortTableData(
-      (await this.findResponses()).map((response) => this.toTableItem(response)),
-      sorting
-    );
+    const data = this.sortTableData(await this.findResponses(), sorting);
     const responseOffset = offset ?? 0;
     const responseLimit = limit ?? 100;
     return { data: data.slice(responseOffset, responseOffset + responseLimit), total: data.length };
   }
 
-  async getFailedBookingsByFieldData(): Promise<Record<string, Record<string, { optionId: string; count: number; optionLabel: string }[]>>> {
+  async getFailedBookingsByFieldData(): Promise<
+    Record<string, Record<string, { optionId: string; count: number; optionLabel: string }[]>>
+  > {
     return {};
   }
 
@@ -204,18 +225,21 @@ export class InsightsRoutingBaseService {
 
   async getRoutingFunnelData(dateRanges: DateRange[]) {
     const responses = await this.findResponses();
-    return dateRanges.map((range) => ({
-      name: range.formattedDate,
-      formattedDateFull: range.formattedDateFull,
-      totalSubmissions: responses.filter((response) => {
-        const createdAt = response.createdAt.getTime();
+    return dateRanges.map((range) => {
+      const inRange = responses.filter((response) => {
+        const createdAt = new Date(response.createdAt).getTime();
         return (
           createdAt >= new Date(range.startDate).getTime() && createdAt <= new Date(range.endDate).getTime()
         );
-      }).length,
-      successfulRoutings: 0,
-      acceptedBookings: 0,
-    }));
+      });
+      return {
+        name: range.formattedDate,
+        formattedDateFull: range.formattedDateFull,
+        totalSubmissions: inRange.length,
+        successfulRoutings: inRange.filter((response) => response.bookingUid !== null).length,
+        acceptedBookings: inRange.filter((response) => response.bookingStatus === "ACCEPTED").length,
+      };
+    });
   }
 
   private async getResponseWhere(): Promise<Prisma.App_RoutingForms_FormResponseWhereInput> {
@@ -248,34 +272,73 @@ export class InsightsRoutingBaseService {
     };
   }
 
-  private async findResponses(): Promise<ResponseWithForm[]> {
+  private async findResponses(): Promise<InsightsRoutingTableItem[]> {
     const responses = await this.prisma.app_RoutingForms_FormResponse.findMany({
       where: await this.getResponseWhere(),
       include: { form: { select: { id: true, name: true, teamId: true, userId: true } } },
     });
-    return responses.filter((response) => this.matchesColumnFilters(this.toTableItem(response)));
+    const bookingsByUid = await this.findRoutedBookings(responses);
+    return responses
+      .map((response) => this.toTableItem(response, bookingsByUid))
+      .filter((item) => this.matchesColumnFilters(item));
   }
 
-  private toTableItem(response: ResponseWithForm): InsightsRoutingTableItem {
+  /**
+   * Responses carry the routed booking's uid (routedToBookingUid, populated by
+   * routing-trace). REF gets the joined booking columns from its denormalized
+   * table; the fork resolves them here with one batched lookup instead.
+   */
+  private async findRoutedBookings(responses: ResponseWithForm[]): Promise<Map<string, RoutedBooking>> {
+    const uids = responses
+      .map((response) => response.routedToBookingUid)
+      .filter((uid): uid is string => uid !== null);
+    if (uids.length === 0) return new Map();
+
+    const bookings = await this.prisma.booking.findMany({
+      where: { uid: { in: uids } },
+      select: {
+        uid: true,
+        id: true,
+        status: true,
+        createdAt: true,
+        user: { select: { id: true, name: true, email: true, avatarUrl: true } },
+        attendees: { select: { name: true, email: true, phoneNumber: true } },
+        assignmentReason: {
+          select: { reasonString: true },
+          orderBy: { createdAt: "desc" },
+          take: 1,
+        },
+      },
+    });
+    return new Map(bookings.map((booking) => [booking.uid, booking]));
+  }
+
+  private toTableItem(
+    response: ResponseWithForm,
+    bookingsByUid: Map<string, RoutedBooking>
+  ): InsightsRoutingTableItem {
     const responseJson = (response.response ?? {}) as ResponseJson;
+    const booking = response.routedToBookingUid
+      ? (bookingsByUid.get(response.routedToBookingUid) ?? null)
+      : null;
     return {
       id: response.id,
-      uuid: null,
+      uuid: response.uuid,
       formId: response.form.id,
       formName: response.form.name,
       formTeamId: response.form.teamId,
       formUserId: response.form.userId,
-      bookingUid: null,
-      bookingId: null,
-      bookingUserId: null,
-      bookingUserName: null,
-      bookingUserEmail: null,
-      bookingUserAvatarUrl: null,
-      bookingStatus: null,
-      bookingStatusOrder: null,
-      bookingCreatedAt: null,
-      bookingAssignmentReason: null,
-      bookingAttendees: [],
+      bookingUid: booking?.uid ?? null,
+      bookingId: booking?.id ?? null,
+      bookingUserId: booking?.user?.id ?? null,
+      bookingUserName: booking?.user?.name ?? null,
+      bookingUserEmail: booking?.user?.email ?? null,
+      bookingUserAvatarUrl: booking?.user?.avatarUrl ?? null,
+      bookingStatus: booking?.status ?? null,
+      bookingStatusOrder: booking ? (BOOKING_STATUS_ORDER[booking.status] ?? 999) : null,
+      bookingCreatedAt: booking?.createdAt ?? null,
+      bookingAssignmentReason: booking?.assignmentReason[0]?.reasonString ?? null,
+      bookingAttendees: booking?.attendees ?? [],
       fields: Object.entries(responseJson).map(([fieldId, answer]) => fieldFromValue(fieldId, answer?.value)),
       createdAt: response.createdAt,
       utm_source: null,
