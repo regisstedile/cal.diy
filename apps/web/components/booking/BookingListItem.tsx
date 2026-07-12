@@ -1,14 +1,14 @@
-import Link from "next/link";
-import { useState, useEffect, useRef } from "react";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
-
 import { getPaymentAppData } from "@calcom/app-store/_utils/payments/getPaymentAppData";
 import type { getEventLocationValue } from "@calcom/app-store/locations";
 import { getSuccessPageLocationMessage, guessEventLocationType } from "@calcom/app-store/locations";
 import dayjs from "@calcom/dayjs";
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 // TODO: Use browser locale, implement Intl in Dayjs maybe?
 import "@calcom/dayjs/locales";
 import { formatTime } from "@calcom/lib/dayjs";
+import { getUserAvatarUrl } from "@calcom/lib/getAvatarUrl";
 import { useCopy } from "@calcom/lib/hooks/useCopy";
 import { useLocale } from "@calcom/lib/hooks/useLocale";
 import { useGetTheme } from "@calcom/lib/hooks/useTheme";
@@ -20,6 +20,7 @@ import { bookingMetadataSchema } from "@calcom/prisma/zod-utils";
 import { trpc } from "@calcom/trpc/react";
 import type { Ensure } from "@calcom/types/utils";
 import classNames from "@calcom/ui/classNames";
+import { AvatarGroup } from "@calcom/ui/components/avatar";
 import { Badge } from "@calcom/ui/components/badge";
 import { Button } from "@calcom/ui/components/button";
 import {
@@ -29,36 +30,34 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuPortal,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  DropdownMenuPortal,
 } from "@calcom/ui/components/dropdown";
 import { Icon } from "@calcom/ui/components/icon";
 import { MeetingTimeInTimezones } from "@calcom/ui/components/popover";
 import { showToast } from "@calcom/ui/components/toast";
 import { Tooltip } from "@calcom/ui/components/tooltip";
-
 import assignmentReasonBadgeTitleMap from "@lib/booking/assignmentReasonBadgeTitleMap";
-
-import { WrongAssignmentDialog } from "../dialog/WrongAssignmentDialog";
 import { buildBookingLink } from "../../modules/bookings/lib/buildBookingLink";
 import { useBookingDetailsSheetStore } from "../../modules/bookings/store/bookingDetailsSheetStore";
 import type { BookingAttendee } from "../../modules/bookings/types";
+import { WrongAssignmentDialog } from "../dialog/WrongAssignmentDialog";
 import { AcceptBookingButton } from "./AcceptBookingButton";
-import { RejectBookingButton } from "./RejectBookingButton";
 import { BookingActionsDropdown } from "./actions/BookingActionsDropdown";
 import {
-  useBookingActionsStoreContext,
   BookingActionsStoreProvider,
+  useBookingActionsStoreContext,
 } from "./actions/BookingActionsStoreProvider";
 import {
-  shouldShowPendingActions,
-  shouldShowRecurringCancelAction,
-  shouldShowIndividualReportButton,
   type BookingActionContext,
   getReportAction,
   isActionDisabled,
+  shouldShowIndividualReportButton,
+  shouldShowPendingActions,
+  shouldShowRecurringCancelAction,
 } from "./actions/bookingActions";
+import { RejectBookingButton } from "./RejectBookingButton";
 import type { BookingItemProps } from "./types";
 
 type ParsedBooking = ReturnType<typeof buildParsedBooking>;
@@ -419,18 +418,39 @@ function BookingListItem(booking: BookingItemProps) {
                   &quot;{booking.description}&quot;
                 </div>
               )}
-              {booking.attendees.length !== 0 && (
-                <DisplayAttendees
-                  attendees={attendeeList}
-                  user={booking.user}
-                  currentEmail={userEmail}
-                  bookingUid={booking.uid}
-                  isBookingInPast={isBookingInPast}
-                  hideOrganizerEmail={booking.eventType?.hideOrganizerEmail}
-                  organizerEmail={booking.user?.email}
-                  eventTypeHosts={booking.eventType?.hosts}
+              <div className="flex items-center gap-2">
+                <AvatarGroup
+                  size="sm"
+                  items={[
+                    ...(booking.user
+                      ? [
+                          {
+                            image: getUserAvatarUrl(booking.user),
+                            alt: booking.user.name || "",
+                            title: booking.user.name || "",
+                          },
+                        ]
+                      : []),
+                    ...attendeeList.map((attendee) => ({
+                      image: getUserAvatarUrl({ avatarUrl: attendee.user?.avatarUrl ?? null }),
+                      alt: attendee.user?.name || attendee.name || attendee.email,
+                      title: attendee.user?.name || attendee.name || attendee.email,
+                    })),
+                  ]}
                 />
-              )}
+                {booking.attendees.length !== 0 && (
+                  <DisplayAttendees
+                    attendees={attendeeList}
+                    user={booking.user}
+                    currentEmail={userEmail}
+                    bookingUid={booking.uid}
+                    isBookingInPast={isBookingInPast}
+                    hideOrganizerEmail={booking.eventType?.hideOrganizerEmail}
+                    organizerEmail={booking.user?.email}
+                    eventTypeHosts={booking.eventType?.hosts}
+                  />
+                )}
+              </div>
               {!isPending && (
                 <div className="sm:hidden">
                   {(provider?.label ||
@@ -588,9 +608,28 @@ const BookingItemBadges = ({
           {booking.eventType.team.name}
         </Badge>
       )}
+      {(() => {
+        const provider = guessEventLocationType(booking.location);
+        if (!provider) return null;
+        const providerLabel = t(provider.label);
+        return (
+          <Tooltip content={providerLabel}>
+            <span className="ltr:mr-2 rtl:ml-2 inline-flex">
+              {provider.iconUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={provider.iconUrl} width={16} height={16} className="h-4 w-4" alt={providerLabel} />
+              ) : (
+                <Icon name="map-pin" className="text-subtle h-4 w-4" />
+              )}
+            </span>
+          </Tooltip>
+        );
+      })()}
       {booking?.assignmentReasonSortedByCreatedAt.length > 0 && (
         <AssignmentReasonTooltip
-          assignmentReason={booking.assignmentReasonSortedByCreatedAt[booking.assignmentReasonSortedByCreatedAt.length - 1]}
+          assignmentReason={
+            booking.assignmentReasonSortedByCreatedAt[booking.assignmentReasonSortedByCreatedAt.length - 1]
+          }
           onClick={onAssignmentReasonClick}
         />
       )}
