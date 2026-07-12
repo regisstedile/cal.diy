@@ -45,6 +45,10 @@ function getTestExclude() {
     "**/dist/**",
     "apps/api/v2/**/*.spec.ts",
     "__checks__/**/*.spec.ts",
+    // Frozen REF reference snapshot — not live source, was duplicating every
+    // test run and breaking on stale @calcom/web-aliased imports whenever the
+    // real fork file it pointed at got renamed or deleted.
+    "docs/cal-fork/cal-diy-opensource/**",
   ];
   if (isIntegrationMode || isTimezoneMode) {
     return [...baseExclude, "packages/embeds/**/*"];
