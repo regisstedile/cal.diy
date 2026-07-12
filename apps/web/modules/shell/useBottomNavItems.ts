@@ -44,6 +44,11 @@ export function useBottomNavItems({ publicPageUrl }: BottomNavItemsProps): Navig
       : null,
 
     {
+      name: "help",
+      href: "/ajuda",
+      icon: "circle-help",
+    },
+    {
       name: "settings",
       href: "/settings/my-account/profile",
       icon: "settings",
