@@ -1,3 +1,5 @@
+"use client";
+
 import { Button as CalButton } from "@calcom/ui/components/button";
 import { TextArea, TextField } from "@calcom/ui/components/form";
 import { Icon } from "@calcom/ui/components/icon";
