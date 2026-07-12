@@ -1,10 +1,3 @@
-import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import type { Dispatch, SetStateAction } from "react";
-import { useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-
 import { Dialog } from "@calcom/features/components/controlled-dialog";
 import { ErrorCode } from "@calcom/lib/errorCodes";
 import { useDebounce } from "@calcom/lib/hooks/useDebounce";
@@ -14,15 +7,21 @@ import { trpc } from "@calcom/trpc/react";
 import classNames from "@calcom/ui/classNames";
 import { Button } from "@calcom/ui/components/button";
 import {
+  ConfirmationDialogContent,
+  DialogClose,
   DialogContent,
   DialogFooter,
-  DialogClose,
-  ConfirmationDialogContent,
 } from "@calcom/ui/components/dialog";
-import { TextAreaField, Form, Label, Input } from "@calcom/ui/components/form";
+import { Form, Input, Label, TextAreaField } from "@calcom/ui/components/form";
 import { RadioAreaGroup as RadioArea } from "@calcom/ui/components/radio";
 import { showToast } from "@calcom/ui/components/toast";
 import { CheckIcon, LoaderIcon } from "@coss/ui/icons";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import type { Dispatch, SetStateAction } from "react";
+import { useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 enum ReassignType {
   AUTO = "auto",
@@ -76,26 +75,41 @@ export const ReassignDialog = ({
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearch = useDebounce(searchTerm, 500);
 
-  const managedEventQuery: {
-    data: { pages: { items: { id: number; name: string | null; email: string; status: string }[] }[] } | undefined;
-    fetchNextPage: () => void;
-    hasNextPage: boolean;
-    isFetching: boolean;
-    isFetchingNextPage: boolean;
-  } = { data: undefined, fetchNextPage: () => {}, hasNextPage: false, isFetching: false, isFetchingNextPage: false };
+  const managedEventQuery = trpc.viewer.teams.managedEvents.usersToReassign.useInfiniteQuery(
+    {
+      bookingId,
+      limit: 10,
+      searchTerm: debouncedSearch,
+    },
+    {
+      enabled: isManagedEvent,
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+    }
+  );
 
-  const roundRobinQuery: typeof managedEventQuery = { data: undefined, fetchNextPage: () => {}, hasNextPage: false, isFetching: false, isFetchingNextPage: false };
+  const roundRobinQuery = trpc.viewer.teams.roundRobin.hostsToReassign.useInfiniteQuery(
+    {
+      bookingId,
+      exclude: "fixedHosts",
+      limit: 10,
+      searchTerm: debouncedSearch,
+    },
+    {
+      enabled: !isManagedEvent,
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+    }
+  );
 
   const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } = isManagedEvent
     ? managedEventQuery
     : roundRobinQuery;
 
   const allRows = useMemo(() => {
-    return data?.pages.flatMap((page: { items: { id: number; name: string | null; email: string; status: string }[] }) => page.items) ?? [];
+    return data?.pages.flatMap((page) => page.items) ?? [];
   }, [data]);
 
   const teamMemberOptions = useMemo(() => {
-    return allRows.map((member: { id: number; name: string | null; email: string; status: string }) => ({
+    return allRows.map((member) => ({
       label: member.name || member.email,
       value: member.id,
       status: member.status,
@@ -115,17 +129,65 @@ export const ReassignDialog = ({
     },
   });
 
-  const roundRobinReassignMutation = { mutate: (..._args: unknown[]) => {}, mutateAsync: async () => ({}), isPending: false };
+  const roundRobinReassignMutation = trpc.viewer.teams.roundRobin.reassign.useMutation({
+    onSuccess: async (data) => {
+      await utils.viewer.bookings.get.invalidate();
+      setIsOpenDialog(false);
+      showToast(t("booking_reassigned_to_host", { host: data?.reassignedTo.name }), "success");
+    },
+    onError: async (error) => {
+      if (error.message.includes(ErrorCode.NoAvailableUsersFound)) {
+        showToast(t("no_available_hosts"), "error");
+      } else {
+        showToast(t(error.message), "error");
+      }
+    },
+  });
 
+  const managedEventReassignMutation = trpc.viewer.teams.managedEvents.reassign.useMutation({
+    onSuccess: async () => {
+      await utils.viewer.bookings.get.invalidate();
+      setIsOpenDialog(false);
+      showToast(t("booking_reassigned"), "success");
+    },
+    onError: async (error) => {
+      if (error.message.includes(ErrorCode.NoAvailableUsersFound)) {
+        showToast(t("no_available_hosts"), "error");
+      } else {
+        showToast(t(error.message), "error");
+      }
+    },
+  });
 
-  const managedEventReassignMutation = { mutate: (..._args: unknown[]) => {}, mutateAsync: async () => ({}), isPending: false };
+  const roundRobinManualReassignMutation = trpc.viewer.teams.roundRobin.manualReassign.useMutation({
+    onSuccess: async () => {
+      await utils.viewer.bookings.get.invalidate();
+      setIsOpenDialog(false);
+      showToast(t("booking_reassigned"), "success");
+    },
+    onError: async (error) => {
+      if (error.message.includes(ErrorCode.NoAvailableUsersFound)) {
+        showToast(t("no_available_hosts"), "error");
+      } else {
+        showToast(t(error.message), "error");
+      }
+    },
+  });
 
-
-  const roundRobinManualReassignMutation = { mutate: (..._args: unknown[]) => {}, mutateAsync: async () => ({}), isPending: false };
-
-
-  const managedEventManualReassignMutation = { mutate: (..._args: unknown[]) => {}, mutateAsync: async () => ({}), isPending: false };
-
+  const managedEventManualReassignMutation = trpc.viewer.teams.managedEvents.manualReassign.useMutation({
+    onSuccess: async () => {
+      await utils.viewer.bookings.get.invalidate();
+      setIsOpenDialog(false);
+      showToast(t("booking_reassigned"), "success");
+    },
+    onError: async (error) => {
+      if (error.message.includes(ErrorCode.NoAvailableUsersFound)) {
+        showToast(t("no_available_hosts"), "error");
+      } else {
+        showToast(t(error.message), "error");
+      }
+    },
+  });
 
   const [confirmationModal, setConfirmationModal] = useState<{
     show: boolean;

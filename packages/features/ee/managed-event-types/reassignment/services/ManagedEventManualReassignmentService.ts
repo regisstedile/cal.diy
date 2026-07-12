@@ -149,14 +149,47 @@ export class ManagedEventManualReassignmentService {
       reassignLogger.error("Error cancelling workflow reminders", error);
     }
 
-    if (targetEventTypeDetails.workflows && targetEventTypeDetails.workflows.length > 0) {
+    const workflowsForTargetEventType = await this.prisma.workflow.findMany({
+      where: {
+        activeOn: { some: { eventTypeId: targetEventTypeDetails.id } },
+      },
+      select: {
+        id: true,
+        name: true,
+        trigger: true,
+        time: true,
+        timeUnit: true,
+        userId: true,
+        teamId: true,
+        steps: {
+          select: {
+            id: true,
+            action: true,
+            sendTo: true,
+            template: true,
+            reminderBody: true,
+            emailSubject: true,
+            sender: true,
+            includeCalendarEvent: true,
+            numberVerificationPending: true,
+            numberRequired: true,
+            verifiedAt: true,
+            autoTranslateEnabled: true,
+            sourceLocale: true,
+          },
+        },
+      },
+    });
+
+    if (workflowsForTargetEventType.length > 0) {
       try {
         const creditService = new CreditService();
         const bookerBaseUrl = await getBookerBaseUrl(orgId);
         const bookerUrl = `${bookerBaseUrl}/${newUser.username}/${targetEventTypeDetails.slug}`;
 
         await WorkflowService.scheduleWorkflowsForNewBooking({
-          workflows: targetEventTypeDetails.workflows.map((w) => w.workflow),
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          workflows: workflowsForTargetEventType as any,
           smsReminderNumber: newBooking.smsReminderNumber || null,
           calendarEvent: {
             type: targetEventTypeDetails.slug,

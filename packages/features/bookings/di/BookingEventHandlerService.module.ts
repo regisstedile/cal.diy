@@ -1,3 +1,4 @@
+import { moduleLoader as bookingAuditProducerServiceModuleLoader } from "@calcom/features/booking-audit/di/BookingAuditTaskerProducerService.module";
 import { BookingEventHandlerService } from "@calcom/features/bookings/lib/onBookingEvents/BookingEventHandlerService";
 import { bindModuleToClassOnToken, createModule } from "@calcom/features/di/di";
 import { moduleLoader as loggerModuleLoader } from "@calcom/features/di/shared/services/logger.service";
@@ -16,6 +17,7 @@ const loadModule = bindModuleToClassOnToken({
   depsMap: {
     hashedLinkService: hashedLinkServiceModuleLoader,
     log: loggerModuleLoader,
+    bookingAuditProducerService: bookingAuditProducerServiceModuleLoader,
   },
 });
 

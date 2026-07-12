@@ -75,7 +75,6 @@ export type ManagedEventCancellationResult = {
   status: BookingStatus;
 };
 
-
 type TeamBookingsParamsBase = {
   user: { id: number; email: string };
   teamId: number;
@@ -1771,6 +1770,13 @@ export class BookingRepository implements IBookingRepository {
             credentialId: true,
             thirdPartyRecurringEventId: true,
             delegationCredentialId: true,
+          },
+        },
+        workflowReminders: {
+          select: {
+            id: true,
+            referenceId: true,
+            method: true,
           },
         },
       },

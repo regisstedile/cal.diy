@@ -14,8 +14,20 @@ import {
   listTeamInvites,
   setTeamInviteExpiration,
 } from "./invites";
+import { getManagedEventUsersToReassign } from "./managedEvents/getManagedEventUsersToReassign.handler";
+import { ZGetManagedEventUsersToReassignInputSchema } from "./managedEvents/getManagedEventUsersToReassign.schema";
+import { managedEventManualReassignHandler } from "./managedEvents/managedEventManualReassign.handler";
+import { ZManagedEventManualReassignInputSchema } from "./managedEvents/managedEventManualReassign.schema";
+import { managedEventReassignHandler } from "./managedEvents/managedEventReassign.handler";
+import { ZManagedEventReassignInputSchema } from "./managedEvents/managedEventReassign.schema";
 import { getOwnMembership } from "./membership";
 import { assertNotLastOwner } from "./ownership";
+import { getRoundRobinHostsToReassign } from "./roundRobin/getRoundRobinHostsToReasign.handler";
+import { ZGetRoundRobinHostsInputSchema } from "./roundRobin/getRoundRobinHostsToReasign.schema";
+import { roundRobinManualReassignHandler } from "./roundRobin/roundRobinManualReassign.handler";
+import { ZRoundRobinManualReassignInputSchema } from "./roundRobin/roundRobinManualReassign.schema";
+import { roundRobinReassignHandler } from "./roundRobin/roundRobinReassign.handler";
+import { ZRoundRobinReassignInputSchema } from "./roundRobin/roundRobinReassign.schema";
 
 const slugSchema = z
   .string()
@@ -930,6 +942,30 @@ export const teamsRouter = router({
 
       return { eventTypeId: input.eventTypeId };
     }),
+  }),
+
+  roundRobin: router({
+    reassign: authedProcedure
+      .input(ZRoundRobinReassignInputSchema)
+      .mutation(({ ctx, input }) => roundRobinReassignHandler({ ctx, input })),
+    manualReassign: authedProcedure
+      .input(ZRoundRobinManualReassignInputSchema)
+      .mutation(({ ctx, input }) => roundRobinManualReassignHandler({ ctx, input })),
+    hostsToReassign: authedProcedure
+      .input(ZGetRoundRobinHostsInputSchema)
+      .query(({ ctx, input }) => getRoundRobinHostsToReassign({ ctx, input })),
+  }),
+
+  managedEvents: router({
+    reassign: authedProcedure
+      .input(ZManagedEventReassignInputSchema)
+      .mutation(({ ctx, input }) => managedEventReassignHandler({ ctx, input })),
+    manualReassign: authedProcedure
+      .input(ZManagedEventManualReassignInputSchema)
+      .mutation(({ ctx, input }) => managedEventManualReassignHandler({ ctx, input })),
+    usersToReassign: authedProcedure
+      .input(ZGetManagedEventUsersToReassignInputSchema)
+      .query(({ ctx, input }) => getManagedEventUsersToReassign({ ctx, input })),
   }),
 });
 
