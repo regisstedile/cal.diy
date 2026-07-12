@@ -135,3 +135,14 @@ UI+API junto — reavaliar lá, não pré-portar API agora.
 decisão. Único item vivo restante: **12.2 wizard `/settings/organizations/new`** —
 bloqueado em decisão do dono (o fluxo custom `/settings/organizations/general`
 já cria/edita org; o wizard só se justifica se onboarding guiado for demanda real).
+
+## Resumo canônico da sprint (validado pelo dono, 2026-07-12)
+
+- **ReassignDialog**: UI viva com backend incompleto → **implementar** (feito,
+  `14301649e3`).
+- **UserTable**: UI morta, substituída por fluxo ativo (`members-view.tsx`) →
+  **remover** (feito, `01182a9ebe`, ~2700 linhas).
+- **Stub não significa automaticamente funcionalidade faltante** — significa
+  "porte interrompido aqui"; pode ter sido substituído por outro caminho.
+- **Consumer discovery é obrigatório antes de portar qualquer capacidade.**
+  Checklist completo em [METODO-TRIAGEM-CAPACIDADE.md](METODO-TRIAGEM-CAPACIDADE.md).
