@@ -1,7 +1,7 @@
-import { WEBAPP_URL } from "@calcom/lib/constants";
 import { loadTranslations } from "@calcom/i18n/server";
+import { WEBAPP_URL } from "@calcom/lib/constants";
 import { buildLegacyCtx, decodeParams } from "@lib/buildLegacyCtx";
-import { getServerSideProps } from "@server/lib/[user]/[type]/getServerSideProps";
+import { getServerSideProps } from "@lib/org/[orgSlug]/[user]/[type]/getServerSideProps";
 import type { PageProps } from "app/_types";
 import { generateMeetingMetadata } from "app/_utils";
 import { CustomI18nProvider } from "app/CustomI18nProvider";
@@ -12,20 +12,13 @@ import type React from "react";
 import type { PageProps as LegacyPageProps } from "~/users/views/users-type-public-view";
 import LegacyPage from "~/users/views/users-type-public-view";
 
-// Strip orgSlug from params so the handler sees only user+type
-import type { Params } from "app/_types";
-
-async function resolveParams(params: Promise<Params>): Promise<Params> {
-  const { orgSlug: _orgSlug, ...rest } = await params;
-  return rest;
-}
-
+// The dispatcher loader needs orgSlug to decide between team and user pages,
+// so params are passed through untouched (downstream zod schemas ignore extras).
 const getData: (ctx: ReturnType<typeof buildLegacyCtx>) => Promise<LegacyPageProps> =
   withAppDirSsr<LegacyPageProps>(getServerSideProps);
 
 const ServerPage = async ({ params, searchParams }: PageProps): Promise<JSX.Element> => {
-  const resolvedParams = resolveParams(params);
-  const legacyCtx = buildLegacyCtx(await headers(), await cookies(), await resolvedParams, await searchParams);
+  const legacyCtx = buildLegacyCtx(await headers(), await cookies(), await params, await searchParams);
   const props = await getData(legacyCtx);
 
   const locale = props.eventData?.interfaceLanguage;
@@ -43,8 +36,7 @@ const ServerPage = async ({ params, searchParams }: PageProps): Promise<JSX.Elem
 };
 
 export const generateMetadata = async ({ params, searchParams }: PageProps): Promise<Metadata> => {
-  const resolvedParams = resolveParams(params);
-  const legacyCtx = buildLegacyCtx(await headers(), await cookies(), await resolvedParams, await searchParams);
+  const legacyCtx = buildLegacyCtx(await headers(), await cookies(), await params, await searchParams);
   const props = await getData(legacyCtx);
 
   const { booking, isSEOIndexable = true, eventData, isBrandingHidden } = props;
@@ -60,7 +52,7 @@ export const generateMetadata = async ({ params, searchParams }: PageProps): Pro
         username: `${user.username}`,
       })) || [],
   };
-  const decodedParams = decodeParams(await resolvedParams);
+  const decodedParams = decodeParams(await params);
   const metadata = await generateMeetingMetadata(
     meeting,
     (t) => `${rescheduleUid && !!booking ? t("reschedule") : ""} ${title} | ${profileName}`,
