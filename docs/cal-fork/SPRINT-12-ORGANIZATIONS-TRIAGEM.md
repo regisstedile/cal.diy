@@ -101,12 +101,37 @@ Validação executada:
 
 | Opção | Valor | Risco | Decisão |
 |---|---|---|---|
-| 12.1A compat org teams/members | médio | baixo | **recomendada** |
+| 12.1A compat org teams/members | médio | baixo | **entregue** |
 | 12.2 wizard `/organizations/new` sem billing | alto se onboarding for prioridade | médio/alto | só depois de confirmar demanda |
-| 12.5 user admin (`getUser/updateUser`) | médio | alto | depois de roles/permissions |
+| 12.4 hosts/eventTypes | — | — | **IGNORAR — sem consumer** (ver abaixo, 2026-07-12) |
+| 12.5 user admin (`getUser/updateUser`) | — | — | **IGNORAR — sem consumer** (ver abaixo, 2026-07-12) |
 | admin global | baixo p/ ALLGED | alto | ignorar |
 | billing/payment | fora de escopo | alto | ignorar |
 
+## Verificação de consumers — 12.4 e 12.5 natimortos (2026-07-12)
+
+Antes de portar 12.4/12.5, aplicada a lição do UserTable (commit `01182a9ebe`):
+verificar se existe consumer vivo antes de portar handler.
+
+- **12.4** (`addMembersToEventTypes`, `removeHostsFromEventTypes`): os únicos
+  consumers no REF são `UserTable/BulkActions/EventTypesList.tsx` (código morto
+  deletado do fork em `01182a9ebe`) e `ee/teams/components/EventTypesList.tsx`
+  (não existe no fork e não tem importador nem no próprio REF). Zero consumers
+  no fork.
+- **12.5** (`getUser`, `updateUser`, `sendPasswordReset`, `setPassword`): todos
+  os consumers no REF são `UserTable/EditSheet/*` e `UserTableActions.tsx` —
+  a mesma árvore morta deletada. Zero consumers no fork; `/members` usa
+  `members-view.tsx`, que já cobre list/invite/remove/role via procedures
+  existentes.
+
+Portar qualquer um deles hoje = adicionar API sem chamador. Se um dia o fork
+quiser a UI rica do EditSheet (avatar/bio/role custom), isso é um projeto de
+UI+API junto — reavaliar lá, não pré-portar API agora.
+
 ## Critério para próxima implementação
 
-A 12.1A está fechada. Para avançar, escolher entre 12.2 wizard `/settings/organizations/new` adaptado sem billing, 12.4 hosts/eventTypes, ou 12.5 administração de usuários. Não portar billing/admin global por matriz nominal.
+**Sprint 12 efetivamente completa.** Dos 22 "faltantes" nominais: 12.1A entregue;
+12.4/12.5 ignorados por falta de consumer; billing/admin global/AI ignorados por
+decisão. Único item vivo restante: **12.2 wizard `/settings/organizations/new`** —
+bloqueado em decisão do dono (o fluxo custom `/settings/organizations/general`
+já cria/edita org; o wizard só se justifica se onboarding guiado for demanda real).
