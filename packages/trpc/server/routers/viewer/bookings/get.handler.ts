@@ -518,6 +518,17 @@ export async function getBookings({
           "Booking.isRecorded",
           "Booking.cancellationReason",
           "Booking.rejectionReason",
+          // Back-relation by uid (no FK column on Booking itself) — existence
+          // alone drives isBookingFromRoutingForm gating on the actions
+          // dropdown, so only the id is fetched, not the full row. `report`
+          // (BookingReport) is NOT duplicated here — it's already selected
+          // in full further down (id/reportedById/reason/description/createdAt).
+          jsonObjectFrom(
+            eb
+              .selectFrom("App_RoutingForms_FormResponse")
+              .select(["App_RoutingForms_FormResponse.id"])
+              .whereRef("App_RoutingForms_FormResponse.routedToBookingUid", "=", "Booking.uid")
+          ).as("routedFromRoutingFormReponse"),
           jsonObjectFrom(
             eb
               .selectFrom("EventType")

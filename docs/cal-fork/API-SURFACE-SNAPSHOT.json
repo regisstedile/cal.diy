@@ -1,6 +1,6 @@
 {
   "generated": "2026-07-12",
-  "count": 333,
+  "count": 334,
   "procedures": [
     "admin.addToWatchlist",
     "admin.assignFeatureToTeam",
@@ -91,6 +91,7 @@
     "bookings.getBookingAttendees",
     "bookings.getBookingDetails",
     "bookings.getBookingHistory",
+    "bookings.getRoutingTrace",
     "bookings.getWrongAssignmentReports",
     "bookings.hasWrongAssignmentReport",
     "bookings.reportBooking",
