@@ -136,6 +136,25 @@ decisão. Único item vivo restante: **12.2 wizard `/settings/organizations/new`
 bloqueado em decisão do dono (o fluxo custom `/settings/organizations/general`
 já cria/edita org; o wizard só se justifica se onboarding guiado for demanda real).
 
+## 12.2 wizard — FECHADO: não portar (2026-07-12)
+
+Decisão tomada aplicando o próprio método ao wizard:
+
+1. **Deploy é single-org** (`NEXT_PUBLIC_SINGLE_ORG_SLUG=allged` no compose) e a
+   org já existe (Team id 2). Criação de organização é evento único que já
+   aconteceu — wizard multi-step de criação não tem chamador possível.
+2. **Nenhum caminho vivo alcança o 404**: o link do sidebar é gated por
+   `IS_CALCOM` (falso em self-hosted); o banner de upsell em
+   `/settings/my-account/profile` estava neutralizado com `&& false` hardcoded
+   (hack de sessão anterior) e, mesmo sem o hack, seu botão apontava para
+   `/onboarding/organization/details` — rota que também não existe no fork.
+3. O flag `onboarding-v3` fica ligado: controla o onboarding de usuário novo
+   (`/onboarding/getting-started`), que existe e funciona.
+
+Entregável real do 12.2: remover o banner morto direito (componente +
+MailIcon local + state + hack `&& false`) em vez de deixar o hack apodrecer.
+O wizard segue disponível no git history / REF se a demanda um dia existir.
+
 ## Resumo canônico da sprint (validado pelo dono, 2026-07-12)
 
 - **ReassignDialog**: UI viva com backend incompleto → **implementar** (feito,
