@@ -35,19 +35,24 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
 
   const team = await prisma.team.findFirst({
     where: { slug: teamSlug, isOrganization: false },
-    select: { id: true, slug: true },
+    select: { id: true, slug: true, parent: { select: { slug: true } } },
   });
 
   if (!team) {
     return { notFound: true } as const;
   }
 
+  // Org-nested teams (parentId = org, the single-org invite flow) need their
+  // org passed through — with org: null, getPublicEvent requires
+  // team.parent = null and 404s every event of a nested team. Standalone
+  // teams (custom /settings/teams flow) keep org: null. The fork's orgDomains
+  // is a stub, so the team's own parent is the source of truth, not the host.
   const eventData = await EventRepository.getPublicEvent(
     {
       username: teamSlug,
       eventSlug,
       isTeamEvent: true,
-      org: null,
+      org: team.parent?.slug ?? null,
       fromRedirectOfNonOrgLink: false,
     },
     session?.user?.id
