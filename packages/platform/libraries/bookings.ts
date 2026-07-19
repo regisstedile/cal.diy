@@ -1,3 +1,4 @@
+export { getBookingAuditProducerService } from "@calcom/features/booking-audit/di/BookingAuditProducerService.container";
 export { getBookingAttendeesService } from "@calcom/features/bookings/di/BookingAttendeesService.container";
 export { BookingEmailSmsHandler } from "@calcom/features/bookings/lib/BookingEmailSmsHandler";
 export { CheckBookingLimitsService } from "@calcom/features/bookings/lib/checkBookingLimits";

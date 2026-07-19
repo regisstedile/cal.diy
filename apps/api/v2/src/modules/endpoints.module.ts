@@ -9,15 +9,9 @@ import { ConferencingModule } from "@/modules/conferencing/conferencing.module";
 import { DestinationCalendarsModule } from "@/modules/destination-calendars/destination-calendars.module";
 import { NotificationsModule } from "@/modules/notifications/notifications.module";
 import { OAuthClientModule } from "@/modules/oauth-clients/oauth-client.module";
-import { OrganizationsBookingsModule } from "@/modules/organizations/bookings/organizations.bookings.module";
-import { OrganizationsRoutingFormsModule } from "@/modules/organizations/routing-forms/organizations-routing-forms.module";
-import { OrganizationsTeamsBookingsModule } from "@/modules/organizations/teams/bookings/organizations-teams-bookings.module";
-import { OrganizationsUsersBookingsModule } from "@/modules/organizations/users/bookings/organizations-users-bookings.module";
 import { RouterModule } from "@/modules/router/router.module";
 import { SelectedCalendarsModule } from "@/modules/selected-calendars/selected-calendars.module";
 import { StripeModule } from "@/modules/stripe/stripe.module";
-import { TeamsBookingsModule } from "@/modules/teams/bookings/teams-bookings.module";
-import { TeamsSchedulesModule } from "@/modules/teams/schedules/teams-schedules.module";
 import { TimezoneModule } from "@/modules/timezones/timezones.module";
 import { VerifiedResourcesModule } from "@/modules/verified-resources/verified-resources.module";
 import { PlatformEndpointsModule } from "@/platform/platform-endpoints-module";
@@ -37,12 +31,12 @@ import { PlatformEndpointsModule } from "@/platform/platform-endpoints-module";
     CalUnifiedCalendarsModule,
     VerifiedResourcesModule,
     RouterModule,
-    TeamsSchedulesModule,
-    TeamsBookingsModule,
-    OrganizationsTeamsBookingsModule,
-    OrganizationsUsersBookingsModule,
-    OrganizationsBookingsModule,
-    OrganizationsRoutingFormsModule,
+    // DESMONTADOS (80f8ece267 montou sem build-testar): TeamsBookings, TeamsSchedules,
+    // OrganizationsTeamsBookings, OrganizationsUsersBookings,
+    // OrganizationsBookings, OrganizationsRoutingForms — todos importam
+    // @/ee/** que NÃO existe no fork (EE removido). 82 erros de build,
+    // api-v2 sem imagem nova desde 22/05 por causa disso. Ficam no disco
+    // (excluídos do tsconfig.build) até alguém portar as deps de verdade.
     // O app companion consome estes dois: push subscription (novo) e
     // selected-calendars (módulo já existia no fork, nunca tinha sido montado)
     NotificationsModule,

@@ -89,8 +89,9 @@ export class RouterController {
       recordType: crmOwnerRecordType,
       crmAppSlug,
     } = await getTeamMemberEmailForResponseOrContactUsingUrlQuery({
+      // Stub no fork (CRM removido) — assinatura pede eventTypeId, retorna nulls
       query: Object.fromEntries(routingSearchParams),
-      eventData: eventTypeData,
+      eventTypeId: eventTypeData.id,
     });
 
     teamMemberEmail && routingUrl.searchParams.set("cal.teamMemberEmail", teamMemberEmail);

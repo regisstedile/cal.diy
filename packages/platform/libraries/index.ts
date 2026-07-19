@@ -212,3 +212,9 @@ export async function verifyPhoneNumber(
 ): Promise<boolean> {
   throw new Error("Phone verification is not available in community edition");
 }
+
+// Router (routing forms) — consumidos por apps/api/v2 router.controller; os
+// exports sumiram no refactor 2716889b21 mas as implementações seguem vivas
+// em features (getRoutedUrl tem 174 testes passando no fork)
+export { getRoutedUrl } from "@calcom/features/routing-forms/lib/getRoutedUrl";
+export { getTeamMemberEmailForResponseOrContactUsingUrlQuery } from "@calcom/features/ee/teams/lib/getTeamMemberEmailFromCrm";

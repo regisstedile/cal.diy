@@ -1,4 +1,7 @@
-import { BookingEventHandlerService as BaseBookingEventHandlerService } from "@calcom/platform-libraries/bookings";
+import {
+  BookingEventHandlerService as BaseBookingEventHandlerService,
+  getBookingAuditProducerService,
+} from "@calcom/platform-libraries/bookings";
 import { Injectable } from "@nestjs/common";
 import { HashedLinkService } from "./hashed-link.service";
 import { Logger } from "@/lib/logger.bridge";
@@ -9,6 +12,9 @@ export class BookingEventHandlerService extends BaseBookingEventHandlerService {
     super({
       log: bridgeLogger,
       hashedLinkService,
+      // Mesmo producer do web (container DI de features) — sem ele todo audit
+      // de booking criado via API v2 sumiria silenciosamente
+      bookingAuditProducerService: getBookingAuditProducerService(),
     });
   }
 }

@@ -1,4 +1,18 @@
 {
   "extends": "./tsconfig.json",
-  "exclude": ["node_modules", "test", "dist", "**/*spec.ts"]
+  "exclude": [
+    "node_modules",
+    "test",
+    "dist",
+    "**/*spec.ts",
+    "src/modules/teams/schedules/**",
+    "src/modules/teams/bookings/**",
+    "src/modules/auth/guards/workflows/**",
+    "src/modules/organizations/bookings/**",
+    "src/modules/organizations/teams/bookings/**",
+    "src/modules/organizations/teams/workflows/**",
+    "src/modules/organizations/users/bookings/**",
+    "src/modules/organizations/routing-forms/**",
+    "src/modules/workflows/**"
+  ]
 }
