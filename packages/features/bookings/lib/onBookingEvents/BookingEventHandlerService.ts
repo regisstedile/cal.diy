@@ -4,6 +4,7 @@ import type { BookingAuditProducerService } from "@calcom/features/booking-audit
 import type { ActionSource } from "@calcom/features/booking-audit/lib/types/actionSource";
 import type { ISimpleLogger } from "@calcom/features/di/shared/services/logger.service";
 import type { HashedLinkService } from "@calcom/features/hashedLink/lib/service/HashedLinkService";
+import type { PushNotificationService } from "@calcom/features/notifications/lib/service/PushNotificationService";
 import { safeStringify } from "@calcom/lib/safeStringify";
 import type { z } from "zod";
 import type { BookingCreatedPayload, BookingRescheduledPayload } from "./types";
@@ -12,6 +13,7 @@ interface BookingEventHandlerDeps {
   log: ISimpleLogger;
   hashedLinkService: HashedLinkService;
   bookingAuditProducerService: BookingAuditProducerService;
+  pushNotificationService: PushNotificationService;
 }
 
 interface OnBookingCreatedParams {
@@ -76,6 +78,7 @@ export class BookingEventHandlerService {
   private async onBookingCreatedOrRescheduled(payload: BookingCreatedPayload | BookingRescheduledPayload) {
     const results = await Promise.allSettled([
       this.updatePrivateLinkUsage(payload.bookingFormData.hashedLink),
+      this.notifyHost(payload),
     ]);
     results.forEach((result) => {
       if (result.status === "rejected") {
@@ -85,6 +88,30 @@ export class BookingEventHandlerService {
         );
       }
     });
+  }
+
+  // Push (navegador via web-push + app companion via Expo) pro anfitrião.
+  // Falha aqui nunca propaga -- push é cortesia, booking é o negócio.
+  private async notifyHost(payload: BookingCreatedPayload | BookingRescheduledPayload) {
+    try {
+      const isReschedule = "oldBooking" in payload;
+      const start = payload.booking.startTime;
+      const when = start.toLocaleString("pt-BR", {
+        timeZone: "America/Sao_Paulo",
+        day: "2-digit",
+        month: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+      await this.deps.pushNotificationService.sendToUser({
+        userId: payload.booking.userId ?? payload.booking.user?.id ?? null,
+        title: isReschedule ? "Reserva reagendada" : "Nova reserva",
+        body: `${when}`,
+        url: `/booking/${payload.booking.uid}`,
+      });
+    } catch (error) {
+      this.log.error("Error while sending booking push", safeStringify(error));
+    }
   }
 
   private async updatePrivateLinkUsage(hashedLink: string | null) {
